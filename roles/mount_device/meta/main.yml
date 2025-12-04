@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: mount_device
+  namespace: genlab
+  author: "Alexander Gorelyshev"
+  company: "Genlab, LLC"
+  description: "Mount the given device"
+  license: "GPL-2.0-or-later"
+  min_ansible_version: "2.1"
+
+  platforms:
+    - name: "Ubuntu"
+      versions: [ "focal", "jammy", "noble" ]
+
+  galaxy_tags: []
+
+dependencies: []
