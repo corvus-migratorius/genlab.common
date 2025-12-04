@@ -1,0 +1,9 @@
+---
+- name: "Mount devices"
+  with_items: "{{ devices }}"
+  ansible.posix.mount:
+    fstype: "{{ item.fstype }}"
+    path: "{{ item.where }}"
+    src: "{{ item.what }}"
+    opts: "{{ item.opts | join(',') }}"
+    state: "{{ item.state }}"
