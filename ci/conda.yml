@@ -1,0 +1,11 @@
+---
+name: ansible-mount-device
+channels:
+  - conda-forge
+dependencies:
+  - python~=3.12
+  - pip>=22.2
+  - actionlint
+  - pip:
+      - -r requirements.txt
+      - -r requirements.ci.txt
