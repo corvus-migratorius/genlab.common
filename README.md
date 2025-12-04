@@ -1,3 +1,5 @@
 # Ansible Collection - genlab.common
 
-Documentation for the collection.
+## Roles
+
+- [mount_device](roles/mount_device/README.md)
