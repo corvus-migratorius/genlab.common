@@ -9,6 +9,8 @@ description: >-
   The genlab.common collection includes roles for performing deploying and configuring common infrastructural components
 license_file: LICENSE
 tags:
+  - linux
+  - infrastructure
   - genlab
 repository: https://github.com/corvus-migratorius/genlab.common
 issues: https://github.com/corvus-migratorius/genlab.common/issues

@@ -1,0 +1,11 @@
+---
+name: genlab.common
+channels:
+  - conda-forge
+dependencies:
+  - python~=3.13.10
+  - pip==25.3
+  - actionlint
+  - pip:
+      - -r requirements.txt
+      - -r requirements.ci.txt

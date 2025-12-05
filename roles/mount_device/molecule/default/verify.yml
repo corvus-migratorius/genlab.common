@@ -7,12 +7,12 @@
   tasks:
     - name: "Check mountpoint"  # noqa: command-instead-of-module
       changed_when: false
-      register: mounts
+      register: mount_device_mounts
       ansible.builtin.command:
         cmd: mount -l
 
     - name: "Ensure test_file is mounted on test_mount"
       ansible.builtin.assert:
-        that: "'/tmp/test_file on /test_mount type ext3' in mounts.stdout"
+        that: "'/tmp/test_file on /test_mount type ext3' in mount_device_mounts.stdout"
         success_msg: "/test_mount is a mounted"
         fail_msg: "/test_mount is not on the list of mounts"

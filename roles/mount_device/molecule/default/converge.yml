@@ -5,19 +5,19 @@
   pre_tasks:
 
     - name: "Check if the disk file already exists"
+      register: mount_device_disk_file
       ansible.builtin.stat:
         path: /tmp/test_file
-      register: disk_file
 
     - name: "Create a file to act as a disk if it doesn't exist"
-      when: not disk_file.stat.exists
+      when: not mount_device_disk_file.stat.exists
       changed_when: false
       ansible.builtin.shell: |
         dd if=/dev/zero of=/tmp/test_file bs=1000000 count=100
         mkfs.ext3 /tmp/test_file
 
   roles:
-    - role: genlab.mount_device
+    - role: genlab.common.mount_device
       devices:
         - what: "/tmp/test_file"
           where: "/test_mount"
