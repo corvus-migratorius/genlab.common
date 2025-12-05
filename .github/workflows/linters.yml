@@ -23,6 +23,7 @@ jobs:
           environment-file: ci/conda.yml
           init-shell: bash
           post-cleanup: 'all'
+          cache-environment: true
 
     #   - name: "Install role dependencies"
     #     run: ansible-galaxy install -r requirements.yml
