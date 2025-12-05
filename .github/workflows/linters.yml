@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v5
 
 
-      - uses: mamba-org/setup-micromamba@7f29b8b80078b1b601dfa018b0f7425c587c63bb
+      - uses: mamba-org/setup-micromamba@4d84239119b14cba1690b971f05c0bab912bea04
         with:
           micromamba-version: '2.4.0-0'
           environment-file: ci/conda.yml
