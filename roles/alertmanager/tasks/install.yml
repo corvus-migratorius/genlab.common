@@ -37,9 +37,9 @@
         group: "{{ alertmanager_group }}"
         mode: "0755"
       with_items:
-        - "{{ config_dir }}"
+        - "{{ alertmanager_config_dir }}"
         - "{{ alertmanager_dir }}"
-        - "{{ storage_dir }}"
+        - "{{ alertmanager_storage_dir }}"
 
     - name: "Download Alertmanager binary"
       ansible.builtin.get_url:

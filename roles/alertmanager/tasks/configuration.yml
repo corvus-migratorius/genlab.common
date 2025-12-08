@@ -4,7 +4,7 @@
   notify: "(Re)start and enable Alertmanager"
   ansible.builtin.template:
     src: "{{ item }}"
-    dest: "{{ config_dir }}/{{ item | basename }}"
+    dest: "{{ alertmanager_config_dir }}/{{ item | basename }}"
     owner: "{{ alertmanager_user }}"
     group: "{{ alertmanager_group }}"
     mode: "0660"
@@ -16,7 +16,7 @@
   when: template_source_dir is defined
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: "{{ config_dir }}/{{ item | basename }}"
+    dest: "{{ alertmanager_config_dir }}/{{ item | basename }}"
     owner: "{{ alertmanager_user }}"
     group: "{{ alertmanager_group }}"
     mode: "0660"
