@@ -3,27 +3,67 @@ name: molecule
   
 on:
   pull_request:
-    branches: [ "master" ]
-  push:
-    branches: [ "master" ]
 
 jobs:
-
-  molecule:
-    name: molecule
+  detect:
+    name: Detect changed roles
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    strategy:
-      matrix:
-        distro:
-          - ubuntu2404
-          - ubuntu2204
+    outputs:
+      matrix: ${{ steps.make-matrix.outputs.matrix }}
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Get PR files and build role matrix
+        id: make-matrix
+        uses: actions/github-script@v6
+        with:
+          script: |
+            if (!context.payload.pull_request?.number) {
+              core.setFailed('This workflow must be triggered by a pull_request event. No pull_request found in context.');
+              return;
+            }  
+          
+            // List files changed in the PR and extract top-level role folders under `roles/`
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              per_page: 100
+            });
 
-      - uses: mamba-org/setup-micromamba@4d84239119b14cba1690b971f05c0bab912bea04
+            const roles = Array.from(new Set(files.map(f => {
+              const m = f.filename.match(/^roles\/([^/]+)/);
+              return m ? `roles/${m[1]}` : null;
+            }).filter(Boolean)));
+
+            // If nothing changed, use a sentinel so the matrix is never empty (empty matrices fail the runner)
+            if (roles.length === 0) {
+              roles.push('__no_role__');
+            }
+
+            const matrix = { include: roles.map(r => ({ role: r })) };
+            core.setOutput('matrix', JSON.stringify(matrix));
+
+            console.log(matrix);
+
+  
+  molecule:
+    name: Run Molecule
+    needs: detect
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.detect.outputs.matrix) }}
+    
+    steps:
+      - name: Checkout the repo
+        if: ${{ matrix.role != '__no_role__' }}
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: "Set up micromamba"
+        uses: mamba-org/setup-micromamba@4d84239119b14cba1690b971f05c0bab912bea04
+        if: ${{ matrix.role != '__no_role__' }}
         with:
           micromamba-version: '2.4.0-0'
           environment-file: ci/conda.yml
@@ -31,14 +71,52 @@ jobs:
           post-cleanup: 'all'
           cache-environment: true
 
-      - name: "Install role dependencies"
+      - name: "Install collection dependencies"
+        if: ${{ matrix.role != '__no_role__' }}
         run: ansible-galaxy install -r requirements.yml
         shell: micromamba-shell {0}
 
       - name: "Run Molecule tests"
+        if: ${{ matrix.role != '__no_role__' }}
+        working-directory: ${{ matrix.role }}
         run: molecule test
         shell: micromamba-shell {0}
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
-          MOLECULE_DISTRO: ${{ matrix.distro }}
+          # MOLECULE_DISTRO: ${{ matrix.distro }}
+  
+  
+  # molecule:
+  #   name: molecule
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
+
+  #   strategy:
+  #     matrix:
+  #       distro:
+  #         - ubuntu2404
+  #         - ubuntu2204
+
+  #   steps:
+  #     - uses: actions/checkout@v6
+
+  #     - uses: mamba-org/setup-micromamba@4d84239119b14cba1690b971f05c0bab912bea04
+  #       with:
+  #         micromamba-version: '2.4.0-0'
+  #         environment-file: ci/conda.yml
+  #         init-shell: bash
+  #         post-cleanup: 'all'
+  #         cache-environment: true
+
+  #     - name: "Install role dependencies"
+  #       run: ansible-galaxy install -r requirements.yml
+  #       shell: micromamba-shell {0}
+
+  #     - name: "Run Molecule tests"
+  #       run: molecule test
+  #       shell: micromamba-shell {0}
+  #       env:
+  #         PY_COLORS: '1'
+  #         ANSIBLE_FORCE_COLOR: '1'
+  #         MOLECULE_DISTRO: ${{ matrix.distro }}
