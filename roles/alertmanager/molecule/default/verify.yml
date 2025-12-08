@@ -1,0 +1,55 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+
+    - name: "Include default vars"
+      ansible.builtin.include_vars:
+        dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
+        extensions: [ 'yml' ]
+
+    - name: "Check if Alertmanager is installed"
+      changed_when: false
+      ansible.builtin.command: "alertmanager --version"
+      register: alertmanager_installed_version
+
+    - name: "Check Alertmanager version"
+      ansible.builtin.assert:
+        that: "alertmanager_installed_version.stdout is regex('{{ alertmanager_version }}')"
+        success_msg: "Alertmanager version {{ alertmanager_version }} is installed and working"
+        fail_msg: "Alertmanager version {{ alertmanager_version }} is not installed or not working correctly"
+
+    # kics-scan ignore-block
+    - name: "Check if Alertmanager is reachable"
+      ansible.builtin.uri:
+        url: "http://localhost:9093/-/healthy"
+        return_content: true
+        status_code: 200
+        method: GET
+        body_format: json
+      register: alertmanager_health
+
+    - name: "Assert Alertmanager health status"
+      ansible.builtin.assert:
+        that: "alertmanager_health.content == 'OK'"
+        success_msg: "Alertmanager is healthy"
+        fail_msg: "Alertmanager is not healthy"
+
+    # kics-scan ignore-block
+    - name: "Check if Alertmanager is ready"
+      ansible.builtin.uri:
+        url: "http://localhost:9093/-/ready"
+        return_content: true
+        status_code: 200
+        method: GET
+        body_format: json
+      register: alertmanager_ready
+
+    - name: "Assert Alertmanager readiness status"
+      ansible.builtin.assert:
+        that: "alertmanager_ready.content == 'OK'"
+        success_msg: "Alertmanager is ready"
+        fail_msg: "Alertmanager is not ready"

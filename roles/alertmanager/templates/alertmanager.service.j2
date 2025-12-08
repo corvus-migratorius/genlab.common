@@ -1,0 +1,27 @@
+[Unit]
+Description=Alertmanager Service
+After=network.target
+Documentation="https://prometheus.io/docs/alerting/latest/alertmanager/"
+
+[Service]
+User={{ alertmanager_user }}
+Group={{ alertmanager_group }}
+Type=simple
+ExecStart=/usr/local/bin/alertmanager \
+          --config.file={{ config_dir }}/alertmanager.yml \
+          --storage.path={{ storage_dir }}
+Restart=on-failure
+ 
+# Security hardening
+ReadWritePaths={{ storage_dir }}
+ProtectSystem=strict
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectKernelTunables=true
+ProtectClock=yes
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target
