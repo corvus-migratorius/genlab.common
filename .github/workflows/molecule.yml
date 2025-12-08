@@ -47,7 +47,7 @@ jobs:
 
   
   molecule:
-    name: Run Molecule for changed roles
+    name: Run Molecule
     needs: detect
     runs-on: ubuntu-latest
     strategy:
