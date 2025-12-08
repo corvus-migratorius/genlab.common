@@ -5,6 +5,7 @@ version: 0.0.1
 readme: README.md
 authors:
   - Alexander Gorelyshev (corvus-migratorius@proton.me)
+  - Sergey Malyuk (malyuk.ss@genlab.llc)
 description: >-
   The genlab.common collection includes roles for performing deploying and configuring common infrastructural components
 license_file: LICENSE
