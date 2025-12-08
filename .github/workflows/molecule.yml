@@ -3,6 +3,8 @@ name: molecule
   
 on:
   pull_request:
+    paths:
+      - 'roles/**'
 
 jobs:
   detect:
