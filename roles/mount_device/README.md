@@ -23,16 +23,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-- role: mount_device
-  devices:
-    - what: /dev/vdb
-      where: "/somewhere"
-      fstype: ext4
-      opts:
-        - noatime
-      state: mounted
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------
