@@ -18,6 +18,11 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
+            if (!context.payload.pull_request?.number) {
+              core.setFailed('This workflow must be triggered by a pull_request event. No pull_request found in context.');
+              return;
+            }  
+          
             // List files changed in the PR and extract top-level role folders under `roles/`
             const files = await github.paginate(github.rest.pulls.listFiles, {
               owner: context.repo.owner,
