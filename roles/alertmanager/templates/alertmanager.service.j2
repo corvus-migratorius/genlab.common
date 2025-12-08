@@ -8,12 +8,12 @@ User={{ alertmanager_user }}
 Group={{ alertmanager_group }}
 Type=simple
 ExecStart=/usr/local/bin/alertmanager \
-          --config.file={{ config_dir }}/alertmanager.yml \
-          --storage.path={{ storage_dir }}
+          --config.file={{ alertmanager_config_dir }}/alertmanager.yml \
+          --storage.path={{ alertmanager_storage_dir }}
 Restart=on-failure
  
 # Security hardening
-ReadWritePaths={{ storage_dir }}
+ReadWritePaths={{ alertmanager_storage_dir }}
 ProtectSystem=strict
 NoNewPrivileges=true
 PrivateTmp=true
