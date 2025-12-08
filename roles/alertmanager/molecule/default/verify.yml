@@ -9,7 +9,7 @@
     - name: "Include default vars"
       ansible.builtin.include_vars:
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
-        extensions: [ 'yml' ]
+        extensions: ['yml']
 
     - name: "Check if Alertmanager is installed"
       changed_when: false

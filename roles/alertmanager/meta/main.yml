@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  role_name: "alertmanager"
+  role_name: alertmanager
   namespace: genlab
   author: "Alexander Gorelyshev"
   company: "Genlab, LLC"
@@ -10,8 +10,8 @@ galaxy_info:
 
   platforms:
     - name: "Ubuntu"
-      versions: [ "focal", "jammy", "noble" ]
+      versions: ["focal", "jammy", "noble"]
 
-  galaxy_tags: [ ]
+  galaxy_tags: []
 
 dependencies: []

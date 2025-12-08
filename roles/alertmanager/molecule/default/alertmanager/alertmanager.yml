@@ -7,20 +7,20 @@ global:
 
   # Other global settings like resolve_timeout, http_config, etc.
 
-route: 
+route:
   # Default receiver for alerts
   receiver: 'default-receiver'
 
-  # Labels used for grouping alerts 
-  group_by: ['alertname', 'instance', 'severity'] 
+  # Labels used for grouping alerts
+  group_by: ['alertname', 'instance', 'severity']
 
-  # Timing settings (group_wait, group_interval, repeat_interval) 
-  # You can have nested 'routes' for more complex routing logic 
+  # Timing settings (group_wait, group_interval, repeat_interval)
+  # You can have nested 'routes' for more complex routing logic
 
 receivers:
   - name: 'default-receiver'
     email_configs:
-      - to: 'ops-team@example.com' 
+      - to: 'ops-team@example.com'
 
 inhibit_rules:
   # Rules to suppress alerts based on other alerts
@@ -31,6 +31,6 @@ inhibit_rules:
       severity: 'warning'
     # Suppress 'warning' alerts if a 'critical' alert is also firing
 
-templates: 
-  # Paths to template files for customizing notifications 
-  - '/etc/alertmanager/templates/*.tmpl' 
+templates:
+  # Paths to template files for customizing notifications
+  - '/etc/alertmanager/templates/*.tmpl'

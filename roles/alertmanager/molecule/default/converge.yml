@@ -2,5 +2,5 @@
 - name: Converge
   hosts: all
   roles:
-    - role: genlab.alertmanager
+    - role: genlab.common.alertmanager
       config_source_dir: alertmanager
