@@ -1,0 +1,25 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: "Attach the file to a loop device"
+      ansible.builtin.command: losetup /dev/loop3 /tmp/test_file
+      register: loop_device
+      changed_when: loop_device.rc != 0
+
+    - name: "Verify the filesystem type"
+      ansible.builtin.command: blkid /dev/loop3
+      register: blkid_output
+      changed_when: blkid_output.rc != 0
+
+    - name: "Ensure filesystem is ext3"
+      ansible.builtin.assert:
+        that:
+          - "'TYPE=\"ext3\"' in blkid_output.stdout"
+
+    - name: "Explore stdout"
+      ansible.builtin.debug:
+        var: blkid_output.stdout
