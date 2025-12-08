@@ -6,3 +6,4 @@
 ## Roles
 
 - [mount_device](roles/mount_device/README.md)
+- [alertmanager](roles/alertmanager/README.md)

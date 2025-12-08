@@ -1,0 +1,9 @@
+---
+- name: "Run installation tasks"
+  ansible.builtin.include_tasks: install.yml
+
+- name: "Run configuration tasks"
+  ansible.builtin.include_tasks: configuration.yml
+
+- name: "Flush handlers"
+  ansible.builtin.meta: "flush_handlers"
