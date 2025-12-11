@@ -7,3 +7,4 @@
 
 - [mount_device](roles/mount_device/README.md)
 - [alertmanager](roles/alertmanager/README.md)
+- [wg_hub](roles/wg_hub/README.md)

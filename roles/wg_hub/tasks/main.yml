@@ -1,0 +1,54 @@
+---
+- name: "Install wireguard system-wide"
+  ansible.builtin.apt:
+    name: wireguard
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Ensure no dashes in the interface name"
+  when: "'-' in wg_hub_iface_name"
+  ansible.builtin.fail:
+    msg: "The interface name must not contain dashes, got: '{{ wg_hub_iface_name }}'"
+
+- name: "Create the Hub configuration file"
+  no_log: "{{ wg_hub_hide_secrets }}"
+  notify: "Run the Wireguard service"
+  ansible.builtin.blockinfile:
+    path: "/etc/wireguard/{{ wg_hub_iface_name }}.conf"
+    create: true
+    owner: root
+    group: root
+    mode: "0600"
+    state: present
+    block: |
+      [Interface]
+      Address = {{ wg_hub_ipv4_vpn_addr }}/32
+      ListenPort = {{ wg_hub_wg_port }}
+      PrivateKey = {{ wg_hub_wg_pkey }}
+
+      PreUp = sysctl -w net.ipv4.ip_forward=1
+      {% if dns_server is defined %}
+      PostUp = resolvectl dns %i {{ dns_server }}; resolvectl domain %i {{ wg_hub_iface_name }}.local
+      {% endif %}
+      PostDown = sysctl -w net.ipv4.ip_forward=0
+
+- name: "Add [Peer] sections to the Hub configuration file"
+  no_log: "{{ wg_hub_hide_secrets }}"
+  notify: "Run the Wireguard service"
+  loop: "{{ peers }}"
+  vars:
+    domain_name: "{{ item.wg_hub_host_id }}.{{ wg_hub_iface_name }}.local"
+  ansible.builtin.blockinfile:
+    path: "/etc/wireguard/{{ wg_hub_iface_name }}.conf"
+    owner: root
+    group: root
+    mode: "0600"
+    marker: "# {mark} ANSIBLE MANAGED SPOKE BLOCK: {{ domain_name }}"
+    block: |
+      #
+      [Peer]  # {{ domain_name }}
+      PublicKey = {{ item.wg_hub_wg_pubkey }}
+      PresharedKey = {{ item.wg_psk }}
+      AllowedIPs = {{ item.wg_hub_ipv4_vpn_addr }}/32
+      #
