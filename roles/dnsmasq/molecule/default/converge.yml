@@ -1,0 +1,21 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: genlab.ufw
+      disable_ipv6: true
+      rules:
+        - rule: allow
+          # proto: udp
+          port: 5300
+          interface: lo
+          direction: in
+          comment: "Allow dnsmasq to serve DNS queries on the given interface"
+
+    - role: genlab.dnsmasq
+      iface: lo
+      domain: adm.local
+      dns_port: 5300
+      nodes:
+        - name: hub
+          ip: 127.0.0.1
