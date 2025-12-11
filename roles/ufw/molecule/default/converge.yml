@@ -1,0 +1,17 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    custom_rules:
+      - port: 80
+      - port: 9080
+        src: "10.2.1.0/24"
+      - interface: eth0@if288
+        direction: in
+        comment: "Allow all incoming traffic on eth0@if288"
+
+  roles:
+    - role: genlab.common.ufw
+      disable_ipv6: true
+      ufw_limit_ssh: true
+      ufw_rules: "{{ custom_rules }}"

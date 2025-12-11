@@ -1,0 +1,24 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    wg_hub_iface_name: adm
+    wg_hub_ipv4_vpn_addr: 10.0.0.254
+    wg_hub_ipv4_vpn_cidr: 24
+    wg_hub_wg_port: 51820
+    wg_hub_wg_pkey: gABk6e/n3UDgudEVlUrEVcVdn0tc0YVDeCASsI10QFA=
+    wg_hub_wg_pubkey: EvcoZ21/p0AHz5y95jwjVIR9puljc2kXqh/f3U1A4nk=
+    wg_hub_hide_secrets: false
+    # dns_server: 127.0.0.1:5300  # doesn't work in Github Actions environment
+    peers:
+      - wg_hub_host_id: alpha
+        wg_hub_ipv4_vpn_addr: 10.0.0.1
+        wg_hub_wg_pubkey: LfEJgNiJ05nx4nWB0Pj3wS3WRyFq567fsdDh4XZqRF0=
+        wg_psk: i3JCrQOfptZhgpL+BTm/65MPW/ljJexCgiuWMIqZJYo=
+      - wg_hub_host_id: beta
+        wg_hub_ipv4_vpn_addr: 10.0.0.2
+        wg_hub_wg_pubkey: oq3Fcwwfxsi5f5UHcZKtxMwQ2aSeHOUe3r35soUUYzU=
+        wg_psk: Z/z7Qo8hW97UcImYE/ZbCxpNmizfVhvl0dzygtvtYYg=
+
+  roles:
+    - role: genlab.common.wg_hub
