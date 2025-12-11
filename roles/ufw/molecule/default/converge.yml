@@ -11,7 +11,7 @@
         comment: "Allow all incoming traffic on eth0@if288"
 
   roles:
-    - role: genlab.ufw
+    - role: genlab.common.ufw
       disable_ipv6: true
-      limit_ssh: true
-      rules: "{{ custom_rules }}"
+      ufw_limit_ssh: true
+      ufw_rules: "{{ custom_rules }}"

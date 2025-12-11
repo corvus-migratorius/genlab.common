@@ -1,4 +1,4 @@
 ---
-rules: []
-limit_ssh: false
-openssh_port: 22
+ufw_rules: []
+ufw_limit_ssh: false
+ufw_openssh_port: 22

@@ -28,13 +28,13 @@
 - name: "Allow SSH access"
   notify: Reload-ufw
   community.general.ufw:
-    rule: "{{ limit_ssh | ternary('limit', 'allow') }}"
-    port: "{{ openssh_port }}"
+    rule: "{{ ufw_limit_ssh | ternary('limit', 'allow') }}"
+    port: "{{ ufw_openssh_port }}"
     proto: tcp
 
 - name: "Set whitelist rules"
   notify: Reload-ufw
-  loop: "{{ rules }}"
+  loop: "{{ ufw_rules }}"
   community.general.ufw:
     rule: "{{ item.rule | default('allow') }}"
     comment: "{{ item.comment | default(omit) }}"
