@@ -1,0 +1,28 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: "Get the UFW status"
+      register: ufw_status
+      changed_when: false
+      ansible.builtin.command:
+        cmd: ufw status
+
+    - name: "Verify expected UFW status"
+      vars:
+        expected:
+          - "Status: active"
+          - ""
+          - "To                         Action      From"
+          - "--                         ------      ----"
+          - "22/tcp                     LIMIT       Anywhere                  "
+          - "80                         ALLOW       Anywhere                  "
+          - "9080                       ALLOW       10.2.1.0/24               "
+          - "Anywhere on eth0@if288     ALLOW       Anywhere                   # Allow all incoming traffic on eth0@if288"
+      ansible.builtin.assert:
+        that: ufw_status.stdout_lines == expected
+        success_msg: "UFW has the expected state"
+        fail_msg: "Unexpected UFW state (some rules may have not been applied correctly)"
