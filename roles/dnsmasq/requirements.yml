@@ -1,5 +1,0 @@
-# requirements file
----
-roles:
-  - name: genlab.ufw
-    src: https://github.com/corvus-migratorius/ansible-ufw.git
