@@ -7,6 +7,7 @@
 
 - [alertmanager](roles/alertmanager/README.md)
 - [dnsmasq](roles/dnsmasq/README.md)
+- [grafana](roles/grafana/README.md)
 - [mount_device](roles/mount_device/README.md)
 - [prometheus](roles/prometheus/README.md)
 - [ufw](roles/ufw/README.md)
