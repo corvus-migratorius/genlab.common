@@ -38,11 +38,11 @@
         state: started
 
   roles:
-    - role: genlab.borgmatic
-      borg_source_directories:
+    - role: genlab.common.borgmatic
+      borgmatic_source_directories:
         - "/tmp/data"
-      borg_repo_path: "ssh://borg@localhost/./test-repo"
-      borg_repo_label: "test-repo"
-      borg_encryption_passphrase: "secret"
+      borgmatic_repo_path: "ssh://borg@localhost/./test-repo"
+      borgmatic_repo_label: "test-repo"
+      borgmatic_encryption_passphrase: "secret"
       repo_server_inventory_hostname: ubuntu  # in production this should be an Ansible inventory hostname
       repo_server_user: borg

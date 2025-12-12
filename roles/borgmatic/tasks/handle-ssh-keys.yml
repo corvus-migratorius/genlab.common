@@ -8,7 +8,7 @@
     mode: "0700"
 
 - name: "Generate an ed25519 SSH key pair with 100 KDF rounds"
-  register: ssh_key_pair
+  register: borgmatic_ssh_key_pair
   community.crypto.openssh_keypair:
     type: ed25519
     path: "{{ ssh_key_path }}"
@@ -21,5 +21,5 @@
   delegate_to: "{{ repo_server_inventory_hostname }}"
   ansible.posix.authorized_key:
     user: "{{ repo_server_user }}"
-    key: "{{ ssh_key_pair.public_key }}"
+    key: "{{ borgmatic_ssh_key_pair.public_key }}"
     state: present

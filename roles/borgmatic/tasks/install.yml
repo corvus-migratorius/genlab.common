@@ -37,22 +37,22 @@
     # we are looking for Borg installed in a directory that Max Hoesel's role exects to find it
     - name: "Get the currently installed version of Borg"
       changed_when: false
-      register: borg_version_installed
+      register: borgmatic_version_installed
       ansible.builtin.command:
         cmd: /usr/bin/borg --version
 
     - name: "Check that the correct version of Borg is installed"
       ansible.builtin.assert:
-        that: borg_version_installed.stdout.find(borg_version)
-        fail_msg: "The expected Borg version was not found: {{ borg_version_installed }}"
-        success_msg: "Found the expected Borg version ({{ borg_version }})"
+        that: borgmatic_version_installed.stdout.find(borgmatic_version)
+        fail_msg: "The expected Borg version was not found: {{ borgmatic_version_installed }}"
+        success_msg: "Found the expected Borg version ({{ borgmatic_version }})"
 
   rescue:
-    - name: "Download Borg from a custom URL: '{{ borg_binary_url }}'"
+    - name: "Download Borg from a custom URL: '{{ borgmatic_binary_url }}'"
       retries: 3
       delay: 1
       ansible.builtin.unarchive:
-        src: "{{ borg_binary_url }}"
+        src: "{{ borgmatic_binary_url }}"
         dest: "/opt/"
         remote_src: true
         owner: root
