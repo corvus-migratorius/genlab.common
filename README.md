@@ -5,4 +5,8 @@
 
 ## Roles
 
+- [alertmanager](roles/alertmanager/README.md)
+- [dnsmasq](roles/dnsmasq/README.md)
 - [mount_device](roles/mount_device/README.md)
+- [ufw](roles/ufw/README.md)
+- [wg_hub](roles/wg_hub/README.md)
