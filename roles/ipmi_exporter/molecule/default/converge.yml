@@ -1,0 +1,6 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: genlab.ipmi_exporter
+      ipmi_exp_source_dir: "molecule/default/"
