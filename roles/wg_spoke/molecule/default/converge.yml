@@ -1,0 +1,20 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: genlab.common.wg_spoke
+      iface_name: adm
+      subnet: "10.0.0.0"
+      netmask: "24"
+      spoke_ipv4_vpn: "10.0.0.1"
+      spoke_port: "51820"
+      spoke_pkey: eGqGx4A5ufFKatLflPFKNuzFgGuospIe08iPbTlEhm0=
+      hub_pubkey: EvcoZ21/p0AHz5y95jwjVIR9puljc2kXqh/f3U1A4nk=
+      # hub_psk: 5qmMuLuGQT7w8VnHPsZDO4vRF5wEKcpEtaCQW1BLmbg=
+      hub_ipv4_wan: "1.2.3.4"
+      hub_ipv4_vpn: "10.0.0.254"
+      hub_port: "51820"
+      dns_server: "10.0.0.254:5300"
+      domain: "adm.local"
+      wg_spoke_hide_secrets: false
+      wg_spoke_logging: false  # doesn't work in Github Actions environment
