@@ -1,0 +1,7 @@
+---
+- name: "(Re)start and enable Grafana"
+  ansible.builtin.systemd_service:
+    name: grafana-server
+    state: restarted
+    enabled: true
+    daemon_reload: true
