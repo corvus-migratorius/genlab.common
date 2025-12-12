@@ -2,7 +2,7 @@
 - name: Converge
   hosts: all
   roles:
-    - role: genlab.ufw
+    - role: genlab.common.ufw
       disable_ipv6: true
       rules:
         - rule: allow
@@ -12,10 +12,10 @@
           direction: in
           comment: "Allow dnsmasq to serve DNS queries on the given interface"
 
-    - role: genlab.dnsmasq
-      iface: lo
-      domain: adm.local
-      dns_port: 5300
-      nodes:
+    - role: genlab.common.dnsmasq
+      dnsmasq_iface: lo
+      dnsmasq_domain: adm.local
+      dnsmasq_dns_port: 5300
+      dnsmasq_nodes:
         - name: hub
           ip: 127.0.0.1

@@ -1,3 +1,3 @@
 ---
-cache_size: 100
-dns_port: 5300
+dnsmasq_cache_size: 100
+dnsmasq_dns_port: 5300
