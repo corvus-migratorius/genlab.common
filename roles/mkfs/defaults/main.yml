@@ -1,0 +1,5 @@
+---
+# defaults file for mkfs
+mkfs_opts: ""
+mkfs_state: present
+mkfs_force: false
