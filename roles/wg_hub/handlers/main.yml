@@ -1,0 +1,7 @@
+---
+- name: "Run the Wireguard service"
+  ansible.builtin.systemd_service:
+    name: wg-quick@{{ wg_hub_iface_name | replace("-", "_") }}
+    state: restarted
+    enabled: true
+    daemon_reload: true

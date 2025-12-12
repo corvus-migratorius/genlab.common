@@ -1,0 +1,7 @@
+---
+alertmanager_version: 0.28.1
+alertmanager_config_dir: "/etc/alertmanager/conf"
+alertmanager_storage_dir: "/var/lib/alertmanager"
+alertmanager_dir: "/etc/alertmanager"
+alertmanager_user: alertmanager
+alertmanager_group: alertmanager

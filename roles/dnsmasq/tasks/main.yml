@@ -1,0 +1,38 @@
+---
+- name: "Install dnsmasq"
+  ansible.builtin.apt:
+    name: dnsmasq
+    state: present
+    update_cache: true
+
+
+- name: "Create interface-specific configuration file"
+  notify: "Restart dnsmasq"
+  ansible.builtin.blockinfile:
+    path: /etc/dnsmasq.d/{{ dnsmasq_domain }}.conf
+    create: true
+    owner: root
+    group: root
+    mode: "0660"
+    block: |
+      interface="{{ dnsmasq_iface }}"
+      port="{{ dnsmasq_dns_port }}"
+      cache-size="{{ dnsmasq_cache_size }}"
+      log-queries
+      server=1.1.1.1   # Cloudflare DNS
+      server=8.8.8.8   # Google DNS
+      server=8.8.4.4   # Google DNS (secondary)
+
+
+- name: "Add dnsmasq_nodes to the configuration file"
+  notify: "Restart dnsmasq"
+  loop: "{{ dnsmasq_nodes }}"
+  ansible.builtin.blockinfile:
+    path: /etc/dnsmasq.d/{{ dnsmasq_domain }}.conf
+    marker: "# {mark} ANSIBLE MANAGED: {{ item.name }}.{{ dnsmasq_domain }}"
+    block: |
+      address=/{{ item.name }}.{{ dnsmasq_domain }}/{{ item.ip }}
+
+
+- name: "Flush handlers"
+  ansible.builtin.meta: flush_handlers
