@@ -16,4 +16,4 @@
       register: dnsmasq_dig
       failed_when: 'dig.stdout != "127.0.0.1"'
       ansible.builtin.command:
-        cmd: "dig @127.0.0.1 -p 5353 hub.adm.vpn +short"
+        cmd: "dig @127.0.0.1 -p 5300 hub.adm.local +short"
