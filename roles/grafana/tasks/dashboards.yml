@@ -1,0 +1,40 @@
+---
+- name: "Create dashboard directory"
+  ansible.builtin.file:
+    path: "{{ grafana_dashboard_dir }}"
+    state: directory
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: "0755"
+
+- name: "Copy dashboard files from source to target"
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ grafana_dashboard_dir }}/{{ item | basename }}"
+    mode: "0644"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+  with_fileglob:
+    - "{{ dashboard_source_path }}/*.json"
+
+- name: "Import Grafana dashboards to Grafana"
+  community.grafana.grafana_dashboard:
+    grafana_url: "http://127.0.0.1:{{ grafana_port }}"
+    url_username: "{{ admin_api_username }}"
+    url_password: "{{ admin_api_password }}"
+    state: present
+    commit_message: Updated by ansible
+    overwrite: false
+    path: "{{ grafana_dashboard_dir }}/{{ item | basename }}"
+  with_fileglob:
+    - "{{ dashboard_source_path }}/*.json"
+
+- name: "Run | reload Grafana provisioned dashboard configurations"
+  ansible.builtin.uri:
+  # kics-scan ignore-line
+    url: "http://127.0.0.1:{{ grafana_port }}/api/admin/provisioning/dashboards/reload"
+    method: POST
+    force_basic_auth: true
+    user: "{{ admin_api_username }}"
+    password: "{{ admin_api_password }}"
+    status_code: 200
