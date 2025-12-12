@@ -82,6 +82,10 @@ jobs:
         run: ansible-galaxy collection install community.general
         shell: micromamba-shell {0}
 
+      - name: "Install community.grafana collection"
+        run: ansible-galaxy collection install community.grafana
+        shell: micromamba-shell {0}
+
       - name: "Run Molecule tests"
         if: ${{ matrix.role != '__no_role__' }}
         working-directory: ${{ matrix.role }}
