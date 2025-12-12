@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+
+  roles:
+    - role: genlab.common.prometheus
+      prometheus_config_source_dir: prometheus
+      alertrules_source_dir: prometheus/rules
