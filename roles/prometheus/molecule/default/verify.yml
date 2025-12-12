@@ -9,16 +9,16 @@
     - name: "Include default vars"
       ansible.builtin.include_vars:
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
-        extensions: [ 'yml' ]
+        extensions: ['yml']
 
     - name: "Check if Prometheus is installed"
       changed_when: false
       ansible.builtin.command: "prometheus --version"
-      register: prom_installed_version
+      register: prometheus_installed_version
 
     - name: "Check Prometheus version"
       ansible.builtin.assert:
-        that: "prom_installed_version.stdout is regex('{{ prometheus_version }}')"
+        that: "prometheus_installed_version.stdout is regex('{{ prometheus_version }}')"
         success_msg: "Prometheus version {{ prometheus_version }} is installed and working"
         fail_msg: "Prometheus version {{ prometheus_version }} is not installed or not working correctly"
 
@@ -30,11 +30,11 @@
         status_code: 200
         method: GET
         body_format: json
-      register: prom_health
+      register: prometheus_health
 
     - name: "Debug Prometheus health status"
       ansible.builtin.assert:
-        that: "prom_health.content | trim == 'Prometheus Server is Healthy.'"
+        that: "prometheus_health.content | trim == 'Prometheus Server is Healthy.'"
         success_msg: "Prometheus is healthy"
         fail_msg: "Prometheus is not healthy"
 
@@ -46,10 +46,10 @@
         status_code: 200
         method: GET
         body_format: json
-      register: prom_ready
+      register: prometheus_ready
 
     - name: "Debug Prometheus readiness status"
       ansible.builtin.assert:
-        that: "prom_ready.content | trim == 'Prometheus Server is Ready.'"
+        that: "prometheus_ready.content | trim == 'Prometheus Server is Ready.'"
         success_msg: "Prometheus is ready"
         fail_msg: "Prometheus is not ready"

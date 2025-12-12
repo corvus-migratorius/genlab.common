@@ -3,6 +3,6 @@
   hosts: all
 
   roles:
-    - role: genlab.prometheus
-      config_source_dir: prometheus
+    - role: genlab.common.prometheus
+      prometheus_config_source_dir: prometheus
       alertrules_source_dir: prometheus/rules

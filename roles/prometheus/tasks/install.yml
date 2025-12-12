@@ -37,9 +37,9 @@
         group: "{{ prometheus_group }}"
         mode: "0755"
       with_items:
-        - "{{ config_dir }}"
+        - "{{ prometheus_config_dir }}"
         - "{{ prometheus_dir }}"
-        - "{{ db_dir }}"
+        - "{{ prometheus_db_dir }}"
 
     - name: "Download Prometheus binary"
       ansible.builtin.get_url:
