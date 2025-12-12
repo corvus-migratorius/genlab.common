@@ -37,9 +37,9 @@
         group: "{{ grafana_group }}"
         mode: '0775'
       with_items:
-        - "{{ log_dir }}"
-        - "{{ data_dir }}"
-        - "{{ plugins_dir }}"
+        - "{{ grafana_log_dir }}"
+        - "{{ grafana_data_dir }}"
+        - "{{ grafana_plugins_dir }}"
 
     - name: "Download Grafana DEB package"
       ansible.builtin.get_url:
@@ -48,12 +48,12 @@
         owner: "{{ grafana_user }}"
         group: "{{ grafana_group }}"
         mode: "0644"
-      register: package_tmp
+      register: grafana_package_tmp
 
     - name: "Install DEB package"
       notify: "(Re)start and enable Grafana"
       ansible.builtin.apt:
-        deb: "{{ package_tmp.dest }}"
+        deb: "{{ grafana_package_tmp.dest }}"
         state: present
         update_cache: true
 

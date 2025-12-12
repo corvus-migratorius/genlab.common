@@ -3,8 +3,8 @@ grafana_user: "grafana"
 grafana_group: "grafana"
 grafana_version: 11.5.0
 grafana_port: 3000
-dashboard_dir: "/tmp/grafana/dashboards"
-plugins_dir: "/var/lib/grafana/plugins"
-datasource_dir: "/etc/grafana/provisioning/datasources"
-log_dir: "/var/log/grafana"
-data_dir: "/var/lib/grafana"
+grafana_dashboard_dir: "/tmp/grafana/dashboards"
+grafana_plugins_dir: "/var/lib/grafana/plugins"
+grafana_datasource_dir: "/etc/grafana/provisioning/datasources"
+grafana_log_dir: "/var/log/grafana"
+grafana_data_dir: "/var/lib/grafana"

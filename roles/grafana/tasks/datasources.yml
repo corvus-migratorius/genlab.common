@@ -1,7 +1,7 @@
 ---
 - name: "Create datasource directory"
   ansible.builtin.file:
-    path: "{{ datasource_dir }}"
+    path: "{{ grafana_datasource_dir }}"
     state: directory
     owner: "{{ grafana_user }}"
     group: "{{ grafana_group }}"
@@ -10,7 +10,7 @@
 - name: "Configure | provision datasources for Grafana"
   ansible.builtin.copy:
     src: "{{ datasource_source_path }}/{{ item | basename }}"
-    dest: "{{ datasource_dir }}/{{ item | basename }}"
+    dest: "{{ grafana_datasource_dir }}/{{ item | basename }}"
     owner: "{{ grafana_user }}"
     group: "{{ grafana_group }}"
     mode: "0660"

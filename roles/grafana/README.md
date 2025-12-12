@@ -14,7 +14,7 @@ This role installs and configures Grafana from a binary distribution. It also:
 - Allows admin password changes
 
 Supports user creation
- Grafana service requires an environment file at startup, where you can set custom paths for logs (`log_dir`), data (`data_dir`), and plugins (`plugins_dir`). This allows flexible control over Grafana's data storage.
+ Grafana service requires an environment file at startup, where you can set custom paths for logs (`grafana_log_dir`), data (`grafana_data_dir`), and plugins (`grafana_plugins_dir`). This allows flexible control over Grafana's data storage.
 
  Requirements
 ------------
@@ -31,11 +31,11 @@ grafana_version: 11.5.0    # version
 grafana_port: 3000         # port
 
 # Directory paths  
-dashboard_dir: "/tmp/grafana/dashboards"          # where to copy dashboards from source  
-plugins_dir: "/var/lib/grafana/plugins"           # where to store plugins on target  
-datasource_dir: "/etc/grafana/provisioning/datasources"  # where to store data sources on target  
-log_dir: "/var/log/grafana"                       # where to write logs  
-data_dir: "/var/lib/grafana"                      # where to store Grafana DB  
+grafana_dashboard_dir: "/tmp/grafana/dashboards"          # where to copy dashboards from source  
+grafana_plugins_dir: "/var/lib/grafana/plugins"           # where to store plugins on target  
+grafana_datasource_dir: "/etc/grafana/provisioning/datasources"  # where to store data sources on target  
+grafana_log_dir: "/var/log/grafana"                       # where to write logs  
+grafana_data_dir: "/var/lib/grafana"                      # where to store Grafana DB  
 
 # Optional configurations  
 grafana_users: []                  # array of user names, passwords, and statuses  
@@ -91,8 +91,8 @@ Example Playbook
       public_dashboards: "{{ grafana_public_dashboards }}"
       dashboard_source_path: "molecule/default/dashboards"
       datasource_source_path: "molecule/default/datasources"
-      log_dir: "/opt/grafana/data"
-      data_dir: "/opt/grafana/lib"
+      grafana_log_dir: "/opt/grafana/data"
+      grafana_data_dir: "/opt/grafana/lib"
 
 ```
 

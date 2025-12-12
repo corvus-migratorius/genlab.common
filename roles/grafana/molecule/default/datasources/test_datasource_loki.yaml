@@ -13,4 +13,4 @@ datasources:
     secureJsonData:
       httpHeaderValue1: "Bearer your_token_here"
     version: 1
-    editable: false 
+    editable: false

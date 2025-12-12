@@ -31,7 +31,7 @@
 
   roles:
     # kics-scan ignore-block
-    - role: genlab.grafana
+    - role: genlab.common.grafana
       grafana_version: 11.5.0
       admin_api_username: "{{ grafana.admin_api_username }}"
       admin_api_password: "{{ grafana.admin_api_password }}"
@@ -40,5 +40,5 @@
       public_dashboards: "{{ grafana_public_dashboards }}"
       dashboard_source_path: "molecule/default/dashboards"
       datasource_source_path: "molecule/default/datasources"
-      log_dir: "/opt/grafana/data"
-      data_dir: "/opt/grafana/lib"
+      grafana_log_dir: "/opt/grafana/data"
+      grafana_data_dir: "/opt/grafana/lib"

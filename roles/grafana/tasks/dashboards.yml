@@ -1,7 +1,7 @@
 ---
 - name: "Create dashboard directory"
   ansible.builtin.file:
-    path: "{{ dashboard_dir }}"
+    path: "{{ grafana_dashboard_dir }}"
     state: directory
     owner: "{{ grafana_user }}"
     group: "{{ grafana_group }}"
@@ -10,7 +10,7 @@
 - name: "Copy dashboard files from source to target"
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: "{{ dashboard_dir }}/{{ item | basename }}"
+    dest: "{{ grafana_dashboard_dir }}/{{ item | basename }}"
     mode: "0644"
     owner: "{{ grafana_user }}"
     group: "{{ grafana_group }}"
@@ -25,7 +25,7 @@
     state: present
     commit_message: Updated by ansible
     overwrite: false
-    path: "{{ dashboard_dir }}/{{ item | basename }}"
+    path: "{{ grafana_dashboard_dir }}/{{ item | basename }}"
   with_fileglob:
     - "{{ dashboard_source_path }}/*.json"
 
