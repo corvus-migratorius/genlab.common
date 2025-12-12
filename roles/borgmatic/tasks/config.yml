@@ -1,0 +1,34 @@
+---
+- name: "Compose basic configuration for Borgmatic"
+  ansible.builtin.set_fact:
+    borgmatic_composite_config:
+      source_directories: "{{ borg_source_directories }}"
+      repositories:
+        - path: "{{ borg_repo_path }}"
+          label: "{{ borg_repo_label }}"
+      encryption_passphrase: "{{ borg_encryption_passphrase }}"
+      compression: "{{ borg_compression }}"
+      # CLI output configuration
+      list_details: true
+      statistics: true
+      exclude_caches: true
+      # logging verbosity:
+      verbosity: 1
+      syslog_verbosity: 1
+      monitoring_verbosity: 1
+      # backup depth
+      keep_hourly: "{{ borg_keep_hourly }}"
+      keep_daily: "{{ borg_keep_daily }}"
+      keep_weekly: "{{ borg_keep_weekly }}"
+      keep_monthly: "{{ borg_keep_monthly }}"
+      keep_yearly: "{{ borg_keep_yearly }}"
+
+- name: "Add Uptime Kuma configuration"
+  when: borg_uptime_kuma
+  ansible.builtin.set_fact:
+    borgmatic_composite_config: "{{ borgmatic_composite_config | combine({'uptime_kuma': borg_uptime_kuma}) }}"
+
+- name: "Add Loki configuration"
+  when: borg_loki
+  ansible.builtin.set_fact:
+    borgmatic_composite_config: "{{ borgmatic_composite_config | combine({'loki': borg_loki}) }}"

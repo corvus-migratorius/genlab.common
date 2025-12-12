@@ -1,0 +1,66 @@
+---
+- name: "Ensure that system dependencies are installed"
+  ansible.builtin.apt:
+    name:
+      - openssh-client
+      - python3-pip
+      - python3-venv
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Install pipx"
+  retries: 3
+  delay: 1
+  ansible.builtin.pip:
+    name: "pipx=={{ pipx_version }}"
+    executable: pip3
+    break_system_packages: true
+
+- name: "Ensure pipx binary is available in PATH"
+  changed_when: false
+  ansible.builtin.command:
+    cmd: pipx ensurepath
+
+- name: "Install borgmatic via pipx"
+  retries: 3
+  delay: 1
+  environment:
+    PIPX_BIN_DIR: "{{ borgmatic_pipx_bin_dir }}"
+  community.general.pipx:
+    name: borgmatic
+    state: present
+    install_deps: true
+
+- name: "Install Borg if the correct version is not available"
+  block:
+    # we are looking for Borg installed in a directory that Max Hoesel's role exects to find it
+    - name: "Get the currently installed version of Borg"
+      changed_when: false
+      register: borg_version_installed
+      ansible.builtin.command:
+        cmd: /usr/bin/borg --version
+
+    - name: "Check that the correct version of Borg is installed"
+      ansible.builtin.assert:
+        that: borg_version_installed.stdout.find(borg_version)
+        fail_msg: "The expected Borg version was not found: {{ borg_version_installed }}"
+        success_msg: "Found the expected Borg version ({{ borg_version }})"
+
+  rescue:
+    - name: "Download Borg from a custom URL: '{{ borg_binary_url }}'"
+      retries: 3
+      delay: 1
+      ansible.builtin.unarchive:
+        src: "{{ borg_binary_url }}"
+        dest: "/opt/"
+        remote_src: true
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: "Create a symbolic link for Borg"
+      ansible.builtin.file:
+        state: link
+        src: "/opt/borg-dir/borg.exe"
+        dest: "/usr/bin/borg"

@@ -1,0 +1,22 @@
+---
+# A workaround for maxhoesel.borgbackup.borgmatic that does not support custom paths
+- name: "Create symbolic links for Borgmatic executables"
+  loop:
+    - borgmatic
+    - generate-borgmatic-config
+    - validate-borgmatic-config
+  ansible.builtin.file:
+    state: link
+    src: "{{ borgmatic_pipx_bin_dir }}/{{ item }}"
+    dest: /usr/bin/{{ item }}
+
+- name: "Configure and run Borgmatic"
+  ansible.builtin.include_role:
+    name: maxhoesel.borgbackup.borgmatic
+  vars:
+    borgmatic_install: false  # we handle installation separately to get the recent version
+    # borgmatic_ssh_key_gen_options: "-t ed25519 -a 100"
+    borgmatic_ssh_key_path: "{{ ssh_key_path }}"
+    borgmatic_schedule_on: "{{ borgmatic_schedule_oncalendar }}"
+    borgmatic_schedule_max_random_delay: 600
+    borgmatic_config: "{{ borgmatic_composite_config }}"
