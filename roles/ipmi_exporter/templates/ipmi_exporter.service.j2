@@ -8,17 +8,17 @@ StartLimitBurst=5
 [Service]
 Type=simple
 ExecStart=/usr/local/bin/ipmi_exporter \
-    --web.listen-address={{ ipmi_exp_web_listen_address }} \
-    --log.level={{ ipmi_exp_log_level }} \
-    --log.format={{ ipmi_exp_log_format }} \
-{% if ipmi_exp_args is defined and ipmi_exp_args | length > 0 %}
-      {{ ipmi_exp_args }} \
+    --web.listen-address={{ ipmi_exporter_web_listen_address }} \
+    --log.level={{ ipmi_exporter_log_level }} \
+    --log.format={{ ipmi_exporter_log_format }} \
+{% if ipmi_exporter_args is defined and ipmi_exporter_args | length > 0 %}
+      {{ ipmi_exporter_args }} \
 {% endif %}
-{% if ipmi_exp_source_dir is defined and ipmi_exp_source_dir | length > 0 %}
-    --config.file={{ ipmi_exp_config_dir }}/ipmi_local.conf \
+{% if ipmi_exporter_source_dir is defined and ipmi_exporter_source_dir | length > 0 %}
+    --config.file={{ ipmi_exporter_config_dir }}/ipmi_local.conf \
 {% endif %}
-{% if ipmi_exp_web_source_dir is defined and ipmi_exp_web_source_dir | length > 0 %}
-    --web.config.file={{ ipmi_exp_config_dir }}/web_conf.yaml
+{% if ipmi_exporter_web_source_dir is defined and ipmi_exporter_web_source_dir | length > 0 %}
+    --web.config.file={{ ipmi_exporter_config_dir }}/web_conf.yaml
 {% endif %}
 
 SyslogIdentifier=ipmi_exporter

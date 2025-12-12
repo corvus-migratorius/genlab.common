@@ -8,7 +8,7 @@
     - name: "Include default vars"
       ansible.builtin.include_vars:
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
-        extensions: [ 'yml' ]
+        extensions: ['yml']
 
     - name: "Check if ipmi_exporter is installed"
       changed_when: false
@@ -17,21 +17,21 @@
 
     - name: "Check ipmi_exporter version"
       ansible.builtin.assert:
-        that: "ipmi_exporter_installed_version.stdout is regex('{{ ipmi_exp_version }}')"
-        success_msg: "ipmi_exporter version {{ ipmi_exp_version }} is installed and working"
-        fail_msg: "ipmi_exporter version {{ ipmi_exp_version }} is not installed or not working correctly"
+        that: "ipmi_exporter_installed_version.stdout is regex('{{ ipmi_exporter_version }}')"
+        success_msg: "ipmi_exporter version {{ ipmi_exporter_version }} is installed and working"
+        fail_msg: "ipmi_exporter version {{ ipmi_exporter_version }} is not installed or not working correctly"
 
     # kics-scan ignore-block
     - name: Check if /metrics endpoint is reachable
       ansible.builtin.uri:
-        url: "http://{{ ipmi_exp_web_listen_address }}/metrics"
+        url: "http://{{ ipmi_exporter_web_listen_address }}/metrics"
         return_content: true
         status_code: 200
         timeout: 60
-      register: metrics_check
+      register: ipmi_exporter_metrics_check
 
     - name: "Fail if /metrics doesn't contain ipmi_exporter_build_info line"
       ansible.builtin.assert:
-        that: "'ipmi_exporter_build_info' in metrics_check.content"
+        that: "'ipmi_exporter_build_info' in ipmi_exporter_metrics_check.content"
         fail_msg: "ipmi_exporter /metrics endpoint doesn't contain ipmi_exporter_build_info line!"
         success_msg: "ipmi_exporter /metrics endpoint contains ipmi_exporter_build_info line!"
