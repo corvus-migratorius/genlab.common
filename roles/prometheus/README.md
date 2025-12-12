@@ -20,7 +20,7 @@ prometheus_group: prometheus              # groups name
 prometheus_config_dir: "/etc/prometheus/conf"        # where to place prometheus config
 prometheus_db_dir: "/var/lib/prometheus"             # where to store prometheus db
 prometheus_config_source_dir: prometheus             # path to config files on source
-alertrules_source_dir: prometheus/rules   # path to rule files  on source
+prometheus_alertrules_source_dir: prometheus/rules   # path to rule files  on source
 ```
 
 Dependencies
@@ -35,7 +35,7 @@ Example Playbook
 roles:
     - role: genlab.prometheus
       prometheus_config_source_dir: mydir/configs
-      alertrules_source_dir: mydir/configs/rules
+      prometheus_alertrules_source_dir: mydir/configs/rules
       prometheus_version: 3.2.1
 ```
 
