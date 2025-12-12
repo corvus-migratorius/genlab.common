@@ -5,6 +5,12 @@ strict: true
 # Enable checking of loop variable prefixes in roles
 loop_var_prefix: "^(__|{role}_)"
 
+skip_list:
+  - var-naming[no-role-prefix]
+
+warn_list:
+  - role-name[path]
+  - var-naming[no-role-prefix]
+
 exclude_paths:
   - .github/
-  - .ansible/

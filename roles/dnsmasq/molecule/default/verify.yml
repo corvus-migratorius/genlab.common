@@ -1,0 +1,19 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  pre_tasks:
+    - name: "Install a package providing the `dig` tool"
+      ansible.builtin.apt:
+        name: dnsutils
+        state: present
+
+  tasks:
+    - name: "Test the output of the `dig` command"
+      changed_when: false
+      register: dnsmasq_dig
+      failed_when: 'dnsmasq_dig.stdout != "127.0.0.1"'
+      ansible.builtin.command:
+        cmd: "dig @127.0.0.1 -p 5300 hub.adm.local +short"
