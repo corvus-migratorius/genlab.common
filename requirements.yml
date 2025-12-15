@@ -5,5 +5,4 @@ collections:
   - name: community.grafana
   - name: community.docker
   - name: community.crypto
-roles:
-  - name: maxhoesel.borgmatic
+  - name: maxhoesel.borgbackup
