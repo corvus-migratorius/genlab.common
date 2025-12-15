@@ -1,6 +1,0 @@
-# requirements file
----
-collections:
-  - name: https://github.com/maxhoesel/ansible-collection-borgbackup
-    type: git
-    version: "v2.0.1"
