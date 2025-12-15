@@ -6,4 +6,4 @@ collections:
   - name: community.docker
   - name: community.crypto
 roles:
-  - name: maxhoesel.borgbackup.borgmatic
+  - name: maxhoesel.borgmatic
