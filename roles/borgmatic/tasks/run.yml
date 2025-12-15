@@ -16,7 +16,7 @@
   vars:
     borgmatic_install: false  # we handle installation separately to get the recent version
     # borgmatic_ssh_key_gen_options: "-t ed25519 -a 100"
-    borgmatic_ssh_key_path: "{{ ssh_key_path }}"
+    borgmatic_ssh_key_path: "{{ borgmatic_sshkey_path }}"
     borgmatic_schedule_on: "{{ borgmatic_schedule_oncalendar }}"
     borgmatic_schedule_max_random_delay: 600
     borgmatic_config: "{{ borgmatic_composite_config }}"

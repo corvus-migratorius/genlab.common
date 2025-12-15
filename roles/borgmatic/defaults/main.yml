@@ -1,12 +1,13 @@
 ---
 borgmatic_version: "1.4.0"
-glibc_version: "2.36"
-pipx_version: "1.7.1"
-borgmatic_binary_url: "https://github.com/borgbackup/borg/releases/download/{{ borgmatic_version }}/borg-linux-glibc{{ glibc_version | replace('.', '') }}.tgz"
+borgmatic_glibc_version: "2.36"
+borgmatic_pipx_version: "1.7.1"
+borgmatic_binary_url: "\
+    https://github.com/borgbackup/borg/releases/download/{{ borgmatic_version }}/borg-linux-glibc{{ borgmatic_glibc_version | replace('.', '') }}.tgz"
 borgmatic_pipx_bin_dir: "/opt/borgmatic/bin"
 borgmatic_schedule_oncalendar: "daily"
-push_pubkey: true
-ssh_key_path: "/root/borgmatic/id_ed25519"
+borgmatic_push_pubkey: true
+borgmatic_sshkey_path: "/root/borgmatic/id_ed25519"
 borgmatic_compression: "lz4"
 borgmatic_keep_hourly: 0
 borgmatic_keep_daily: 3
@@ -15,4 +16,3 @@ borgmatic_keep_monthly: 1
 borgmatic_keep_yearly: 0
 borgmatic_uptime_kuma:
 borgmatic_loki:
-# todo: ansible-lint errors

@@ -13,7 +13,7 @@
   retries: 3
   delay: 1
   ansible.builtin.pip:
-    name: "pipx=={{ pipx_version }}"
+    name: "pipx=={{ borgmatic_pipx_version }}"
     executable: pip3
     break_system_packages: true
 
