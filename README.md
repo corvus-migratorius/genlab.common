@@ -12,6 +12,7 @@
 - [ipmi_exporter](roles/ipmi_exporter/README.md)
 - [mount_device](roles/mount_device/README.md)
 - [prometheus](roles/prometheus/README.md)
+- [smartctl_exporter](roles/smartctl_exporter/README.md)
 - [ufw](roles/ufw/README.md)
 - [wg_hub](roles/wg_hub/README.md)
 - [wg_spoke](roles/wg_spoke/README.md)
