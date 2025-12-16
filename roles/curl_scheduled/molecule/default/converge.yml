@@ -31,7 +31,7 @@
         executable: /bin/bash
 
   roles:
-    - role: genlab.curl_scheduled
+    - role: genlab.common.curl_scheduled
       services:
         - label: "localhost-test-zero"
           url: "http://127.0.0.1:8080"
