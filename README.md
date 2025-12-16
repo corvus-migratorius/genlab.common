@@ -7,6 +7,7 @@
 
 - [alertmanager](roles/alertmanager/README.md)
 - [borgmatic](roles/borgmatic/README.md)
+- [curl_scheduled](roles/curl_scheduled/README.md)
 - [dnsmasq](roles/dnsmasq/README.md)
 - [grafana](roles/grafana/README.md)
 - [ipmi_exporter](roles/ipmi_exporter/README.md)
