@@ -10,6 +10,8 @@
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
         extensions: ['yml']
 
+    # kics-scan ignore
+    # kics wants localhost on https but i dont
     - name: "Sanity check the Loki daemon"
       retries: 5
       delay: 1
