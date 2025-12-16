@@ -1,0 +1,7 @@
+---
+- name: "(Re)start and enable karma"
+  ansible.builtin.systemd_service:
+    name: karma.service
+    state: restarted
+    enabled: true
+    daemon_reload: true

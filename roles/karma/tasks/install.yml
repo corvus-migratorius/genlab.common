@@ -1,0 +1,66 @@
+---
+
+- name: "Create Karma system group"
+  ansible.builtin.group:
+    name: "{{ karma_user }}"
+    system: true
+    state: present
+
+- name: "Create karma system user"
+  ansible.builtin.user:
+    name: "{{ karma_user }}"
+    group: "{{ karma_group }}"
+    system: true
+    shell: "/sbin/nologin"
+    create_home: false
+    state: present
+
+- name: "Install karma from binary"
+  block:
+    - name: "Check karma version"
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "{{ karma_dir }}/karma-linux-amd64 --version"
+      register: karma_ver
+
+    - name: "Assert version correctness"
+      ansible.builtin.assert:
+        that: "karma_ver.stdout is regex('{{ karma_version }}')"
+        success_msg: "karma version {{ karma_version }} is installed and working"
+        fail_msg: "karma version {{ karma_version }} is not installed or not working correctly"
+
+  rescue:
+    - name: "Create karma directories"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ karma_user }}"
+        group: "{{ karma_group }}"
+        mode: "0755"
+      with_items:
+        - "{{ karma_dir }}"
+        - "{{ karma_config_dir }}"
+
+    - name: "Unarchive karma tar file"
+      notify: "(Re)start and enable karma"
+      ansible.builtin.unarchive:
+        src: "https://github.com/prymitive/karma/releases/download/v{{ karma_version }}/karma-linux-amd64.tar.gz"
+        dest: "{{ karma_dir }}"
+        remote_src: true
+
+    - name: "Move karma binary"
+      ansible.builtin.copy:
+        src: "{{ karma_dir }}/karma-linux-amd64"
+        dest: "/usr/local/bin/karma"
+        mode: "0755"
+        owner: "{{ karma_user }}"
+        group: "{{ karma_group }}"
+        remote_src: true
+
+- name: Create systemd service file
+  ansible.builtin.template:
+    src: karma.service.j2
+    dest: /etc/systemd/system/karma.service
+    owner: "{{ karma_user }}"
+    group: "{{ karma_group }}"
+    mode: '0644'
