@@ -17,6 +17,7 @@
 - [nginx](roles/nginx/README.md)
 - [prometheus](roles/prometheus/README.md)
 - [rclone_yandex](roles/rclone_yandex/README.md)
+- [sftp_share](roles/sftp_share/README.md)
 - [smartctl_exporter](roles/smartctl_exporter/README.md)
 - [ufw](roles/ufw/README.md)
 - [wg_hub](roles/wg_hub/README.md)
