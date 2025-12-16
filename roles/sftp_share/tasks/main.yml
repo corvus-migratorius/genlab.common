@@ -1,0 +1,38 @@
+---
+- name: Create SFTP user - {{ sftp_username }}
+  ansible.builtin.user:
+    name: "{{ sftp_username }}"
+    state: present
+    create_home: true
+    shell: /sbin/nologin
+
+- name: Create SFTP user upload directory - {{ sftp_username }}
+  ansible.builtin.file:
+    state: directory
+    path: "{{ sftp_root }}/{{ sftp_username }}-uploads/"
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Create transfers directory - {{ sftp_username }}
+  ansible.builtin.file:
+    state: directory
+    path: "{{ sftp_root }}/{{ sftp_username }}-uploads/transfers/"
+    mode: '2770'
+    owner: "{{ sftp_username }}"
+    group: "{{ sftp_transfers_groupname }}"
+
+- name: Push sshd config - {{ sftp_username }}
+  ansible.builtin.template:
+    src: sshd_config.conf.j2
+    dest: "/etc/ssh/sshd_config.d/60-sftp-jail-{{ sftp_username }}.conf"
+    mode: '0600'
+    owner: "root"
+    group: "root"
+  notify: Restart sshd
+
+- name: Push public ssh key - {{ sftp_username }}
+  ansible.posix.authorized_key:
+    user: "{{ sftp_username }}"
+    key: "{{ sftp_pubkey }}"
+    state: present
