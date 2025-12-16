@@ -10,14 +10,13 @@
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
         extensions: ['yml']
 
-    # kics-scan ignore
-    # kics wants localhost on https but i dont
     - name: "Sanity check the Loki daemon"
       retries: 5
       delay: 1
       register: loki_this
       failed_when: "loki_version not in loki_this.content"
       ansible.builtin.uri:
+        # kics-scan ignore - kics wants https on localhost but i dont
         url: "http://localhost:{{ loki_port }}/metrics"
         return_content: true
 
