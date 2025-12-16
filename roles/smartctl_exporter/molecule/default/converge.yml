@@ -2,6 +2,6 @@
 - name: Converge
   hosts: all
   roles:
-    - role: genlab.smartctl_exporter
-      smartctl_exp_dir: "/etc/exporters"
+    - role: genlab.common.smartctl_exporter
+      smartctl_exporter_dir: "/etc/exporters"
       smartctl_exp_config_dir: "/etc/exporters/config"
