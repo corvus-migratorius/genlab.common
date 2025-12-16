@@ -1,0 +1,45 @@
+---
+- name: Converge
+  hosts: all
+
+  pre_tasks:
+    - name: "Create test directory"
+      ansible.builtin.file:
+        path: "/test"
+        state: directory
+        mode: "0664"
+
+    - name: "Create a test file"
+      ansible.builtin.lineinfile:
+        path: "/test/index.html"
+        create: true
+        mode: "0664"
+        line: "OK"
+
+    - name: "Simulate remote HTTP server(s) directly on localhost"
+      changed_when: false
+      async: 1
+      poll: 0
+      args:
+        chdir: "/test"
+      loop:
+        - 8080
+        - 8081
+        - 8082
+      ansible.builtin.shell:
+        cmd: nohup python3 -m http.server {{ item }} </dev/null >/dev/null 2>&1 &
+        executable: /bin/bash
+
+  roles:
+    - role: genlab.curl_scheduled
+      services:
+        - label: "localhost-test-zero"
+          url: "http://127.0.0.1:8080"
+          schedule: minutely
+        - label: "localhost-test-one"
+          url: "http://127.0.0.1:8081"
+          schedule: hourly
+        - label: "localhost-test-chained-curl"
+          curl_cmd: '/usr/bin/curl "http://127.0.0.1:8081" && /usr/bin/curl'
+          url: "http://127.0.0.1:8082"
+          schedule: minutely

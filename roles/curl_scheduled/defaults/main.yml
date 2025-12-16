@@ -1,0 +1,4 @@
+---
+default_curl_cmd: "/usr/bin/curl"
+default_curl_args: "-fsS -m 10"
+default_schedule: "minutely"
