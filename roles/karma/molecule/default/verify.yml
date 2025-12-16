@@ -1,0 +1,35 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  vars:
+    karma_version: "0.121"
+
+  tasks:
+    - name: "Check if Karma is installed"
+      changed_when: false
+      ansible.builtin.command: "karma --version"
+      register: karma_installed_version
+
+    - name: "Check Karma version"
+      ansible.builtin.assert:
+        that: "karma_installed_version.stdout is regex('{{ karma_version }}')"
+        success_msg: "Karma version {{ karma_version }} is installed and working"
+        fail_msg: "Karma version {{ karma_version }} is not installed or not working correctly"
+
+    # kics-scan ignore-block
+    - name: "Check if Karma is reachable"
+      ansible.builtin.uri:
+        url: "http://localhost:8080/health"
+        return_content: true
+        status_code: 200
+        method: GET
+        body_format: json
+      register: karma_health
+
+    - name: "Assert Karma health status"
+      ansible.builtin.assert:
+        that: "karma_health.content.strip() == 'Pong'"
+        success_msg: "Karma is healthy"
+        fail_msg: "Karma is not healthy"

@@ -1,0 +1,26 @@
+[Unit]
+Description=Karma - Alertmanager dashboard
+After=network.target
+Documentation=https://github.com/prymitive/karma
+
+[Service]
+Type=simple
+User={{ karma_user }}
+Group={{ karma_group }}
+ExecStart=karma --config.file={{ karma_config_dir }}/karma.conf
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=karma
+ProtectSystem=strict
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectKernelTunables=true
+ProtectClock=yes
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target
