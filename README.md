@@ -13,6 +13,7 @@
 - [ipmi_exporter](roles/ipmi_exporter/README.md)
 - [karma](roles/karma/README.md)
 - [mount_device](roles/mount_device/README.md)
+- [nginx](roles/nginx/README.md)
 - [prometheus](roles/prometheus/README.md)
 - [smartctl_exporter](roles/smartctl_exporter/README.md)
 - [ufw](roles/ufw/README.md)
