@@ -1,0 +1,58 @@
+---
+- name: "Configure | create a group - '{{ rclone_group }}'"
+  ansible.builtin.group:
+    name: "{{ rclone_group }}"
+    state: present
+
+- name: "Configure | get GID for '{{ rclone_group }}'"
+  register: rclone_group_gid
+  changed_when: false
+  failed_when: not rclone_group_gid.stdout
+  ansible.builtin.shell:
+    cmd: 'set -o pipefail && getent group "{{ rclone_group }}" | cut -d: -f3'
+    executable: /bin/bash
+
+- name: "Configure | display rclone mount ownership group"
+  ansible.builtin.debug:
+    msg: "'{{ rclone_group }}' ({{ rclone_group_gid.stdout }})"
+
+- name: "Configure | set up directories"
+  loop:
+    - {path: "/tmp/rclone", group: "root"}
+    - {path: "/mnt/yandex-disk", group: "{{ rclone_group }}"}
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item.path }}"
+    owner: root
+    group: "{{ item.group }}"
+    mode: "0770"
+
+- name: "Configure | create the [yandex] section"
+  ansible.builtin.lineinfile:
+    create: true
+    path: "{{ rclone_config_path }}"
+    line: "[yandex]"
+    mode: "0660"
+
+- name: "Configure | read in the YAMLified Yandex share credentials"
+  ansible.builtin.include_vars:
+    file: "{{ rclone_secrets }}"
+
+- name: "Configure | insert/update the section for the [yandex] share"
+  ansible.builtin.blockinfile:
+    path: "{{ rclone_config_path }}"
+    insertafter: "^[yandex]"
+    block: |
+      type = yandex
+      token = {{ rclone | to_json }}
+
+- name: "Configure | template a systemd service file"
+  ansible.builtin.template:
+    src: templates/rclone-yandex.service.j2
+    dest: /lib/systemd/system/rclone-yandex.service
+    mode: "0660"
+
+# validate attribute doesn't seem to work here, unfortunately, so command to the rescue
+- name: "Configure | validate the service file"
+  ansible.builtin.command: systemd-analyze verify rclone-yandex.service
+  changed_when: false

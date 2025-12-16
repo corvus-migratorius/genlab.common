@@ -1,0 +1,18 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  become: true
+
+  tasks:
+    - name: "Gather facts about the service"
+      ansible.builtin.service_facts:
+
+    - name: "Check if the `rclone-yandex` service is running"
+      ansible.builtin.assert:
+        that:
+          - "'rclone-yandex.service' in ansible_facts.services"
+          - "ansible_facts.services['rclone-yandex.service'].state == 'running'"
+        fail_msg: "the 'rclone-yandex' service is not running!"
+        success_msg: "the 'rclone-yandex' service is up and running"

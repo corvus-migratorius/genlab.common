@@ -1,0 +1,26 @@
+[Unit]
+Description=rclone: Remote FUSE filesystem for cloud storage config %i
+Documentation=man:rclone(1)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart= \
+  /usr/bin/rclone mount \
+      --gid={{ rclone_group_gid.stdout }} \
+      --dir-perms=0770 \
+      --file-perms=0660 \
+      --umask=007 \
+      --default-permissions \
+      --allow-other \
+      --config "{{ rclone_config_path }}" \
+      --log-file="/tmp/rclone/yandex.log" \
+      --log-level=INFO \
+      --vfs-cache-mode=off \
+      yandex: "{{ rclone_mountpoint }}"
+
+ExecStop=/bin/fusermount -u "{{ rclone_mountpoint }}"
+
+[Install]
+WantedBy=default.target
