@@ -1,0 +1,6 @@
+---
+- name: "Run | start the 'rclone-yandex' service"
+  ansible.builtin.systemd:
+    name: rclone-yandex
+    state: started
+    daemon_reload: true

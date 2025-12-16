@@ -1,0 +1,39 @@
+---
+- name: "Install | unzip (RHEL)"
+  ansible.builtin.dnf:
+    name: [unzip]
+    state: installed
+  when: ansible_os_family == 'RHEL'
+
+- name: "Install | unzip (Debian)"
+  ansible.builtin.apt:
+    update_cache: true
+    name: [unzip]
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: "Install | rclone_yandex"
+  block:
+    - name: "Install | check if rclone binary is available in PATH"
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "rclone --version"
+  rescue:
+    - name: "Install | fetch and install the rclone binary"  # noqa: no-changed-when
+      register: rclone_yandex_result
+      failed_when: rclone_yandex_result.rc != 0
+      ansible.builtin.shell:
+        cmd: "set -o pipefail && curl https://rclone.org/install.sh | sudo bash"
+        executable: /bin/bash
+
+- name: "Install | fuse (RHEL)"
+  ansible.builtin.dnf:
+    name: [fuse]
+    state: installed
+  when: ansible_os_family == 'RHEL'
+
+- name: "Install | fuse (Debian)"
+  ansible.builtin.apt:
+    name: [fuse3]
+    state: present
+  when: ansible_os_family == 'Debian'
