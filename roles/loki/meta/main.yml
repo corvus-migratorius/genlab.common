@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: loki
+  namespace: genlab
+  author: "Danila Danilkin"
+  company: "Genlab, LLC"
+  description: "Deploy Loki as a systemd service"
+  license: "MIT"
+  min_ansible_version: "2.1"
+
+  platforms:
+    - name: "Ubuntu"
+      versions: ["focal", "jammy"]
+
+  galaxy_tags: []
+
+dependencies: []
