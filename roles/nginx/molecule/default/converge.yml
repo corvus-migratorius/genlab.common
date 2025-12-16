@@ -1,0 +1,36 @@
+---
+- name: Converge
+  hosts: all
+  post_tasks:
+    - name: "Create a test site root"
+      ansible.builtin.file:
+        path: /var/www/html
+        state: directory
+        owner: nginx
+        group: nginx
+        mode: "0755"
+
+    - name: "Push a test index file"
+      ansible.builtin.copy:
+        src: index.html
+        dest: /var/www/html
+        owner: nginx
+        group: nginx
+        mode: "0644"
+
+  roles:
+    # using default NGINX verison
+    - role: genlab.nginx
+      site:
+        confname: test-var
+        content: |
+          server {
+              listen 80;
+              server_name example.com www.example.com;
+
+              location / {
+                  root /var/www/html;
+                  index index.html;
+              }
+          }
+      dir_sites: '{{ lookup("env", "MOLECULE_PROJECT_DIRECTORY") }}/molecule/default/site-configs/'
