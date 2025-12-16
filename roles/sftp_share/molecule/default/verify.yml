@@ -13,67 +13,67 @@
     - name: Gather user SFTP directory info
       ansible.builtin.stat:
         path: "{{ sftp_root }}/{{ sftp_username }}-uploads"
-      register: sftp_root_stat
+      register: sftp_share_permissions
 
     - name: Assert that user SFTP directory has correct owner
       ansible.builtin.assert:
         that:
-          - sftp_root_stat.stat.pw_name == "root"
-          - sftp_root_stat.stat.gr_name == "root"
+          - sftp_share_permissions.stat.pw_name == "root"
+          - sftp_share_permissions.stat.gr_name == "root"
         success_msg: "SFTP directory {{ sftp_root }}/{{ sftp_username }}-uploads has correct owner root:root"
         fail_msg: |
          "SFTP directory {{ sftp_root }}/{{ sftp_username }}-uploads does not have correct owner root:root,
-          actual owner is {{ sftp_root_stat.stat.pw_name }}:{{ sftp_root_stat.stat.gr_name }}"
+          actual owner is {{ sftp_share_permissions.stat.pw_name }}:{{ sftp_share_permissions.stat.gr_name }}"
 
     - name: Gather transfers directory info
       ansible.builtin.stat:
         path: "{{ sftp_root }}/{{ sftp_username }}-uploads/transfers"
-      register: transfers_stat
+      register: sftp_share_transfers_stat
 
     - name: Assert that transfers directory has correct owner
       ansible.builtin.assert:
         that:
-          - transfers_stat.stat.pw_name == sftp_username
-          - transfers_stat.stat.gr_name == sftp_transfers_groupname
+          - sftp_share_transfers_stat.stat.pw_name == sftp_username
+          - sftp_share_transfers_stat.stat.gr_name == sftp_transfers_groupname
         success_msg: "Directory {{ sftp_root }}/{{ sftp_username }}-uploads/transfers has correct owner {{ sftp_username }}:{{ sftp_transfers_groupname }}"
         fail_msg: |
          "Directory {{ sftp_root }}/{{ sftp_username }}-uploads/transfers does not have correct owner {{ sftp_username }}:{{ sftp_transfers_groupname }},
-          actual owner is {{ transfers_stat.stat.pw_name }}:{{ transfers_stat.stat.gr_name }}"
+          actual owner is {{ sftp_share_transfers_stat.stat.pw_name }}:{{ sftp_share_transfers_stat.stat.gr_name }}"
 
     - name: Assert that transfers directory has correct permissions
       ansible.builtin.assert:
         that:
-          - transfers_stat.stat.mode == "2770"
+          - sftp_share_transfers_stat.stat.mode == "2770"
         success_msg: "Directory {{ sftp_root }}/{{ sftp_username }}-uploads/transfers has correct permissions 2770"
         fail_msg: |
          "Directory {{ sftp_root }}/{{ sftp_username }}-uploads/transfers does not have correct permissions 2770,
-          actual permissions are {{ sftp_root_stat.stat.mode }}"
+          actual permissions are {{ sftp_share_permissions.stat.mode }}"
 
     - name: Get user info
       ansible.builtin.getent:
         database: passwd
         key: "{{ sftp_username }}"
-      register: user_info
+      register: sftp_share_user_info
 
     - name: Check user exists
       ansible.builtin.assert:
         that:
-          - user_info is defined
+          - sftp_share_user_info is defined
         success_msg: "User {{ sftp_username }} exists"
         fail_msg: "User {{ sftp_username }} does not exist"
 
     - name: Check that sshd refuses non-SFTP connection attempts
       changed_when: false
-      failed_when: ssh.stdout != expected
-      register: ssh
+      failed_when: sftp_share_ssh.stdout != expected
+      register: sftp_share_ssh
       vars:
         expected: "This service allows sftp connections only."
       ansible.builtin.command: "ssh -l {{ sftp_username }} 127.0.0.1 -o StrictHostKeyChecking=no exit"
 
     - name: Check that sFTP chroots into /transfers
       changed_when: false
-      register: sftp
-      failed_when: sftp.stdout != expected
+      register: sftp_share_sftp
+      failed_when: sftp_share_sftp.stdout != expected
       vars:
         expected: "sftp> pwd\nRemote working directory: /transfers"
       ansible.builtin.shell:
@@ -82,8 +82,8 @@
 
     - name: Check that non-whitelisted sFTP permissions are denied
       changed_when: false
-      register: sftp_mkdir
-      failed_when: sftp_mkdir.stderr != expected
+      register: sftp_share_mkdir
+      failed_when: sftp_share_mkdir.stderr != expected
       vars:
         expected: 'remote mkdir "/transfers/foo": Permission denied'
       ansible.builtin.shell:

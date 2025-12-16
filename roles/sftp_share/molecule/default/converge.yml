@@ -31,9 +31,9 @@
         group: root
 
   roles:
-    - role: genlab.sftp_share
+    - role: genlab.common.sftp_share
       sftp_username: "testusr"
       sftp_pubkey: "{{ lookup('file', 'ssh/id_ed25519.pub') }}"
       sftp_root: "/primary/data"
       sftp_transfers_groupname: "testgrp"
-      sftp_permissions: "open,close,read,lstat,fstat,opendir,readdir,realpath,stat"  # read-only
+      sftp_share_permissions: "open,close,read,lstat,fstat,opendir,readdir,realpath,stat"  # read-only
