@@ -16,7 +16,7 @@
       register: loki_this
       failed_when: "loki_version not in loki_this.content"
       ansible.builtin.uri:
-        # # kics-scan ignore-line - kics wants https on localhost but i dont
+        # kics-scan ignore-line - kics wants https on localhost but i dont
         url: "http://localhost:{{ loki_port }}/metrics"
         return_content: true
 
