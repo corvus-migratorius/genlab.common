@@ -1,0 +1,46 @@
+[Unit]
+Description=Smartctl Exporter
+Documentation=https://github.com/prometheus-community/smartctl_exporter
+After=network.target
+StartLimitIntervalSec=120
+StartLimitBurst=5    
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/local/bin/smartctl_exporter \
+    --web.listen-address={{ smartctl_exp_web_listen_address }} \
+    --smartctl.interval={{ smartctl_exp_interval }} \
+    --smartctl.rescan={{ smartctl_exp_rescan }} \
+{% if smartctl_exp_devices is defined and smartctl_exp_devices | length > 0 %}
+  {% for device in smartctl_exp_devices %}
+    --smartctl.device={{ device }} \
+  {% endfor %}
+{% endif %}
+    --smartctl.device-exclude={{ smartctl_exp_device_exclude }} \
+    --smartctl.device-include={{ smartctl_exp_device_include }} \
+    --web.telemetry-path={{ smartctl_exp_web_telemetry_path }} \
+    --log.level={{ smartctl_exp_log_level }} \
+    --log.format={{ smartctl_exp_log_format }} \
+{% if smartctl_exp_args is defined and smartctl_exp_args | length > 0 %}
+      {{ smartctl_exp_args }} \
+{% endif %}
+{% if smartctl_exp_source_web_config_dir is defined and smartctl_exp_source_web_config_dir | length > 0 %} \
+    --web.config.file={{ smartctl_exp_web_config_dir }}/web_smartctl.conf
+{% endif %}
+
+SyslogIdentifier=smartctl_exporter
+Restart=on-failure
+RestartSec=5
+                                                                                                                                                                                                                                                                                
+ProtectHome=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=yes
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target
