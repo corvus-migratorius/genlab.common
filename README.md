@@ -11,6 +11,7 @@
 - [dnsmasq](roles/dnsmasq/README.md)
 - [grafana](roles/grafana/README.md)
 - [ipmi_exporter](roles/ipmi_exporter/README.md)
+- [karma](roles/karma/README.md)
 - [mount_device](roles/mount_device/README.md)
 - [prometheus](roles/prometheus/README.md)
 - [smartctl_exporter](roles/smartctl_exporter/README.md)
