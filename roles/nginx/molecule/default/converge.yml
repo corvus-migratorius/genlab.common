@@ -20,7 +20,7 @@
 
   roles:
     # using default NGINX verison
-    - role: genlab.nginx
+    - role: genlab.common.nginx
       site:
         confname: test-var
         content: |
