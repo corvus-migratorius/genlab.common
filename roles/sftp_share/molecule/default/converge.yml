@@ -1,0 +1,39 @@
+---
+- name: Converge
+  hosts: all
+
+  pre_tasks:
+    - name: Create test group
+      ansible.builtin.group:
+        name: testgrp
+        state: present
+
+    - name: Ensure OpenSSH server is installed
+      ansible.builtin.apt:
+        name: openssh-server
+        state: present
+        update_cache: true
+
+    - name: Ensure the `/root/.ssh` directory exists
+      ansible.builtin.file:
+        state: directory
+        path: "/root/.ssh"
+        mode: "0700"
+        owner: root
+        group: root
+
+    - name: Provide an SSH private key for testing purposes
+      ansible.builtin.copy:
+        src: "ssh/id_ed25519"
+        dest: "/root/.ssh/id_ed25519"
+        mode: "0600"
+        owner: root
+        group: root
+
+  roles:
+    - role: genlab.sftp_share
+      sftp_username: "testusr"
+      sftp_pubkey: "{{ lookup('file', 'ssh/id_ed25519.pub') }}"
+      sftp_root: "/primary/data"
+      sftp_transfers_groupname: "testgrp"
+      sftp_permissions: "open,close,read,lstat,fstat,opendir,readdir,realpath,stat"  # read-only
