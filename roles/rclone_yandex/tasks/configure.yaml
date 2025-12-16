@@ -5,16 +5,16 @@
     state: present
 
 - name: "Configure | get GID for '{{ rclone_group }}'"
-  register: rclone_group_gid
+  register: rclone_yandex_group_gid
   changed_when: false
-  failed_when: not rclone_group_gid.stdout
+  failed_when: not rclone_yandex_group_gid.stdout
   ansible.builtin.shell:
     cmd: 'set -o pipefail && getent group "{{ rclone_group }}" | cut -d: -f3'
     executable: /bin/bash
 
 - name: "Configure | display rclone mount ownership group"
   ansible.builtin.debug:
-    msg: "'{{ rclone_group }}' ({{ rclone_group_gid.stdout }})"
+    msg: "'{{ rclone_group }}' ({{ rclone_yandex_group_gid.stdout }})"
 
 - name: "Configure | set up directories"
   loop:
@@ -30,7 +30,7 @@
 - name: "Configure | create the [yandex] section"
   ansible.builtin.lineinfile:
     create: true
-    path: "{{ rclone_config_path }}"
+    path: "{{ rclone_yandex_config_path }}"
     line: "[yandex]"
     mode: "0660"
 
@@ -40,7 +40,7 @@
 
 - name: "Configure | insert/update the section for the [yandex] share"
   ansible.builtin.blockinfile:
-    path: "{{ rclone_config_path }}"
+    path: "{{ rclone_yandex_config_path }}"
     insertafter: "^[yandex]"
     block: |
       type = yandex

@@ -1,4 +1,4 @@
 ---
 # vars file for rclone_yandex
 
-rclone_config_path: "/root/rclone.conf"
+rclone_yandex_config_path: "/root/rclone.conf"

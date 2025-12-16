@@ -13,7 +13,7 @@
         autoclean: true
 
   roles:
-    - role: genlab.rclone_yandex
+    - role: genlab.common.rclone_yandex
       rclone_mountpoint: /mnt/yandex-disk
       rclone_group: yandex
       rclone_secrets: secrets/token.yml

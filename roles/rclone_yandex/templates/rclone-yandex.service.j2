@@ -8,13 +8,13 @@ Wants=network-online.target
 Type=notify
 ExecStart= \
   /usr/bin/rclone mount \
-      --gid={{ rclone_group_gid.stdout }} \
+      --gid={{ rclone_yandex_group_gid.stdout }} \
       --dir-perms=0770 \
       --file-perms=0660 \
       --umask=007 \
       --default-permissions \
       --allow-other \
-      --config "{{ rclone_config_path }}" \
+      --config "{{ rclone_yandex_config_path }}" \
       --log-file="/tmp/rclone/yandex.log" \
       --log-level=INFO \
       --vfs-cache-mode=off \
