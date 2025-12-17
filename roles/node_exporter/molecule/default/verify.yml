@@ -1,0 +1,15 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  tasks:
+
+    - name: "Sanity check the node exporter"
+      retries: 5
+      delay: 1
+      register: result
+      failed_when: '"node_exporter_build_info" not in result.content'
+      ansible.builtin.uri:
+        url: "http://localhost:9100/metrics"
+        return_content: true

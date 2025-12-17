@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: node_exporter
+  namespace: genlab
+  author: "Alexander Gorelyshev"
+  company: "Genlab, LLC"
+  description: "Deploy prometheus/node_exporter binary as a systemd unit"
+  license: "GPL-2.0-or-later"
+  min_ansible_version: "2.1"
+
+  platforms:
+    - name: "Ubuntu"
+      versions: ["focal", "jammy"]
+
+  galaxy_tags: ["prometheus"]
+
+dependencies: []

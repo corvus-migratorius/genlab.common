@@ -1,0 +1,12 @@
+[Unit]
+Description=Node Exporter
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ node_exporter_bin_path }}/node_exporter \
+    --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/) \
+    --collector.systemd
+
+[Install]
+WantedBy=multi-user.target
