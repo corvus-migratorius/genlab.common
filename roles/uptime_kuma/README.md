@@ -15,12 +15,12 @@ None
 Role Variables
 --------------
 
-- `kuma_img_version`: Kuma container version
-- `kuma_project_dir`: where to put Docker Compose file and keep Kuma's data
-- `kuma_port`: listening port for Kuma API and web interface
-- `kuma_api_version`: version of the Python API
-- `kuma_limit_cpus`: CPU cores limit for Kuma
-- `kuma_limit_ram`: RAM limit for Kuma
+- `uptime_kuma_img_version`: Kuma container version
+- `uptime_kuma_project_dir`: where to put Docker Compose file and keep Kuma's data
+- `uptime_kuma_port`: listening port for Kuma API and web interface
+- `uptime_kuma_api_version`: version of the Python API
+- `uptime_kuma_limit_cpus`: CPU cores limit for Kuma
+- `uptime_kuma_limit_ram`: RAM limit for Kuma
 - `kuma_tg_notif_name`: Name for Telegram notification method
 - `kuma_tg_notif_is_default`: make this notification method default (default: `true`)
 - `kuma_tg_notif_apply_existing`: connect all existing monitors to this notification method (default: `true`)

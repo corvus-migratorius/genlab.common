@@ -18,26 +18,26 @@
 
   tasks:
     - name: "Verify uptime-kuma responds to HTTP requests"
-      register: this
-      until: this is ansible.builtin.success
+      register: uptime_kuma_this
+      until: uptime_kuma_this is ansible.builtin.success
       retries: 3
       delay: 3
       ansible.builtin.uri:
-        url: "http://127.0.0.1:{{ kuma_port }}"
+        url: "http://127.0.0.1:{{ uptime_kuma_port }}"
         method: GET
         status_code: 200
 
     - name: "Get monitor information"
-      register: monitors
+      register: uptime_kuma_monitors
       lucasheld.uptime_kuma.monitor_info:
         api_url: http://127.0.0.1:3001
         api_username: "{{ test_admin_username }}"
         api_password: "{{ test_admin_password }}"
 
     - name: "Get test monitor information"
-      failed_when: monitor_info is not defined
+      failed_when: uptime_kuma_monitor_info is not defined
       ansible.builtin.set_fact:
-        monitor_info: "{{ monitors.monitors | selectattr('name', 'equalto', 'push-test') | list | first }}"
+        uptime_kuma_monitor_info: "{{ uptime_kuma_monitors.monitors | selectattr('name', 'equalto', 'push-test') | list | first }}"
 
     - name: "Check test monitor configuration"
       loop:
@@ -46,6 +46,6 @@
         - {key: "description", value: "Test push monitor"}
         - {key: notificationIDList, value: [1]}   # names are not stored, only integer IDs
       ansible.builtin.assert:
-        that: "monitor_info[item.key] == item.value"
+        that: "uptime_kuma_monitor_info[item.key] == item.value"
         success_msg: "Test monitor has correctly configured {{ item.key }}: {{ item.value }}"
-        fail_msg: "Incorrect test monitor configuration for {{ item.key }}: expected {{ item.value }}, got: {{ monitor_info[item.key] }}"
+        fail_msg: "Incorrect test monitor configuration for {{ item.key }}: expected {{ item.value }}, got: {{ uptime_kuma_monitor_info[item.key] }}"

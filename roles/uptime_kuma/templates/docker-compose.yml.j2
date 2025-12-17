@@ -2,10 +2,10 @@
 ---
 services:
   uptime-kuma:
-    image: louislam/uptime-kuma:{{ kuma_img_version }}
+    image: louislam/uptime-kuma:{{ uptime_kuma_img_version }}
     container_name: uptime-kuma
     volumes:
-      - {{ kuma_project_dir }}/data:/app/data
+      - {{ uptime_kuma_project_dir }}/data:/app/data
     restart: unless-stopped
     cap_drop:
       - ALL
@@ -30,8 +30,8 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ kuma_limit_cpus }}
-          memory: {{ kuma_limit_ram }}
+          cpus: {{ uptime_kuma_limit_cpus }}
+          memory: {{ uptime_kuma_limit_ram }}
 
 volumes:
   uptime-kuma-data:
