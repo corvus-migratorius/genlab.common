@@ -1,0 +1,27 @@
+---
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  vars_files:
+    - ../../defaults/main.yml
+
+  tasks:
+    - name: "Gather service facts"
+      ansible.builtin.service_facts:
+
+    - name: "Check if rustdesk-hbbr is running"
+      ansible.builtin.assert:
+        that: "ansible_facts.services['rustdesk-hbbr.service'].state == 'running'"
+        success_msg: "rustdesk-hbbr is running"
+        fail_msg: "rustdesk-hbbr is NOT running"
+
+    - name: "Check if rustdesk-hbbs is running"
+      ansible.builtin.assert:
+        that: "ansible_facts.services['rustdesk-hbbs.service'].state == 'running'"
+        success_msg: "rustdesk-hbbs is running"
+        fail_msg: "rustdesk-hbbs is NOT running"
+
+    - name: "Check client binary existance"
+      ansible.builtin.include_tasks: client-binary-existance.yml
