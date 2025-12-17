@@ -9,10 +9,10 @@ positions:
   filename: {{ promtail_positions_path }}
 
 clients:
-  - url: "http://{{  loki_server  }}:{{ loki_port }}/loki/api/v1/push"
+  - url: "http://{{  promtail_loki_server  }}:{{ promtail_loki_port }}/loki/api/v1/push"
 
 scrape_configs:
-{% if add_var_logs %}
+{% if promtail_add_var_logs %}
   - job_name: system
     static_configs:
       - targets:

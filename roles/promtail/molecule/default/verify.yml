@@ -7,13 +7,13 @@
     - name: "Include default vars"
       ansible.builtin.include_vars:
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
-        extensions: [ 'yml' ]
+        extensions: ['yml']
 
     - name: "Sanity check the Promtail daemon"
       retries: 3
       delay: 1
-      register: this
-      failed_when: "this.content != 'Ready'"
+      register: promtail_this
+      failed_when: "promtail_this.content != 'Ready'"
       ansible.builtin.uri:
         url: "http://localhost:{{ promtail_http_port }}/ready"
         return_content: true

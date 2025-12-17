@@ -11,8 +11,8 @@ Role Variables
 
 (all optional)
 `promtail_version`: version to install
-`loki_server`: set loki server
-`loki_port`: set loki port
+`promtail_loki_server`: set loki server
+`promtail_loki_port`: set loki port
 `custom_server_config`: path to custom config witch replace all config with your own
 `custom_scrape_configs`: path to custom scrape configs
 
