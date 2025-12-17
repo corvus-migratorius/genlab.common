@@ -1,0 +1,6 @@
+---
+- name: "Include installation tasks"
+  ansible.builtin.include_tasks: "install.yml"
+
+- name: "Including run tasks"
+  ansible.builtin.include_tasks: "run.yml"
