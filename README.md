@@ -16,6 +16,7 @@
 - [mount_device](roles/mount_device/README.md)
 - [nginx](roles/nginx/README.md)
 - [prometheus](roles/prometheus/README.md)
+- [promtail](roles/promtail/README.md)
 - [rclone_yandex](roles/rclone_yandex/README.md)
 - [rustdesk](roles/rustdesk/README.md)
 - [sftp_share](roles/sftp_share/README.md)
