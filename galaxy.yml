@@ -1,7 +1,7 @@
 ---
 namespace: genlab
 name: common
-version: 0.19.0
+version: 0.20.0
 readme: README.md
 authors:
   - Alexander Gorelyshev (corvus-migratorius@proton.me)

@@ -15,6 +15,7 @@
 - [loki](roles/loki/README.md)
 - [mount_device](roles/mount_device/README.md)
 - [nginx](roles/nginx/README.md)
+- [node_exporter](roles/node_exporter/README.md)
 - [prometheus](roles/prometheus/README.md)
 - [promtail](roles/promtail/README.md)
 - [rclone_yandex](roles/rclone_yandex/README.md)
