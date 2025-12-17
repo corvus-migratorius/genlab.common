@@ -1,6 +1,6 @@
 ---
 - name: "Get public IP"
-  register: public_ip
+  register: rustdesk_public_ip
   changed_when: false
   ansible.builtin.uri:
     url: https://ifconfig.me
@@ -9,17 +9,16 @@
       Accept: text/plain
       User-Agent: curl/7.68.0
 
-
 - name: "Get public key"
-  register: public_key
+  register: rustdesk_public_key
   changed_when: false
   ansible.builtin.command: "cat /opt/rustdesk-server/lib/id_ed25519.pub"
-    
+
 - name: "Get client rustdesk binary information"
   changed_when: false
   register: rustdesk_bin
   ansible.builtin.stat:
-    path: "/opt/rustdesk-server/lib/rustdesk-host={{ public_ip.content }},key={{ public_key.stdout }}.exe"
+    path: "/opt/rustdesk-server/lib/rustdesk-host={{ rustdesk_public_ip.content }},key={{ rustdesk_public_key.stdout }}.exe"
 
 - name: "Check if client binary exists"
   changed_when: false

@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  role_name: "rustdesk_server"
+  role_name: "rustdesk"
   namespace: genlab
   author: "Sergey Malyuk"
   company: "Genlab, LLC"
@@ -10,8 +10,8 @@ galaxy_info:
 
   platforms:
     - name: "Ubuntu"
-      versions: [ "focal", "jammy", "noble" ]
+      versions: ["focal", "jammy", "noble"]
 
-  galaxy_tags: [ ]
+  galaxy_tags: []
 
 dependencies: []
