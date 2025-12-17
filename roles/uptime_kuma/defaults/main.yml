@@ -1,0 +1,8 @@
+---
+kuma_img_version: "1.23.16-alpine"
+kuma_project_dir: "/uptime-kuma"
+kuma_port: 3001
+kuma_api_version: "1.2.0"
+kuma_limit_cpus: 2
+kuma_limit_ram: "2G"
+kuma_default_notification_names: []

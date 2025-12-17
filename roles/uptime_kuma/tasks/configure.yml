@@ -1,0 +1,66 @@
+---
+- name: "Wait for uptime-kuma to start"
+  ansible.builtin.wait_for:
+    port: "{{ kuma_port }}"
+    timeout: 30
+
+- name: "Set up uptime-kuma credentials"
+  lucasheld.uptime_kuma.setup:
+    api_url: http://127.0.0.1:{{ kuma_port }}
+    api_username: "{{ kuma_api_username }}"
+    api_password: "{{ kuma_api_password }}"
+
+- name: "Login with credentials once and register the result"
+  register: result
+  lucasheld.uptime_kuma.login:
+    api_url: http://127.0.0.1:{{ kuma_port }}
+    api_username: "{{ kuma_api_username }}"
+    api_password: "{{ kuma_api_password }}"
+
+- name: "Extract the token from the result and set it as fact"
+  ansible.builtin.set_fact:
+    kuma_api_token: "{{ result.token }}"
+
+- name: "Configure Telegram notification method"
+  when:
+    - kuma_tg_bot_token is defined
+    - kuma_tg_chat_id is defined
+  lucasheld.uptime_kuma.notification:
+    api_url: http://127.0.0.1:{{ kuma_port }}
+    api_token: "{{ kuma_api_token }}"
+    type: telegram
+    name: "{{ kuma_tg_notif_name | default('Telegram alerts') }}"
+    isDefault: "{{ kuma_tg_notif_is_default | default(true) }}"
+    applyExisting: "{{ kuma_tg_notif_apply_existing | default(true) }}"
+    telegramBotToken: "{{ kuma_tg_bot_token }}"
+    telegramChatID: "{{ kuma_tg_chat_id }}"
+    state: "present"
+
+- name: "Create monitor groups"
+  when: kuma_monitor_groups is defined
+  loop: "{{ kuma_monitor_groups }}"
+  lucasheld.uptime_kuma.monitor:
+    api_url: http://127.0.0.1:{{ kuma_port }}
+    api_token: "{{ kuma_api_token }}"
+    type: "group"
+    name: "{{ item }}"
+
+- name: "Create monitors"
+  loop: "{{ kuma_monitors }}"
+  lucasheld.uptime_kuma.monitor:
+    api_url: http://127.0.0.1:{{ kuma_port }}
+    api_token: "{{ kuma_api_token }}"
+    type: "{{ item.type }}"
+    name: "{{ item.name }}"
+    upsideDown: "{{ item.upside_down | default(false) }}"
+    url: "{{ item.url | default(omit) }}"
+    hostname: "{{ item.hostname | default(omit) }}"
+    port: "{{ item.port | default(omit) }}"
+    interval: "{{ item.interval | default(60) }}"
+    description: "{{ item.description | default(omit) }}"
+    parent_name: "{{ item.parent_name | default(omit) }}"
+    notification_names: "{{ item.notification_names | default(kuma_default_notification_names) }}"
+    state: "{{ kuma_tg_notif_state | default('present') }}"
+    ignoreTls: "{{ item.ignore_tls | default(false) }}"
+    jsonPath: "{{ item.query | default(omit) }}"
+    expectedValue: "{{ item.expected_value | default(omit) }}"

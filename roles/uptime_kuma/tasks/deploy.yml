@@ -1,0 +1,27 @@
+---
+- name: "Ensure project directory exists"
+  ansible.builtin.file:
+    path: "{{ kuma_project_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0770"
+
+- name: "Push the Compose file"
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ kuma_project_dir }}/docker-compose.yml"
+    owner: root
+    group: root
+    mode: "0660"
+
+- name: "Deploy uptime-kuma via Docker Compose"
+  community.docker.docker_compose_v2:
+    state: present
+    project_src: "{{ kuma_project_dir }}"
+
+- name: "Install Python dependencies"
+  ansible.builtin.pip:
+    name: "uptime-kuma-api"
+    version: "{{ kuma_api_version }}"
+    break_system_packages: true

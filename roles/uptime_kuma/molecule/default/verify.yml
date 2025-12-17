@@ -1,0 +1,51 @@
+# kics-scan disable=2e8d4922-8362-4606-8c14-aa10466a1ce3
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  vars:
+    test_admin_username: admin
+    # kics-scan ignore-line
+    test_admin_password: SDjj3$k4g9dhsjd__1dj
+
+  pre_tasks:
+    - name: "Include default vars"
+      ansible.builtin.include_vars:
+        dir: '{{ lookup("env", "MOLECULE_PROJECT_DIRECTORY") }}/defaults/'
+        extensions:
+          - 'yml'
+
+  tasks:
+    - name: "Verify uptime-kuma responds to HTTP requests"
+      register: this
+      until: this is ansible.builtin.success
+      retries: 3
+      delay: 3
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ kuma_port }}"
+        method: GET
+        status_code: 200
+
+    - name: "Get monitor information"
+      register: monitors
+      lucasheld.uptime_kuma.monitor_info:
+        api_url: http://127.0.0.1:3001
+        api_username: "{{ test_admin_username }}"
+        api_password: "{{ test_admin_password }}"
+
+    - name: "Get test monitor information"
+      failed_when: monitor_info is not defined
+      ansible.builtin.set_fact:
+        monitor_info: "{{ monitors.monitors | selectattr('name', 'equalto', 'push-test') | list | first }}"
+
+    - name: "Check test monitor configuration"
+      loop:
+        - {key: "type", value: "push"}
+        - {key: "interval", value: 30}
+        - {key: "description", value: "Test push monitor"}
+        - {key: notificationIDList, value: [1]}   # names are not stored, only integer IDs
+      ansible.builtin.assert:
+        that: "monitor_info[item.key] == item.value"
+        success_msg: "Test monitor has correctly configured {{ item.key }}: {{ item.value }}"
+        fail_msg: "Incorrect test monitor configuration for {{ item.key }}: expected {{ item.value }}, got: {{ monitor_info[item.key] }}"
