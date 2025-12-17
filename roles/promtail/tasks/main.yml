@@ -1,0 +1,107 @@
+---
+- name: "Install packages"
+  ansible.builtin.apt:
+    name: [ acl, unzip ]
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+
+- name: "Create the 'promtail' group"
+  ansible.builtin.group:
+    name: promtail
+    state: present
+
+
+- name: "Create the 'promtail' user"
+  ansible.builtin.user:
+    name: promtail
+    groups:
+      - promtail
+      - systemd-journal
+      - adm
+    state: present
+    system: true
+
+
+- name: "Set facl to allow promtail user to read '/var/log' contents"
+  ansible.posix.acl:
+    path: /var/log
+    entity: promtail
+    etype: user
+    permissions: rX
+    state: present
+
+
+- name: "Make promtail user owner of '{{ promtail_positions_path }}'"
+  changed_when: false
+  ansible.builtin.file:
+    path: "{{ promtail_positions_path }}"
+    owner: promtail
+    group: promtail
+    state: touch
+    mode: "0750"
+
+
+- name: "Install the requested Promtail version"
+  block:
+    - name: "Check Promtail version"
+      ansible.builtin.command: /usr/bin/promtail --version
+      register: promtail_version_check
+      changed_when: false
+
+    - name: "Assert version correctness"
+      notify: "Restart the Promtail daemon"
+      ansible.builtin.assert:
+        that: "promtail_version in promtail_version_check.stdout"
+        success_msg: "Expected Promtail version available ({{ promtail_version }})"
+        fail_msg: "Expected version '{{ promtail_version }}'; available is '{{ promtail_version_check.stdout }}'"
+
+  rescue:
+    - name: "Install Promtail if its not present"
+      ansible.builtin.unarchive:
+        src: "https://github.com/grafana/loki/releases/download/v\
+             {{ promtail_version }}/promtail-linux-amd64.zip"
+        dest: /usr/bin/
+        remote_src: true
+
+    - name: "Rename and set permissions for the Promtail binary"
+      ansible.builtin.copy:
+        src: "/usr/bin/promtail-linux-amd64"
+        dest: "/usr/bin/promtail"
+        owner: root
+        group: root
+        mode: "0755"
+        remote_src: true
+
+    - name: "Cleanup the downloaded file"
+      ansible.builtin.file:
+        path: "/usr/bin/promtail-linux-amd64"
+        state: absent
+
+
+- name: "Template the systemd unit file"
+  notify: "Reload the Promtail daemon configuration"
+  ansible.builtin.template:
+    src: promtail.service.j2
+    dest: /etc/systemd/system/promtail.service
+    owner: root
+    group: root
+    mode: "0644"
+
+
+- name: "Template Promtail config file"
+  notify: "Restart the Promtail daemon"
+  ansible.builtin.template:
+    src: templates/promtail.yml.j2
+    dest: /usr/local/bin/config-promtail.yml
+    owner: root
+    group: root
+    mode: "0644"
+
+
+- name: "Enable and start Promtail daemon"
+  ansible.builtin.systemd:
+    name: promtail
+    state: started
+    enabled: true
