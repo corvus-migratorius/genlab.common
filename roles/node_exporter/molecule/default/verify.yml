@@ -1,4 +1,4 @@
-# kics-scan-disable=2e8d4922-8362-4606-8c14-aa10466a1ce3
+# kics-scan disable=2e8d4922-8362-4606-8c14-aa10466a1ce3
 ---
 - name: Verify
   hosts: all
