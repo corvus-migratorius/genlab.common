@@ -9,6 +9,7 @@
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
         extensions: ['yml']
 
+    # kics-scan ignore-block - kics doesn't like http but it's localhost so it's not important
     - name: "Sanity check the Promtail daemon"
       retries: 3
       delay: 1
