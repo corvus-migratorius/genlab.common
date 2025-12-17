@@ -2,33 +2,33 @@
 - name: "Install | Check if node_exporter is accessible from $PATH"
   changed_when: false
   failed_when: false
-  register: cmd_node_exporter
+  register: node_exporter_cmd
   ansible.builtin.command:
     cmd: node_exporter --version
 
 - name: "Install | Build the exporter name"
-  when: "node_exporter_ver not in cmd_node_exporter.stdout"
+  when: "node_exporter_ver not in node_exporter_cmd.stdout"
   ansible.builtin.set_fact:
-    prom_exp_name: "/node_exporter-{{ node_exporter_ver }}\
+    node_exporter_name: "/node_exporter-{{ node_exporter_ver }}\
       .{{ ansible_system | lower }}-\
       {{ (ansible_architecture == 'x86_64') | ternary('amd64', ansible_architecture) }}"
 
 - name: "Install | Download the node_exporter binary (release {{ node_exporter_ver }})"
-  when: "node_exporter_ver not in cmd_node_exporter.stdout"
+  when: "node_exporter_ver not in node_exporter_cmd.stdout"
   ansible.builtin.unarchive:
     src: "\
       https://github.com/prometheus/node_exporter/releases/download/\
       v{{ node_exporter_ver }}\
-      {{ prom_exp_name }}\
+      {{ node_exporter_name }}\
       .tar.gz"
     dest: /tmp
     remote_src: true
 
 - name: "Install | Install the downloaded binary to '{{ node_exporter_bin_path }}'"
-  when: "node_exporter_ver not in cmd_node_exporter.stdout"
+  when: "node_exporter_ver not in node_exporter_cmd.stdout"
   changed_when: false
   ansible.builtin.command:
-    cmd: install /tmp/{{ prom_exp_name }}/node_exporter -t {{ node_exporter_bin_path }}
+    cmd: install /tmp/{{ node_exporter_name }}/node_exporter -t {{ node_exporter_bin_path }}
 
 - name: "Install | Push the service file template"
   ansible.builtin.template:
