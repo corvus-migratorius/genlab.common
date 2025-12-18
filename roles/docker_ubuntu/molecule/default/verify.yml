@@ -1,0 +1,31 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  any_errors_fatal: true
+
+  tasks:
+    # https://github.com/ansible/molecule/issues/3587#issuecomment-1158650179
+    - name: "Include default vars"
+      ansible.builtin.include_vars:
+        dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
+        extensions: ['yml']
+
+    - name: "Sanity check Docker by running a `hello-world` container"  # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: "docker run --rm hello-world"
+
+    - name: "Check if `Compose` is available from PATH"  # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: "docker compose version"
+
+    - name: "Get docker version"  # noqa: no-changed-when
+      register: docker_ubuntu_current_version
+      ansible.builtin.command:
+        cmd: "docker version --format '{{ '{{' }} .Server.Version {{ '}}' }}'"
+
+    - name: "Check if Docker has the expected version"  # noqa: no-changed-when
+      ansible.builtin.assert:
+        that: "docker_ubuntu_version in docker_ubuntu_current_version.stdout"
+        success_msg: "Docker has the expected version ({{ docker_ubuntu_current_version.stdout }} )"
+        fail_msg: "Unexpected Docker version ({{ docker_ubuntu_current_version.stdout }})"

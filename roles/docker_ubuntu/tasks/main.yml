@@ -1,0 +1,71 @@
+---
+# REF: https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-20-04
+
+- name: "Install aptitude"
+  ansible.builtin.apt:
+    name: aptitude
+    state: present
+    update_cache: true
+
+- name: "Install required system packages"
+  ansible.builtin.apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gpg-agent
+      - python3-pip
+      - python3-setuptools
+      - software-properties-common
+      - virtualenv
+    state: present
+    update_cache: true
+
+- name: "Add Docker GPG apt Key"
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: "Add Docker Repository"
+  ansible.builtin.apt_repository:
+    repo: "deb https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable"
+    state: present
+
+- name: "Install Docker ecosystem"
+  notify: "Sanity check"
+  ansible.builtin.apt:
+    pkg:
+      - docker-ce={{ docker_ubuntu_version_full }}
+      - docker-ce-cli={{ docker_ubuntu_version_full }}
+    state: present
+    update_cache: true
+
+- name: "Ensure the 'docker' group exists"
+  ansible.builtin.group:
+    name: docker
+    state: present
+    system: true
+
+- name: "Install Python tools for Docker"
+  ansible.builtin.pip:
+    name: [docker]
+    break_system_packages: true
+
+- name: "Configure Docker daemon"
+  notify:
+    - "Restart Docker daemon"
+    - "Sanity check"
+  ansible.builtin.template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0664"
+    validate: "dockerd --validate --config-file=%s"
+
+- name: "Spin up the Docker system service"
+  notify: "Sanity check"
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true
