@@ -1,0 +1,19 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: "Update apt cache"
+      when: ansible_os_family == 'Debian'
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+
+  roles:
+    - role: genlab.swapfile
+      swap_file_path: /swapfile
+      swap_file_size_mb: 2000
+      swap_swappiness: 30
+      swap_file_state: present
+      swap_test_mode: true

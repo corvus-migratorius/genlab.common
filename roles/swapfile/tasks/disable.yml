@@ -1,0 +1,11 @@
+---
+- name: "Disable | disable swap"
+  changed_when: false
+  ansible.builtin.command:
+    cmd: swapoff -a
+
+
+- name: "Disable | ensure swap file doesn't exist"
+  ansible.builtin.file:
+    path: "{{ swap_file_path }}"
+    state: absent

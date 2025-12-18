@@ -1,0 +1,47 @@
+---
+# https://justinmontgomery.com/speed-up-stat-command-in-ansible
+- name: "Enable | create the swap file"
+  block:
+    - name: "Enable | stat the swap file"
+      register: this
+      failed_when: not this.stat.exists
+      ansible.builtin.stat:
+        path: "{{ swap_file_path }}"
+        get_checksum: false
+        get_mime: false
+        get_attributes: false
+
+  rescue:
+    - name: "Enable | ensure swap file exists"
+      register: swap_file_create
+      ansible.builtin.command:
+        cmd: "{{ swap_file_create_command }}"
+        creates: "{{ swap_file_path }}"
+
+    - name: "Enable | set permissions on swap file"
+      ansible.builtin.file:
+        path: "{{ swap_file_path }}"
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: "Enable | make swap"  # noqa: no-handler no-changed-when
+      register: mkswap_result
+      when: swap_file_create is changed
+      ansible.builtin.command:
+        cmd: mkswap {{ swap_file_path }}
+
+    - name: "Enable | run swapon on the swap file => '{{ swap_file_path }}'"
+      when:
+        - mkswap_result is changed
+        - not swap_test_mode
+      changed_when: false
+      ansible.builtin.command:
+        cmd: swapon {{ swap_file_path }}
+
+
+- name: "Set swappiness to '{{ swap_swappiness }}'"
+  ansible.posix.sysctl:
+    name: vm.swappiness
+    value: "{{ swap_swappiness }}"
+    state: present
