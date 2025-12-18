@@ -1,0 +1,22 @@
+---
+users:
+  - name: "user0"
+    uid: 1001
+    gid: 1004
+    full_name: "User Zero"
+    state: "present"
+    groups: [sudo]
+    create_home: true
+    home_root: "/tmp/someplace"
+    shell: "/bin/bash"
+    pubkeys_file: "user0.keys"
+
+  - name: "user1"
+    uid: 1002
+    full_name: "User One"
+    state: "present"
+    groups: []
+    create_home: true
+    shell: "/bin/sh"
+    expires: "2024-07-23 12:00:00"
+    generate_ssh_key: true

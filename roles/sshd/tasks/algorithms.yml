@@ -1,0 +1,42 @@
+---
+# next task requires this directory to exist for sshd -t flag
+- name: Ensure /run/sshd exists
+  ansible.builtin.file:
+    path: /run/sshd
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+# NOTE: order of preference for openssh-server ed25519 -> rsa
+- name: "Algorithms | enable ed25519 authentication algorithm"
+  notify: Restart sshd
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^HostKey /etc/ssh/ssh_host_ed25519_key'
+    line: 'HostKey /etc/ssh/ssh_host_ed25519_key'
+    validate: sshd -f %s -t
+
+- name: "Algorithms | enable the RSA authentication algorithm"
+  notify: Restart sshd
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^HostKey /etc/ssh/ssh_host_rsa_key'
+    line: 'HostKey /etc/ssh/ssh_host_rsa_key'
+    validate: sshd -f %s -t
+
+- name: "Algorithms | disable the ECDSA algorithm (deemed to be less safe)"
+  notify: Restart sshd
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^HostKey /etc/ssh/ssh_host_ecdsa_key'
+    state: absent
+    validate: sshd -f %s -t
+
+- name: "Algorithms | disable the DSA algorithm (considered to be defunct)"
+  notify: Restart sshd
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^HostKey /etc/ssh/ssh_host_dsa_key'
+    state: absent
+    validate: sshd -f %s -t

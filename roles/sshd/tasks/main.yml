@@ -1,0 +1,23 @@
+---
+- name: "Install an OpenSSH server"
+  ansible.builtin.include_tasks: "install.yml"
+
+- name: "Configure SSH algorithms"
+  ansible.builtin.include_tasks: "algorithms.yml"
+
+- name: "Configure authentication methods"
+  ansible.builtin.include_tasks: "authentication.yml"
+
+- name: "Configure SSH encryption keys"
+  ansible.builtin.include_tasks: "encryption.yml"
+
+- name: "Configure additional restrictions"
+  ansible.builtin.include_tasks: "restrictions.yml"
+
+- name: "Log at VERBOSE level"
+  notify: Restart sshd
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?LogLevel'
+    line: 'LogLevel VERBOSE'
+    validate: sshd -f %s -t

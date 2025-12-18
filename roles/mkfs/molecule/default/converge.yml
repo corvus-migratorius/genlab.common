@@ -1,0 +1,22 @@
+---
+- name: Converge
+  hosts: all
+
+  pre_tasks:
+
+    - name: "Check if the disk file already exists"
+      ansible.builtin.stat:
+        path: /tmp/test_file
+      register: mkfs_disk_file
+
+    - name: "Create a file to act as a disk if it doesn't exist"
+      ansible.builtin.command: dd if=/dev/zero of=/tmp/test_file bs=1000000 count=100
+      when: not mkfs_disk_file.stat.exists
+      register: mkfs_dd_output
+      changed_when: mkfs_dd_output.rc != 0
+
+  roles:
+    - role: genlab.common.mkfs
+      mkfs_device: "/tmp/test_file"
+      mkfs_type: ext3
+      mkfs_state: present

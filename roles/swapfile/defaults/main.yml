@@ -1,0 +1,8 @@
+---
+swapfile_path: /swapfile
+swapfile_size_mb: '512'
+swapfile_swappiness: '60'
+swapfile_state: present
+swapfile_create_command: "dd if=/dev/zero of={{ swapfile_path }} bs=1M count={{ swapfile_size_mb }}"
+
+swapfile_test_mode: false

@@ -1,0 +1,8 @@
+---
+- name: "Create a filesystem on the given device"
+  community.general.filesystem:
+    fstype: "{{ mkfs_type }}"
+    dev: "{{ mkfs_device }}"
+    state: "{{ mkfs_state }}"
+    opts: "{{ mkfs_opts }}"
+    force: "{{ mkfs_force }}"

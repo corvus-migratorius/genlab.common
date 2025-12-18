@@ -1,0 +1,11 @@
+---
+# handlers file for playbooks/roles/docker_ubuntu
+- name: "Restart Docker daemon"
+  ansible.builtin.systemd_service:
+    name: docker
+    state: restarted
+    daemon_reload: true
+
+- name: "Sanity check"  # noqa: no-changed-when
+  ansible.builtin.command:
+    cmd: "docker run --rm --pull=always hello-world"

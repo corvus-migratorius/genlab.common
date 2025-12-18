@@ -1,0 +1,12 @@
+[Slice]
+{% if memory_max is defined and memory_max != "" %}
+MemoryAccounting=1
+MemoryMax={{ memory_max }}
+MemorySwapMax={{ swap_max }}
+{% else %}
+{% endif %}
+{% if cpu_quota is defined and cpu_quota != "" %}
+CPUAccounting=1
+CPUQuota={{ cpu_quota }}
+{% else %}
+{% endif %}

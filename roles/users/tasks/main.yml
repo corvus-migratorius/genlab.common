@@ -1,0 +1,14 @@
+---
+- name: "Include OpenSSH client installation tasks"
+  ansible.builtin.include_tasks: openssh.yml
+
+- name: "Include user definition vars"
+  when: (manifest_path is defined) and (manifest_path != "") and users is not defined
+  ansible.builtin.include_vars:
+    file: "{{ manifest_path }}"
+
+- name: "Create user accounts"
+  loop: "{{ users }}"
+  loop_control:
+    loop_var: user
+  ansible.builtin.include_tasks: create.yml

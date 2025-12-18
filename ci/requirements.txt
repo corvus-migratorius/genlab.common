@@ -1,1 +1,2 @@
 ansible-core==2.18.11
+passlib==1.7.4
