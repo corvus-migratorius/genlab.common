@@ -1,0 +1,7 @@
+---
+- name: "(Re)start and enable smartctl_exporter"
+  ansible.builtin.systemd_service:
+    name: smartctl_exporter.service
+    state: restarted
+    enabled: true
+    daemon_reload: true

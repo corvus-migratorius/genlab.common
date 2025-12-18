@@ -1,0 +1,14 @@
+galaxy_info:
+  role_name: promtail
+  namespace: genlab
+  author: Danilkin Danila
+  description: Installs Promtail
+
+  company: Genlab LLC
+  license: MIT
+
+  min_ansible_version: "2.1"
+
+  galaxy_tags: []
+
+dependencies: []

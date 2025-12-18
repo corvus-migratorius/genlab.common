@@ -1,3 +1,8 @@
 ---
 collections:
   - name: ansible.posix
+  - name: community.general
+  - name: community.grafana
+  - name: community.docker
+  - name: community.crypto
+  - name: maxhoesel.borgbackup

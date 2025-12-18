@@ -1,0 +1,39 @@
+---
+- name: "Include grafana installation tasks"
+  ansible.builtin.include_tasks: install.yml
+
+- name: "Wait for the Grafana server to become available"
+  ansible.builtin.wait_for:
+    host: "127.0.0.1"
+    port: "{{ grafana_port }}"
+    state: started
+    delay: 10
+
+- name: "Include user creation tasks"
+  when: users is defined
+  loop: "{{ users }}"
+  loop_control:
+    loop_var: user
+  ansible.builtin.include_tasks: user.yml
+
+- name: "Configure custom dashboards"
+  when: dashboard_source_path is defined
+  ansible.builtin.include_tasks: dashboards.yml
+
+- name: "Configure public dashboards"
+  when: public_dashboards is defined
+  loop: "{{ public_dashboards }}"
+  loop_control:
+    loop_var: public_dashboard
+  ansible.builtin.include_tasks: import_pub_dashboard.yml
+
+- name: "Configure plugins"
+  when: plugins is defined
+  loop: "{{ plugins }}"
+  loop_control:
+    loop_var: plugin
+  ansible.builtin.include_tasks: plugins.yml
+
+- name: "Configure datasources"
+  when: datasource_source_path is defined
+  ansible.builtin.include_tasks: datasources.yml

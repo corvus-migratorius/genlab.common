@@ -1,0 +1,2 @@
+---
+sftp_share_permissions: "open,close,read,write,lstat,fstat,opendir,readdir,remove,mkdir,rmdir,realpath,rename"

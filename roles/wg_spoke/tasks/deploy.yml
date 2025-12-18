@@ -1,0 +1,41 @@
+---
+- name: "Install Wireguard system-wide"
+  ansible.builtin.apt:
+    name: wireguard
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Ensure no dashes in the interface name"
+  when: "'-' in iface_name"
+  ansible.builtin.fail:
+    msg: "The interface name must not contain dashes, got: '{{ iface_name }}'"
+
+- name: "Create a Spoke configuration file"
+  no_log: "{{ wg_spoke_hide_secrets }}"
+  notify: "Run the Wireguard service"
+  ansible.builtin.blockinfile:
+    path: "/etc/wireguard/{{ iface_name }}.conf"
+    create: true
+    owner: root
+    group: root
+    mode: "0600"
+    state: present
+    block: |
+      [Interface]  # Local settings for this node
+      Address = {{ spoke_ipv4_vpn }}/32
+      ListenPort = {{ spoke_port }}
+      PrivateKey = {{ spoke_pkey }}
+
+      {% if dns_server is defined and domain is defined %}
+      PostUp = resolvectl dns %i {{ dns_server }}; resolvectl domain %i {{ domain }}
+      {% endif %}
+
+      [Peer]  # Settings for the Hub peer
+      PublicKey = {{ hub_pubkey }}
+      {% if spoke_psk is defined %}
+      PresharedKey = {{ spoke_psk }}
+      {% endif %}
+      AllowedIPs = {{ subnet }}/{{ netmask }}
+      Endpoint = {{ hub_ipv4_wan }}:{{ hub_port }}
+      PersistentKeepalive = 20

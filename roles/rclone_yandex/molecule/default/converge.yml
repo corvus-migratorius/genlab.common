@@ -1,0 +1,19 @@
+---
+- name: Converge
+  hosts: all
+
+  pre_tasks:
+    - name: "Install basic tools"
+      ansible.builtin.apt:
+        name:
+          - curl
+        update_cache: true
+        cache_valid_time: 3600
+        autoremove: true
+        autoclean: true
+
+  roles:
+    - role: genlab.common.rclone_yandex
+      rclone_mountpoint: /mnt/yandex-disk
+      rclone_group: yandex
+      rclone_secrets: secrets/token.yml

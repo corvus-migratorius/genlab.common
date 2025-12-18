@@ -1,0 +1,48 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    repo_path: "/home/borg/test-repo"
+
+  pre_tasks:
+    - name: "Create a user for borg"
+      ansible.builtin.user:
+        name: borg
+        shell: /bin/bash
+        create_home: true
+
+    - name: "Generate test data file"
+      ansible.builtin.copy:
+        dest: "/tmp/data"
+        content: "This is a test file!"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: "0644"
+
+    - name: "Ensure the repo path exists"
+      ansible.builtin.file:
+        path: "{{ repo_path }}"
+        state: directory
+        owner: "borg"
+        mode: "0700"
+
+    - name: "Install openssh-server"
+      ansible.builtin.apt:
+        name: openssh-server
+        state: present
+        update_cache: true
+
+    - name: "Start an SSH openssh-server"
+      ansible.builtin.systemd:
+        name: ssh
+        state: started
+
+  roles:
+    - role: genlab.common.borgmatic
+      borgmatic_source_directories:
+        - "/tmp/data"
+      borgmatic_repo_path: "ssh://borg@localhost/./test-repo"
+      borgmatic_repo_label: "test-repo"
+      borgmatic_encryption_passphrase: "secret"
+      repo_server_inventory_hostname: ubuntu  # in production this should be an Ansible inventory hostname
+      repo_server_user: borg

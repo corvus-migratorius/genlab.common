@@ -1,0 +1,16 @@
+---
+- name: "Create plugin directory"
+  ansible.builtin.file:
+    path: "{{ grafana_plugins_dir }}"
+    state: directory
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: "0755"
+
+- name: "Install Grafana plugins"
+  community.grafana.grafana_plugin:
+    name: "{{ plugin.name }}"
+    version: "{{ plugin.version }}"
+    grafana_plugins_dir: "{{ grafana_plugins_dir }}"
+    state: "{{ plugin.state | default('present') }}"
+  notify: "(Re)start and enable Grafana"

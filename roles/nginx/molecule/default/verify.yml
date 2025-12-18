@@ -1,0 +1,73 @@
+# kics-scan disable=2e8d4922-8362-4606-8c14-aa10466a1ce3
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  pre_tasks:
+    - name: "Include default vars"
+      ansible.builtin.include_vars:
+        dir: '{{ lookup("env", "MOLECULE_PROJECT_DIRECTORY") }}/defaults/'
+        extensions:
+          - 'yml'
+
+  tasks:
+    - name: "Verify NGINX version"
+      register: nginx_version_output
+      changed_when: false
+      failed_when: nginx_version_output.rc != 0
+      ansible.builtin.command: /usr/sbin/nginx -v
+
+    # version is displayed as e.g. 'nginx version: nginx/1.26.3'
+    - name: "Extract NGINX version"
+      ansible.builtin.set_fact:
+        nginx_version: "{{ nginx_version_output.stderr.split('/')[1] }}"
+
+    - name: "Check expected NGINX version"
+      ansible.builtin.assert:
+        that: nginx_version.startswith(nginx_version)
+        fail_msg: "Unexpected NGINX version found: '{{ nginx_version }}'"
+
+    - name: "Gather service facts"
+      ansible.builtin.service_facts:
+
+    - name: "Assert NGINX service is running"
+      ansible.builtin.assert:
+        that: ansible_facts.services['nginx.service'].state == 'running'
+        fail_msg: "NGINX service is not running."
+
+    - name: "Assert NGINX service is enabled"
+      ansible.builtin.assert:
+        that: ansible_facts.services['nginx.service'].status == 'enabled'
+        fail_msg: "NGINX service is not enabled."
+
+    - name: "Get an HTTP response from the test site (single site deployment from a variable)"
+      register: nginx_response
+      ansible.builtin.uri:
+        url: http://localhost:80
+        status_code: 200
+        return_content: true
+
+    - name: "Check the response correctness on port 80"
+      vars:
+        message: "{{ nginx_response.content | trim }}"
+      ansible.builtin.assert:
+        that: message == 'Hello from ansible-nginx!'
+        success_msg: "{{ message }}"
+        fail_msg: "Unexpected response from the test site: '{{ message }}'"
+
+    - name: "Get an HTTP response from the test site (site deployment from a dictionary)"
+      register: nginx_response
+      ansible.builtin.uri:
+        url: http://localhost:8080
+        status_code: 200
+        return_content: true
+
+    - name: "Check the response correctness on port 8080"
+      vars:
+        message: "{{ nginx_response.content | trim }}"
+      ansible.builtin.assert:
+        that: message == 'Hello from ansible-nginx!'
+        success_msg: "{{ message }}"
+        fail_msg: "Unexpected response from the test site: '{{ message }}'"

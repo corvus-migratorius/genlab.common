@@ -1,0 +1,15 @@
+---
+- name: "Include tool installation tasks"
+  ansible.builtin.include_tasks: "install.yml"
+
+- name: "Include SSH key handling tasks"
+  ansible.builtin.include_tasks: "handle-ssh-keys.yml"
+
+- name: "Include configuration tasks"
+  ansible.builtin.include_tasks: "config.yml"
+
+- name: "Include tasks for third-party integrations"
+  ansible.builtin.include_tasks: "integrations.yml"
+
+- name: "Include tasks for running borgmatic"
+  ansible.builtin.include_tasks: "run.yml"

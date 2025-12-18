@@ -1,0 +1,11 @@
+---
+# SRC https://www.procustodibus.com/blog/2021/03/wireguard-logs/
+- name: "Add wireguard module"
+  community.general.modprobe:
+    name: wireguard
+    state: present
+
+- name: "Turn on Wireguard dyndbg logging into kernel message buffer"
+  changed_when: false
+  ansible.builtin.shell:
+    cmd: echo module wireguard +p > /sys/kernel/debug/dynamic_debug/control

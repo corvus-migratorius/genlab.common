@@ -1,0 +1,21 @@
+[Unit]
+Description=Run an HTTP request via curl designated '{{ label }}'
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart={{ curl_cmd }} {{ curl_args }} "{{ url }}"
+Restart=no 
+
+# Security hardening
+ProtectSystem=strict
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectKernelTunables=true
+ProtectClock=yes
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.targer

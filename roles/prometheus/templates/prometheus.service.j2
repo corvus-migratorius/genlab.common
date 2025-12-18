@@ -1,0 +1,28 @@
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+Documentation="https://prometheus.io/"
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=/usr/local/bin/prometheus \
+    --config.file {{ prometheus_config_dir }}/prometheus.yml \
+    --storage.tsdb.path {{ prometheus_db_dir }} \
+    --storage.tsdb.retention.time=30d
+    
+# Security hardening
+ReadWritePaths={{ prometheus_db_dir }}
+ProtectSystem=strict
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectKernelTunables=true
+ProtectClock=yes
+RestrictSUIDSGID=true
+   
+[Install]
+WantedBy=multi-user.target

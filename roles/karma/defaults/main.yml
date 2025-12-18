@@ -1,0 +1,7 @@
+---
+# Default variables for Karma role
+karma_version: "0.121"
+karma_user: karma
+karma_group: karma
+karma_dir: /etc/karma
+karma_config_dir: /etc/karma/conf

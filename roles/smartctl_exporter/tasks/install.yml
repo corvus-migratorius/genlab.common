@@ -1,0 +1,51 @@
+---
+- name: "Install smartctl_exporter from binary"
+  block:
+    - name: "Check smartctl_exporter version"
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "smartctl_exporter --version"
+      register: smartctl_exporter_ver
+
+    - name: "Assert version correctness"
+      ansible.builtin.assert:
+        that: "smartctl_exporter_ver.stderr is regex('{{ smartctl_exporter_version }}')"
+        success_msg: "smartctl_exporter version {{ smartctl_exporter_version }} is installed and working"
+        fail_msg: "smartctl_exporter version {{ smartctl_exporter_version }} is not installed or not working correctly"
+
+  rescue:
+    - name: "Create smartctl_exporter directories"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      with_items:
+        - "{{ smartctl_exporter_dir }}"
+        - "{{ smartctl_exp_config_dir }}"
+
+    - name: "Unarchive smartctl_exporter tar file"
+      notify: "(Re)start and enable smartctl_exporter"
+      ansible.builtin.unarchive:
+        src: "https://github.com/prometheus-community/smartctl_exporter/releases/\
+              download/v{{ smartctl_exporter_version }}/smartctl_exporter-{{ smartctl_exporter_version }}.linux-amd64.tar.gz"
+        dest: "{{ smartctl_exporter_dir }}"
+        remote_src: true
+
+    - name: "Move smartctl_exporter binary"
+      ansible.builtin.copy:
+        src: "{{ smartctl_exporter_dir }}/smartctl_exporter-{{ smartctl_exporter_version }}.linux-amd64/smartctl_exporter"
+        dest: "/usr/local/bin/smartctl_exporter"
+        mode: "0755"
+        owner: root
+        group: root
+        remote_src: true
+
+- name: Create systemd service file
+  ansible.builtin.template:
+    src: smartctl_exporter.service.j2
+    dest: /etc/systemd/system/smartctl_exporter.service
+    owner: root
+    group: root
+    mode: '0644'

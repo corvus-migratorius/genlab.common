@@ -1,0 +1,32 @@
+[Unit]
+Description=Rustdesk Relay Server
+
+[Service]
+Type=simple
+LimitNOFILE=10000
+Environment="RUST_LOG_LEVEL=trace"
+WorkingDirectory=/opt/rustdesk-server/lib/
+
+ExecStart=/opt/rustdesk-server/amd64/hbbr
+
+Restart=on-failure
+RestartSec=10
+StartLimitIntervalSec=60
+StartLimitBurst=2
+
+User=rustdesk
+Group=rustdesk
+
+# Security
+ProtectSystem=strict
+ReadWritePaths=/opt/rustdesk-server/lib/
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectKernelTunables=true
+ProtectClock=yes
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

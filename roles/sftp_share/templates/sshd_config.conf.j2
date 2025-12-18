@@ -1,0 +1,5 @@
+Match User {{ sftp_username }}
+    ChrootDirectory /primary/data/{{ sftp_username }}-uploads
+    ForceCommand internal-sftp -u 007 -p {{ sftp_share_permissions }} -d /transfers
+    AllowTcpForwarding no
+    X11Forwarding no

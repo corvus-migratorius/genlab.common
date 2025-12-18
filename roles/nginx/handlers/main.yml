@@ -1,0 +1,16 @@
+---
+- name: "Update apt cache"
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Start nginx"
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: "Reload nginx"
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded

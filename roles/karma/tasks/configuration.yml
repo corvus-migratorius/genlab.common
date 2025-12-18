@@ -1,0 +1,10 @@
+---
+
+- name: Create karma configuration file
+  notify: "(Re)start and enable karma"
+  ansible.builtin.template:
+    src: "{{ config_source_dir }}/karma.conf"
+    dest: "{{ karma_config_dir }}/karma.conf"
+    owner: "{{ karma_user }}"
+    group: "{{ karma_group }}"
+    mode: '0640'
