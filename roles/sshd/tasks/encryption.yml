@@ -1,0 +1,11 @@
+---
+- name: "Encryption | remove unsafe host keys"
+  loop:
+    - /etc/ssh/ssh_host_ecdsa_key
+    - /etc/ssh/ssh_host_ecdsa_key.pub
+    - /etc/ssh/ssh_host_dsa_key
+    - /etc/ssh/ssh_host_dsa_key.pub
+  notify: Restart sshd
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
