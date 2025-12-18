@@ -1,0 +1,5 @@
+---
+disable_pam: false
+password_auth: false
+challenge_response_auth: false
+gss_api_auth: false

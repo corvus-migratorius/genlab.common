@@ -1,0 +1,30 @@
+---
+- name: "Restrictions | Configure SSH security restrictions"
+  loop:
+    - { regexp: '^#?Protocol\s+', line: 'Protocol 2' }
+    - { regexp: '^PermitRootLogin yes', line: 'PermitRootLogin no' }
+    - { regexp: '^#?X11Forwarding', line: 'X11Forwarding no' }
+    - { regexp: '^#?IgnoreRhosts', line: 'IgnoreRhosts yes' }
+    - { regexp: '^#?DebianBanner\s+', line: 'DebianBanner no' }
+  notify: Restart sshd
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    validate: /usr/sbin/sshd -t -f %s
+
+- name: "Restrictions | toggle PAM"
+  notify: Restart sshd
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?UsePAM'
+    line: "UsePAM {{ disable_pam | ternary('no', 'yes') }}"
+    validate: sshd -f %s -t
+
+- name: "Restrictions | ensure the SSHD config is restricted to the root user"
+  notify: Restart sshd
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: "0600"
