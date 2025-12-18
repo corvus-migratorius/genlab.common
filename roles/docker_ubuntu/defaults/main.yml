@@ -1,0 +1,5 @@
+---
+du_docker_version: "27.3.1"
+du_registry_mirrors:
+  - https://docker.io
+  - https://mirror.gcr.io
