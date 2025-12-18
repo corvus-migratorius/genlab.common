@@ -16,7 +16,7 @@
 
 - name: "Create | Create user account ('{{ user.name }}')"
   vars:
-    home_root: "{{ user.home_root is defined | ternary(user.home_root, default_home_root) }}"
+    home_root: "{{ user.home_root is defined | ternary(user.home_root, users_default_home_root) }}"
   ansible.builtin.user:
     name: "{{ user.name }}"
     state: "{{ user.state }}"
