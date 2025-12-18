@@ -8,5 +8,7 @@ loop_var_prefix: "^(__|{role}_)"
 exclude_paths:
   - .github/
   - .ansible/
-  # ansible-lint thinks it's a playbook so gives an error, but its tasks are for include_task. decided to exclude it
+
+  # ansible-lint thinks they're playbooks so gives errors, but they're not
   - roles/rustdesk/molecule/default/client-binary-existance.yml
+  - roles/borg_server/molecule/default/secrets.yaml

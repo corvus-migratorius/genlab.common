@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: genlab.common.borg_server
+      borg_secrets_path: "secrets.yaml"
+      borg_server_hide_logs: false

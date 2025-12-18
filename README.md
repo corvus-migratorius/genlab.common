@@ -6,6 +6,7 @@
 ## Roles
 
 - [alertmanager](roles/alertmanager/README.md)
+- [borg_server](roles/borg_server/README.md)
 - [borgmatic](roles/borgmatic/README.md)
 - [curl_scheduled](roles/curl_scheduled/README.md)
 - [dnsmasq](roles/dnsmasq/README.md)
