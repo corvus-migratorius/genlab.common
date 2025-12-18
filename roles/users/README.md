@@ -1,5 +1,5 @@
-ansible-users
-=========
+users
+=====
 
 Create user accounts according to a YAML manifest.
 

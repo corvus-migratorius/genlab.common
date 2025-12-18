@@ -1,5 +1,5 @@
-genlab.smartctl-exporter
-=========
+smartctl_exporter
+=================
 
 ```smartctl``` is a command-line utility used to control and monitor the Self-Monitoring, Analysis and Reporting Technology (SMART) system in hard disk drives (HDDs) and solid-state drives (SSDs). ```smartctl-exporter``` exports ```smartctl``` statistics to Prometheus.
 

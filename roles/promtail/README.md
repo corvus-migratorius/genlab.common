@@ -1,5 +1,5 @@
 promtail
-=========
+========
 
 Installs promtail as systemd service.
 

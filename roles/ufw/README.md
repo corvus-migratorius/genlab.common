@@ -1,5 +1,5 @@
-template
-=========
+ufw
+===
 
 Whitelist network ports with UFW
 

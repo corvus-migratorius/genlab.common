@@ -1,5 +1,5 @@
-ansible-swapfile
-=========
+swapfile
+========
 
 Create/destroy a swapfile and run swapon/-off on it.
 

@@ -1,4 +1,4 @@
-genlab.grafana
+grafana
 =========
 
 This ansible role installs [Grafana](https://github.com/grafana/grafana) - the open-source platform for monitoring and observability. It can produce charts, graphs, and alerts for the web when connected to supported data sources.

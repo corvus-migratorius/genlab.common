@@ -1,13 +1,5 @@
-template
-=========
-
-Template for Ansible role monorepos.
-
-⚠️ Do not forget to update:
-
-- `meta/main.yml`
-- Conda/Mamba manifests
-- this README =)
+wg_hub
+======
 
 Requirements
 ------------

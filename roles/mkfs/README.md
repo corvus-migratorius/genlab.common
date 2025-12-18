@@ -1,5 +1,5 @@
-Role Name
-=========
+mkfs
+====
 
 Create a filesystem on the target device (thinly wraps `community.general.filesystem` module).
 

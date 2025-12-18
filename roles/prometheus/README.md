@@ -1,5 +1,5 @@
-genlab.prometheus
-=========
+prometheus
+==========
 
 This ansible role installs [Prometheus](https://github.com/prometheus/prometheus) from binary distribution. Prometheus is a systems and service monitoring system. It collects metrics from configured targets at given intervals, evaluates rule expressions, displays the results, and can trigger alerts when specified conditions are observed.
 

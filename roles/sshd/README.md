@@ -1,5 +1,5 @@
-ansible-sshd
-=========
+sshd
+====
 
 Deploy a hardened sshd server
 

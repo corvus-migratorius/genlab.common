@@ -1,4 +1,4 @@
-ansible-borgmatic
+borgmatic
 =========
 
 This is a wrapper around the `borgmatic` role from the `maxhoesel.borgbackup` collection.

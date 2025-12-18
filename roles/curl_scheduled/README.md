@@ -1,4 +1,4 @@
-curl-scheduled
+curl_scheduled
 =========
 
 Configure curl to run on schedule by deploying a systemd service + timer. Useful for sending heartbeats.

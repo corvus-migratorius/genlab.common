@@ -1,5 +1,5 @@
-ansible-nginx
-=========
+nginx
+=====
 
 Deploy NGINX with a minimal configuration.
 

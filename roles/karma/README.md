@@ -1,4 +1,4 @@
-genlab.karma
+karma
 =========
 This is the ansible role to install and configure Karma - alert dashboard for Prometheus Alertmanager (https://github.com/prymitive/karma)
 

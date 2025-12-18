@@ -1,5 +1,5 @@
 loki
-=========
+====
 
 Installs Loki as a `systemd` service.
 

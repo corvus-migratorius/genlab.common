@@ -1,4 +1,4 @@
-SFTP Share Ansible Role
+sftp_share
 =========
 
 Creates a user account and directories for secured SFTP data exchange (one user = one share).
