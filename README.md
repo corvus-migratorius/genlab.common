@@ -23,6 +23,7 @@
 - [rustdesk](roles/rustdesk/README.md)
 - [sftp_share](roles/sftp_share/README.md)
 - [smartctl_exporter](roles/smartctl_exporter/README.md)
+- [sshd](roles/sshd/README.md)
 - [swapfile](roles/swapfile/README.md)
 - [ufw](roles/ufw/README.md)
 - [wg_hub](roles/wg_hub/README.md)
