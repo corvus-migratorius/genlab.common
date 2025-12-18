@@ -1,7 +1,7 @@
 dnsmasq
 =========
 
-Deploy dnsmasq on the target node. For now, supports only DNS functionality (DHCP and TFTP are not configuratble).
+Deploy `dnsmasq` on the target node. For now, supports only DNS functionality (DHCP and TFTP are not configurable).
 
 Requirements
 ------------

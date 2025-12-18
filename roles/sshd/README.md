@@ -1,7 +1,7 @@
 sshd
 ====
 
-Deploy a hardened sshd server
+Deploy a hardened `sshd` server
 
 Requirements
 ------------

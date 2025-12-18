@@ -12,7 +12,7 @@ In the case of Borgmatic we are installing it via `pipx`, as recommended by thei
 Requirements
 ------------
 
-- `maxhoesel.borgbackup` collection installed (see `requirements.yml`);
+- `maxhoesel.borgbackup` collection installed;
 
 Role Variables
 --------------

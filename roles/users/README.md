@@ -4,6 +4,7 @@ users
 Create user accounts according to a YAML manifest.
 
 Controls:
+
   - username and UID
   - groupname and GID
   - homedir creation
@@ -20,8 +21,8 @@ Requirements
 
 Target node:
 
-- systemd
-- openssh
+- `systemd`
+- openssh client library
 
 Controller:
 
@@ -58,4 +59,4 @@ Author Information
 ------------------
 
 corvus-migratorius@proton.me
-masayganova@gmail.com
+sayganova@genlab.llc

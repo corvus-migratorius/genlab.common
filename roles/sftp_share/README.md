@@ -1,7 +1,7 @@
 sftp_share
 =========
 
-Creates a user account and directories for secured SFTP data exchange (one user = one share).
+Creates a user account and directories for a secured SFTP data exchange (one user = one share).
 
 The role creates a dedicated SSH config under `/etc/ssh/sshd_config.d/`, configuring:
 

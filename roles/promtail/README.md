@@ -1,7 +1,7 @@
 promtail
 ========
 
-Installs promtail as systemd service.
+Installs `promtail` as a systemd service.
 
 Requirements
 ------------
@@ -19,7 +19,7 @@ Role Variables
 Dependencies
 ------------
 
-No
+None
 
 Example Playbook
 ----------------
@@ -35,7 +35,5 @@ Author Information
 ------------------
 
 Alexander Gorelyshev and Danilkin Danila (MIPT)
-
-Genlab LLC
 
 corvus-migratorius@proton.me
