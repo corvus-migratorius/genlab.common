@@ -1,0 +1,4 @@
+---
+nginx_docker_project_path: "/root/nginx-docker"
+nginx_docker_image_tag: "alpine3.19"
+nginx_docker_custom_volumes: []

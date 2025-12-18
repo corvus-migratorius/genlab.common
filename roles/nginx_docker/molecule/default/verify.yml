@@ -1,0 +1,14 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: "Make an HTTP query"
+      register: nginx_docker_this
+      failed_when: nginx_docker_this is failed or 'healthy' not in nginx_docker_this.content
+      ansible.builtin.uri:
+        url: "http://localhost:80/health/startup"
+        method: "GET"
+        return_content: true
