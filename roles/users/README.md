@@ -18,8 +18,14 @@ Check out [corvus-migratorius/ansible-disk-quotas](https://github.com/corvus-mig
 Requirements
 ------------
 
+Target node:
+
 - systemd
 - openssh
+
+Controller:
+
+- `passlib` (for working with user passwords)
 
 Role Variables
 --------------
