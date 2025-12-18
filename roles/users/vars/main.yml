@@ -1,0 +1,4 @@
+---
+# vars file for user
+inv_groupname: "{{ hostvars[inventory_hostname].group_names[0] }}"
+inv_hostname: "{{ inventory_hostname }}"

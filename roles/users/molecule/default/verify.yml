@@ -1,0 +1,64 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  any_errors_fatal: true
+
+  tasks:
+    - name: "Get user info from /etc/passwd"
+      register: etc_passwd
+      changed_when: false
+      ansible.builtin.shell:
+        cmd: set -o pipefail; cat /etc/passwd | grep user
+        executable: /bin/bash
+
+    - name: "Get user info from /etc/shadow"
+      register: etc_shadow
+      changed_when: false
+      ansible.builtin.shell:
+        cmd: set -o pipefail; cat /etc/shadow | grep user
+        executable: /bin/bash
+
+    # using a hack since here the date of last password change == date of account creation
+    - name: "Verify expected account configuration"
+      vars:
+        expected_shadow:
+          - "user0:!:{{ (ansible_date_time.epoch | int) // 86400 }}:0:99999:7:::"
+          - "user1:!:{{ (ansible_date_time.epoch | int) // 86400 }}:0:99999:7::19927:"
+        expected_passwd:
+          - "user0:x:1001:1004:User Zero:/tmp/someplace/user0:/bin/bash"
+          - "user1:x:1002:1002:User One:/home/user1:/bin/sh"
+      ansible.builtin.assert:
+        that:
+          - etc_passwd.stdout_lines == expected_passwd
+          - etc_shadow.stdout_lines == expected_shadow
+
+    - name: "Get SSH key contents for user1"
+      register: user1_ssh_key
+      changed_when: false
+      ansible.builtin.command:
+        cmd: cat /home/user1/.ssh/id_ed25519.pub
+
+    - name: "Verify the SSH key contents for user1"
+      ansible.builtin.assert:
+        that: "'user1@ubuntu' in user1_ssh_key.stdout"
+
+    - name: "Get the user slice drop-in for user0"
+      register: user0_slice_dropin
+      changed_when: false
+      ansible.builtin.command:
+        cmd: cat /etc/systemd/system/user-1001.slice.d/50-limits.conf
+
+    - name: "Verify drop-in contens"
+      vars:
+        expected:
+          - "[Slice]"
+          - "MemoryAccounting=1"
+          - "MemoryMax=500M"
+          - "MemorySwapMax=2G"
+          - "CPUAccounting=1"
+          - "CPUQuota=100%"
+      ansible.builtin.assert:
+        that: "user0_slice_dropin.stdout_lines == expected"
+        success_msg: "Got the expected limits slice drop-in"
+        fail_msg: "Unexpected limits slice drop-in contents"

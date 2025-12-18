@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+
+  roles:
+    - role: genlab.users
+      manifest_path: "users.yml"
+      common_memory_max: "500M"
+      common_swap_max: "2G"
+      common_cpu_quota: "100%"
