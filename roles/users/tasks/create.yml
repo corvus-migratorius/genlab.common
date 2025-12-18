@@ -1,0 +1,106 @@
+---
+- name: "Create | Get current user's group entity info ({{ user.name }})"
+  failed_when: false
+  ansible.builtin.getent:
+    database: group
+    key: "{{ user.name }}"
+    split: ":"
+
+- name: "Create | Create user group ('{{ user.name }}')"  # to handle cases where GID!=UID
+  when:
+    - getent_group[user.name] is not defined
+  ansible.builtin.group:
+    name: "{{ user.name }}"
+    gid: "{{ user.gid is defined | ternary(user.gid, user.uid) }}"
+    state: "{{ user.state }}"
+
+- name: "Create | Create user account ('{{ user.name }}')"
+  vars:
+    home_root: "{{ user.home_root is defined | ternary(user.home_root, users_default_home_root) }}"
+  ansible.builtin.user:
+    name: "{{ user.name }}"
+    state: "{{ user.state }}"
+    uid: "{{ user.uid }}"
+    group: "{{ user.name }}"
+    create_home: "{{ user.create_home | default(true) }}"
+    home: "{{ home_root }}/{{ user.name }}"
+    comment: "{{ user.full_name }}"
+    shell: "{{ user.shell | default('/bin/bash') }}"
+    groups: "{{ user.groups | default([]) }}"
+    append: false
+    generate_ssh_key: "{{ user.generate_ssh_key | default(false) }}"
+    ssh_key_type: "{{ user.ssh_key_type | default('ed25519') }}"
+    ssh_key_comment: "{{ user.name }}@{{ ansible_nodename }}"
+    # password_lock: "{{ user.password_lock | default('false') }}"
+
+- name: "Create | Set user account expiration date where defined ('{{ user.name }}')"
+  when: user.expires is defined
+  ansible.builtin.user:
+    name: "{{ user.name }}"
+    state: "{{ user.state }}"
+    expires: "{{ (user.expires | to_datetime).strftime('%s') }}"
+
+- name: "Create | Ensure no user account expiration date where undefined ('{{ user.name }}')"
+  when: user.expires is undefined
+  ansible.builtin.user:
+    name: "{{ user.name }}"
+    state: "{{ user.state }}"
+    expires: "-1"
+
+- name: "Create | Deploy SSH public key to 'authorized_keys' files ('{{ user.name }}')"
+  when: (user.pubkeys_file is defined) and (user.pubkeys_file != "")
+  ansible.posix.authorized_key:
+    user: "{{ user.name }}"
+    key: "{{ lookup('file', user.pubkeys_file) }}"
+    key_options: "{{ user.options | default('') }}"
+    exclusive: true
+
+- name: "Create | Create a systemd slice directory ('{{ user.name }}')"
+  ansible.builtin.file:
+    path: /etc/systemd/system/user-{{ user.uid }}.slice.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+
+# Set user's maximum memory limit to 'memory_limit' defined in the user manifest_path.
+# If 'memory_limit' is undefined there, use 'common_memory_max' as fallback.
+# If 'common_memory_max' is also undefined, set to "", which should be ignored by the template.
+# - 'memory_max:' may use postfix like K, M, G.
+# - 'cpu_quota':  "100%" for 1 full core.
+# REF https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html
+# REF https://serverfault.com/a/1092803
+- name: "Create | Create/update a systemd slice limits config ('{{ user.name }}')"
+  when: user.uid is defined
+  register: users_limit_state
+  vars:
+    memory_max: "{{ (user.memory_max is defined and user.memory_max != '') | ternary(user.memory_max, common_memory_max) | default('') }}"
+    swap_max: "{{ (user.swap_max is defined and user.swap_max != '') | ternary(user.swap_max, common_swap_max) | default('') }}"
+    cpu_quota: "{{ (user.cpu_quota is defined and user.cpu_quota != '') | ternary(user.cpu_quota, common_cpu_quota) | default('') }}"
+  ansible.builtin.template:
+    src: slice.j2
+    dest: "/etc/systemd/system/user-{{ user.uid }}.slice.d/50-limits.conf"
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: "Create | Enable user systemd service ('{{ user.name }}')"  # noqa: no-handler
+  when: users_limit_state.changed
+  ansible.builtin.systemd_service:
+    name: user@{{ user.uid }}.service
+    enabled: true
+
+# User service cannot be restarted if:
+# - the account is expired (we check for that)
+# - password change was enforced
+# Sometimes restarting fails with obscure 'status=219/CGROUP', but works fine after a retry
+# Didn't debug this yet, sorry ;(
+- name: "Restart user service (systemd limits) ('{{ user.name }}')"
+  when:
+    - users_limit_state.changed
+    - user.expires is undefined or (user.expires | to_datetime).strftime('%s') > now(fmt='%s')
+  retries: 3
+  ansible.builtin.systemd_service:
+    name: user@{{ user.uid }}.service
+    state: restarted
+    daemon_reload: true

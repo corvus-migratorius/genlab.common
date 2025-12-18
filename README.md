@@ -26,5 +26,6 @@
 - [sshd](roles/sshd/README.md)
 - [swapfile](roles/swapfile/README.md)
 - [ufw](roles/ufw/README.md)
+- [users](roles/users/README.md)
 - [wg_hub](roles/wg_hub/README.md)
 - [wg_spoke](roles/wg_spoke/README.md)
