@@ -31,13 +31,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.prometheus
-      prometheus_config_source_dir: mydir/configs
-      prometheus_alertrules_source_dir: mydir/configs/rules
-      prometheus_version: 3.2.1
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

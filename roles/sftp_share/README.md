@@ -60,7 +60,7 @@ None
 Example Playbook
 ----------------
 
-See `molecule/default/converge.yml` for an example role invocation.
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

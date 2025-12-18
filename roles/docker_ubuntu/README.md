@@ -25,10 +25,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.common.docker_ubuntu
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

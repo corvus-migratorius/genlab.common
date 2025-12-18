@@ -34,13 +34,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.template
-      config_source_dir: alertmanager
-      alertmanager_version: 0.28.1
-
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

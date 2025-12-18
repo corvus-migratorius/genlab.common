@@ -26,10 +26,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.rustdesk_server
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

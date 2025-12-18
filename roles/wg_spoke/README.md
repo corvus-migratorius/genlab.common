@@ -33,7 +33,7 @@ None
 Example Playbook
 ----------------
 
-See `molecule/default/converge.yml`.
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

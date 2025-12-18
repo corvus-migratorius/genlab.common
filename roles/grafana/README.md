@@ -59,42 +59,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
----
-- name: Converge
-  hosts: all
-  vars:
-    grafana_users:
-      - name: "test"
-        user_login: "test"
-        user_password: "test"
-        user_email: "test@mail.ru"
-        is_admin: false
-    grafana_plugins:
-        version: 2.1.8
-      - name: aceiot-svg-panel
-        version: 0.1.5
-    grafana_public_dashboards:
-      - name: Node Full Exporter
-        id: 1860
-        revision: 36
-  vars_files:
-    - secrets/admin_cred.yml
-
-  roles:
-    - role: genlab.grafana
-      grafana_version: 11.5.0
-      admin_api_username: "{{ grafana.admin_api_username }}"
-      admin_api_password: "{{ grafana.admin_api_password }}"
-      users: "{{ grafana_users }}"
-      plugins: "{{ grafana_plugins }}"
-      public_dashboards: "{{ grafana_public_dashboards }}"
-      dashboard_source_path: "molecule/default/dashboards"
-      datasource_source_path: "molecule/default/datasources"
-      grafana_log_dir: "/opt/grafana/data"
-      grafana_data_dir: "/opt/grafana/lib"
-
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

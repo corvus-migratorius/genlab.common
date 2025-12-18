@@ -37,13 +37,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-- role: genlab.smartctl_exporter
-    smartctl_exp_version: "0.14.0"
-    smartctl_exp_dir: "/etc/exporters"
-    smartctl_exp_config_dir: "/etc/exporters/config"
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

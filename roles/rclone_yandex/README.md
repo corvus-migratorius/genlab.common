@@ -23,12 +23,7 @@ A list of other roles hosted on Galaxy should go here, plus any details in regar
 Example Playbook
 ----------------
 
-```yaml
-roles:
-  - role: rclone_yandex
-    rclone_mountpoint: /mnt/yandex-disk
-    rclone_group: yandex
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

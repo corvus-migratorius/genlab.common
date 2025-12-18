@@ -24,10 +24,7 @@ No
 Example Playbook
 ----------------
 
-    - hosts: servers
-      roles:
-         - role: promtail
-           promtail_version: 2.7.3
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

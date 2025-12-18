@@ -21,10 +21,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.dnsmasq
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

@@ -33,14 +33,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.karma
-      karma_version: "0.121"
-      config_source_dir: "karma/"
-      karma_dir: "/etc/karma"
-      karma_config_dir: "/etc/karma/config"
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------
