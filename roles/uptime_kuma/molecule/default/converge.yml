@@ -1,0 +1,25 @@
+# kics-scan ignore
+---
+- name: Converge
+  hosts: all
+  vars:
+    test_admin_username: admin
+    test_admin_password: SDjj3$k4g9dhsjd__1dj
+  roles:
+    - genlab.common.docker_ubuntu
+  tasks:
+    - name: "Test the role"
+      tags: [role]
+      ansible.builtin.include_role:
+        name: "genlab.common.uptime_kuma"
+      vars:
+        kuma_api_username: "{{ test_admin_username }}"
+        kuma_api_password: "{{ test_admin_password }}"
+        kuma_tg_bot_token: 8161628020:AAF9doUFKSwdK4NZ8z58zVpqq0H1EdrKnI1
+        kuma_tg_chat_id: -4877676122
+        uptime_kuma_default_notification_names: ["Telegram alerts"]
+        kuma_monitors:
+          - name: "push-test"
+            type: push
+            interval: 30
+            description: "Test push monitor"

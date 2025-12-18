@@ -1,0 +1,13 @@
+# IDE
+
+.vscode
+.idea
+
+# test files
+
+ansible.cfg
+inventory.yml
+playbook.yml
+
+old/
+uptime-kuma-data/

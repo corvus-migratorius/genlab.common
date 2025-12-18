@@ -1,0 +1,37 @@
+# kics-scan disable=ce76b7d0-9e77-464d-b86f-c5c48e03e22d
+---
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:{{ uptime_kuma_img_version }}
+    container_name: uptime-kuma
+    volumes:
+      - {{ uptime_kuma_project_dir }}/data:/app/data
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - CAP_NET_ADMIN
+      - CAP_NET_RAW
+      - CAP_SETGID
+      - CAP_SETUID
+    security_opt:
+      - no-new-privileges:true
+    network_mode: host
+    healthcheck:
+      test: ["CMD-SHELL", "node extra/healthcheck.js"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: journald
+      options:
+        tag: uptime-kuma
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: {{ uptime_kuma_limit_cpus }}
+          memory: {{ uptime_kuma_limit_ram }}
+
+volumes:
+  uptime-kuma-data:
