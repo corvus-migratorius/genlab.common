@@ -1,0 +1,26 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  vars:
+    swapfile_path: "/swapfile"
+
+  pre_tasks:
+    - name: "Ensure 'file' exists"
+      ansible.builtin.package:
+        name: [file]
+        state: present
+
+  tasks:
+    - name: "Check swapfile file type"
+      register: swapfile_info
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "file {{ swapfile_path }}"
+
+    - name: "Verify correct file type"
+      ansible.builtin.assert:
+        that: "'swap file' in swapfile_info.stdout"
+        success_msg: "{{ swapfile_path }}: Indeed, a Linux swap file"
+        fail_msg: "{{ swapfile_path }}: not a Linux swap file ('{{ swapfile_info.stdout }}')"
