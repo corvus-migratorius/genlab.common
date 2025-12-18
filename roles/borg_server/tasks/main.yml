@@ -17,7 +17,7 @@
     state: present
 
 - name: "Create Borg users"
-  no_log: "{{ hide_logs }}"
+  no_log: "{{ borg_server_hide_logs }}"
   loop: "{{ borg_repos }}"
   ansible.builtin.user:
     name: "{{ item.user }}"
@@ -26,11 +26,11 @@
     create_home: true
     shell: "/bin/bash"
     generate_ssh_key: true
-    groups: [ borgs ]
+    groups: [borgs]
     append: true
 
 - name: "Configure SSH authorized keys for Borg users"
-  no_log: "{{ hide_logs }}"
+  no_log: "{{ borg_server_hide_logs }}"
   loop: "{{ borg_repos }}"
   ansible.builtin.lineinfile:
     path: /home/{{ item.user }}/.ssh/authorized_keys
@@ -52,7 +52,7 @@
     mode: "0770"
 
 - name: "Create repository folders"
-  no_log: "{{ hide_logs }}"
+  no_log: "{{ borg_server_hide_logs }}"
   loop: "{{ borg_repos }}"
   ansible.builtin.file:
     path: "{{ borg_repo_root }}/{{ item.name }}"

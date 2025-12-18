@@ -6,6 +6,6 @@
 
   tasks:
     - name: "Check if `borg` is available from PATH"  # noqa: no-changed-when
-      register: br_test__borg_version
+      register: borg_server_version
       ansible.builtin.command:
         cmd: "borg --version"
