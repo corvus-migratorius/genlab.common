@@ -19,10 +19,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.template
-```
+see [converge.yml](molecule/default/converge.yml)
 
 License
 -------
