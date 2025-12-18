@@ -35,8 +35,8 @@
   notify: "Sanity check"
   ansible.builtin.apt:
     pkg:
-      - docker-ce={{ du_docker_version_full }}
-      - docker-ce-cli={{ du_docker_version_full }}
+      - docker-ce={{ docker_ubuntu_version_full }}
+      - docker-ce-cli={{ docker_ubuntu_version_full }}
     state: present
     update_cache: true
 
@@ -48,7 +48,7 @@
 
 - name: "Install Python tools for Docker"
   ansible.builtin.pip:
-    name: [ docker ]
+    name: [docker]
     break_system_packages: true
 
 - name: "Configure Docker daemon"
