@@ -42,3 +42,35 @@
           - sshd_conf.stat.uid == 0
           - sshd_conf.stat.gid == 0
           - sshd_conf.stat.mode == '0600'
+
+    - name: Create test user
+      ansible.builtin.user:
+        name: test
+        create_home: true
+        shell: /bin/bash
+
+    - name: Create .ssh directory
+      ansible.builtin.file:
+        path: /home/test/.ssh/
+        state: directory
+        mode: '0700'
+        owner: test
+        group: test
+
+    - name: Generate ssh keys
+      community.crypto.openssh_keypair:
+        path: /home/test/.ssh/id_rsa
+        owner: test
+        group: test
+        mode: '0600'
+      register: sshd_key_result
+
+    - name: Put public key to test user
+      ansible.posix.authorized_key:
+        user: test
+        key: "{{ sshd_key_result.public_key }}"
+        state: present
+
+    - name: Test ssh connection
+      ansible.builtin.command: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /home/test/.ssh/id_rsa test@localhost hostname
+      changed_when: false
