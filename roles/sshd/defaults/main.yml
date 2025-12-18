@@ -1,5 +1,5 @@
 ---
-disable_pam: false
-password_auth: false
-challenge_response_auth: false
-gss_api_auth: false
+sshd_disable_pam: false
+sshd_password_auth: false
+sshd_challenge_response_auth: false
+sshd_gss_api_auth: false

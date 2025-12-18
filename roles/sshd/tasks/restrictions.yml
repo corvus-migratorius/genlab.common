@@ -18,7 +18,7 @@
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^#?UsePAM'
-    line: "UsePAM {{ disable_pam | ternary('no', 'yes') }}"
+    line: "UsePAM {{ sshd_disable_pam | ternary('no', 'yes') }}"
     validate: sshd -f %s -t
 
 - name: "Restrictions | ensure the SSHD config is restricted to the root user"

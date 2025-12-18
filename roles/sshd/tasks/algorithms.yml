@@ -1,4 +1,13 @@
 ---
+# next task requires this directory to exist for sshd -t flag
+- name: Ensure /run/sshd exists
+  ansible.builtin.file:
+    path: /run/sshd
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
 # NOTE: order of preference for openssh-server ed25519 -> rsa
 - name: "Algorithms | enable ed25519 authentication algorithm"
   notify: Restart sshd

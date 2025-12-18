@@ -3,13 +3,13 @@
   notify: Restart sshd
   loop:
     - { regexp: '^#?\s*PubkeyAuthentication\s+', line: 'PubkeyAuthentication yes' }
-    - { regexp: '^#?\s*PasswordAuthentication\s+', line: 'PasswordAuthentication {{ password_auth | ternary("yes", "no") }}' }
+    - { regexp: '^#?\s*PasswordAuthentication\s+', line: 'PasswordAuthentication {{ sshd_password_auth | ternary("yes", "no") }}' }
     - { regexp: '^#?\s*PermitEmptyPasswords\s+', line: 'PermitEmptyPasswords no' }
-    - { regexp: '^#?\s*ChallengeResponseAuthentication\s+', line: 'ChallengeResponseAuthentication {{ challenge_response_auth | ternary("yes", "no") }}' }
-    - { regexp: '^#?\s*GSSAPIAuthentication\s+', line: 'GSSAPIAuthentication {{ gss_api_auth | ternary("yes", "no") }}' }
+    - { regexp: '^#?\s*ChallengeResponseAuthentication\s+', line: 'ChallengeResponseAuthentication {{ sshd_challenge_response_auth | ternary("yes", "no") }}' }
+    - { regexp: '^#?\s*GSSAPIAuthentication\s+', line: 'GSSAPIAuthentication {{ sshd_gss_api_auth | ternary("yes", "no") }}' }
     - {
       regexp: '^#?\s*AuthenticationMethods\s+',
-      line: "{{ 'AuthenticationMethods publickey password' if password_auth else 'AuthenticationMethods publickey' }}"
+      line: "{{ 'AuthenticationMethods publickey password' if sshd_password_auth else 'AuthenticationMethods publickey' }}"
     }
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
@@ -22,10 +22,10 @@
   ansible.builtin.stat:
     path: "/etc/ssh/sshd_config.d/50-cloud-init.conf"
 
-- name: "Authentication | override password authentication by cloud-init to '{{ password_auth | ternary('yes', 'no') }}'"
+- name: "Authentication | override password authentication by cloud-init to '{{ sshd_password_auth | ternary('yes', 'no') }}'"
   when: sshd_cloud_init.stat.exists
   notify: Restart sshd
   ansible.builtin.lineinfile:
     path: "/etc/ssh/sshd_config.d/50-cloud-init.conf"
     regexp: '^#?PasswordAuthentication'
-    line: 'PasswordAuthentication {{ password_auth | ternary("yes", "no") }}'
+    line: 'PasswordAuthentication {{ sshd_password_auth | ternary("yes", "no") }}'

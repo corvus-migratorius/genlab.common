@@ -6,5 +6,6 @@
   any_errors_fatal: true
 
   tasks:
-    - name: blank
+    - name: Blank
       ansible.builtin.command: echo
+      changed_when: false
