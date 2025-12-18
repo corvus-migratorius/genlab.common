@@ -27,7 +27,7 @@ Example Playbook
 
 ```yaml
 roles:
-    - role: docker_ubuntu
+    - role: genlab.common.docker_ubuntu
 ```
 
 License
