@@ -1,0 +1,19 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  vars:
+    metr1c_version: "0.2.0"
+  tasks:
+    - name: "Ensure that metr1c is installed and able to run"
+      ansible.builtin.command:
+        cmd: /opt/metr1c/metr1c -version
+      register: metr1c_cmd1
+      changed_when: false
+
+    - name: "Check metr1c version"
+      ansible.builtin.assert:
+        that: "'{{ metr1c_version }}' in metr1c_cmd1.stdout"
+        success_msg: "metr1c version {{ metr1c_version }} is installed and working"
+        fail_msg: "metr1c version {{ metr1c_version }} is not installed or not working correctly"

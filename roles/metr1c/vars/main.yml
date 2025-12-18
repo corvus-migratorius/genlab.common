@@ -1,0 +1,7 @@
+---
+metr1c_version: "0.2.0"
+metr1c_cluster_uuid: "xxxxxxxx"
+metr1c_cluster_admin: "Администратор"
+metr1c_cluster_pw: "1234"
+metr1c_platform_version: "8.3.24.1467"
+metr1c_port: "1599"

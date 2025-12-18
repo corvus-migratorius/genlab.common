@@ -1,0 +1,43 @@
+---
+- name: Create directory for metr1c
+  ansible.builtin.file:
+    path: "/opt/metr1c"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: "Install requested metr1c version"
+  block:
+    - name: "Check metr1c version"
+      ansible.builtin.command: /opt/metr1c/metr1c -version
+      register: metr1c_ver_check
+      changed_when: false
+
+    - name: "Assert version correctness"
+      ansible.builtin.assert:
+        that: "metr1c_version in metr1c_ver_check.stdout"
+        success_msg: "Expected metr1c version available ({{ metr1c_version }})"
+        fail_msg: "Expected version '{{ metr1c_version }}'; available is '{{ metr1c_ver_check.stdout }}'"
+
+  rescue:
+    - name: "Install metr1c if it is not present"
+      ansible.builtin.get_url:
+        url: "https://github.com/Doumor/metr1c/releases/download/{{ metr1c_version }}/metr1c_amd64_linux"
+        dest: /opt/metr1c/metr1c
+        owner: root
+        group: root
+        mode: "0755"
+
+- name: "Create systemd metr1c service file"
+  ansible.builtin.template:
+    src: "templates/metr1c.service.j2"
+    dest: "/etc/systemd/system/metr1c.service"
+    owner: root
+    group: root
+    mode: "0750"
+  register: metr1c_service
+
+- name: "Start systemd service"
+  when: "metr1c_deploy is true"
+  ansible.builtin.include_tasks: "run_systemd.yml"

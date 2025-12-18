@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: metr1c
+  namespace: genlab
+  author: "Alexander Gorelyshev"
+  company: "Genlab, LLC"
+  description: "Metric collector (Prometheus) for 1C Plaform using 1C RAS/RAC"
+  license: "MIT"
+  min_ansible_version: "2.1"
+
+  platforms:
+    - name: "Ubuntu"
+      versions: ["jammy", "noble"]
+
+  galaxy_tags: []
+
+dependencies: []
