@@ -23,7 +23,7 @@ Example Playbook
 
 ```yaml
 roles:
-    - role: genlab.sshd
+    - role: genlab.common.sshd
 ```
 
 License
