@@ -13,6 +13,7 @@
 - [ipmi_exporter](roles/ipmi_exporter/README.md)
 - [karma](roles/karma/README.md)
 - [loki](roles/loki/README.md)
+- [mkfs](roles/mkfs/README.md)
 - [mount_device](roles/mount_device/README.md)
 - [nginx](roles/nginx/README.md)
 - [node_exporter](roles/node_exporter/README.md)
