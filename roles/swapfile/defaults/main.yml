@@ -1,8 +1,8 @@
 ---
-swap_file_path: /swapfile
-swap_file_size_mb: '512'
-swap_swappiness: '60'
-swap_file_state: present
-swap_file_create_command: "dd if=/dev/zero of={{ swap_file_path }} bs=1M count={{ swap_file_size_mb }}"
+swapfile_path: /swapfile
+swapfile_size_mb: '512'
+swapfile_swappiness: '60'
+swapfile_state: present
+swapfile_create_command: "dd if=/dev/zero of={{ swapfile_path }} bs=1M count={{ swapfile_size_mb }}"
 
-swap_test_mode: false
+swapfile_test_mode: false

@@ -2,17 +2,17 @@
 - name: "Manage swap file entry in fstab"
   ansible.posix.mount:
     name: none
-    src: "{{ swap_file_path }}"
+    src: "{{ swapfile_path }}"
     fstype: swap
     opts: sw
-    state: "{{ swap_file_state }}"
+    state: "{{ swapfile_state }}"
 
 
 - name: "Include disable swap tasks"
-  when: swap_file_state == 'absent'
+  when: swapfile_state == 'absent'
   ansible.builtin.include_tasks: disable.yml
 
 
 - name: "Include enable swap tasks"
-  when: swap_file_state == 'present'
+  when: swapfile_state == 'present'
   ansible.builtin.include_tasks: enable.yml

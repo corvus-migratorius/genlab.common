@@ -11,9 +11,9 @@
         cache_valid_time: 600
 
   roles:
-    - role: genlab.swapfile
-      swap_file_path: /swapfile
-      swap_file_size_mb: 2000
-      swap_swappiness: 30
-      swap_file_state: present
-      swap_test_mode: true
+    - role: genlab.common.swapfile
+      swapfile_path: /swapfile
+      swapfile_size_mb: 2000
+      swapfile_swappiness: 30
+      swapfile_state: present
+      swapfile_test_mode: true
