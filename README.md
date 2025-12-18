@@ -19,6 +19,7 @@
 - [mkfs](roles/mkfs/README.md)
 - [mount_device](roles/mount_device/README.md)
 - [nginx](roles/nginx/README.md)
+- [nginx_docker](roles/nginx_docker/README.md)
 - [node_exporter](roles/node_exporter/README.md)
 - [prometheus](roles/prometheus/README.md)
 - [promtail](roles/promtail/README.md)

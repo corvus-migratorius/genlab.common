@@ -21,10 +21,7 @@ Soft dependency on `genlab.docker_ubuntu` (any means of installing Docker on the
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.nginx_docker
-```
+see [converge.yml](molecule/default/converge.yml)
 
 License
 -------
