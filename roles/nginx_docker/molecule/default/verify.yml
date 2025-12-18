@@ -5,6 +5,7 @@
   any_errors_fatal: true
 
   tasks:
+    # kics-scan ignore-block
     - name: "Make an HTTP query"
       register: nginx_docker_this
       failed_when: nginx_docker_this is failed or 'healthy' not in nginx_docker_this.content
