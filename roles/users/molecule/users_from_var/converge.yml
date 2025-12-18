@@ -3,7 +3,7 @@
   hosts: all
 
   roles:
-    - role: genlab.users
+    - role: genlab.common.users
       manifest_path: "some-none-existent-file"  # the 'users' variable is supposed to take precedence
       common_memory_max: "500M"
       common_swap_max: "2G"
