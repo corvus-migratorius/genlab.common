@@ -6,6 +6,39 @@
   any_errors_fatal: true
 
   tasks:
-    - name: Blank
-      ansible.builtin.command: echo
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Ensure sshd is running
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['ssh.service'].state == 'running'
+
+    - name: Ensure sshd_config syntax is OK
+      ansible.builtin.command: sshd -t -f /etc/ssh/sshd_config
       changed_when: false
+
+    - name: Ensure main parameteres are applied
+      ansible.builtin.shell: |
+        set -o pipefail ;
+        sshd -T | egrep -i '
+          ^protocol 2|
+          ^permitrootlogin no|
+          ^passwordauthentication no|
+          ^pubkeyauthentication yes
+        '
+      args:
+        executable: /bin/bash
+      changed_when: false
+
+    - name: Get sshd_config stats
+      ansible.builtin.stat:
+        path: /etc/ssh/sshd_config
+      register: sshd_conf
+
+    - name: Ensure sshd_config file is secure
+      ansible.builtin.assert:
+        that:
+          - sshd_conf.stat.uid == 0
+          - sshd_conf.stat.gid == 0
+          - sshd_conf.stat.mode == '0600'
