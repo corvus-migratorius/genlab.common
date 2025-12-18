@@ -4,16 +4,16 @@ Requires=network.target
 
 [Service]
 # Cluster UUID, for example 07593cfe-64c2-4656-be5f-61c3226286d5
-Environment=platform1c_admin_cluster={{ cluster_uuid }}
+Environment=platform1c_admin_cluster={{ metr1c_cluster_uuid }}
 
 # Name of cluster admin, e.g. Администратор
-Environment=platform1c_admin_user={{ cluster_admin }}
+Environment=platform1c_admin_user={{ metr1c_cluster_admin }}
 
 # Admin cluster password, e.g. 1234
-Environment=platform1c_admin_pw={{ cluster_pw }}
+Environment=platform1c_admin_pw={{ metr1c_cluster_pw }}
 
 # Version of 1C platform, e.g. 8.3.24.1467
-Environment=platform1c_version={{ platform_version }}
+Environment=platform1c_version={{ metr1c_platform_version }}
 
 # Metr1c port, by default 1599
 Environment=metr1c_port={{ metr1c_port }}

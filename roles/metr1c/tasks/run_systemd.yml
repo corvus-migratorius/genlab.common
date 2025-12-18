@@ -1,6 +1,6 @@
 - name: "Set fact for daemon_reload"
   ansible.builtin.set_fact:
-    daemon_reload_required: "{{ metr1c_service.changed | bool }}"
+    metr1c_daemon_reload_required: "{{ metr1c_service.changed | bool }}"
 
 - name: "Make sure that the metr1c service is started"
   become: true
@@ -8,4 +8,4 @@
     name: "metr1c.service"
     state: started
     enabled: true
-    daemon_reload: "{{ daemon_reload_required }}"
+    daemon_reload: "{{ metr1c_daemon_reload_required }}"

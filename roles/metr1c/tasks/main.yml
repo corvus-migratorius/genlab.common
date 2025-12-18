@@ -39,5 +39,5 @@
   register: metr1c_service
 
 - name: "Start systemd service"
-  when: "deploy is true"
+  when: "metr1c_deploy is true"
   ansible.builtin.include_tasks: "run_systemd.yml"

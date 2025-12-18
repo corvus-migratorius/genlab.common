@@ -2,11 +2,11 @@
 - name: Converge
   hosts: all
   roles:
-    - role: genlab.metr1c
-      deploy: false
+    - role: genlab.common.metr1c
+      metr1c_deploy: false
       metr1c_version: "0.2.0"
-      cluster_uuid: "123-123-1234"
-      cluster_admin: "admin"
-      cluster_pw: "testpw"
-      platform_version: "8.3.24.1464"
+      metr1c_cluster_uuid: "123-123-1234"
+      metr1c_cluster_admin: "admin"
+      metr1c_cluster_pw: "testpw"
+      metr1c_platform_version: "8.3.24.1464"
       metr1c_port: "1599"
