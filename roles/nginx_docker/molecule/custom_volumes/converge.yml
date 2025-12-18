@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: genlab.common.docker_ubuntu
+
+    - role: genlab.common.nginx_docker
+      site_config: "nginx/test.conf"
+      nginx_docker_custom_volumes:
+        - {from: /mnt, to: /mnt, mode: ro}

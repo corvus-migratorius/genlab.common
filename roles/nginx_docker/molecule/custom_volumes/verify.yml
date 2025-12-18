@@ -1,0 +1,23 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  pre_tasks:
+    - name: "Copy test file"
+      ansible.builtin.copy:
+        src: ./test.txt
+        dest: /mnt/test.txt
+        owner: root
+        group: root
+        mode: "0660"
+
+  tasks:
+    - name: "Verify custom directory was mounted inside container successfully"
+      register: nginx_docker_this
+      failed_when: nginx_docker_this.stdout != 'this is a test'
+      changed_when: false
+      community.docker.docker_container_exec:
+        container: nginx
+        command: cat /mnt/test.txt

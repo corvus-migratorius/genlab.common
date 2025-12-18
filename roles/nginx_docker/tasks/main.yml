@@ -1,0 +1,39 @@
+---
+- name: "Create project directory"
+  ansible.builtin.file:
+    state: directory
+    path: "{{ nginx_docker_project_path }}/conf.d/"
+    owner: root
+    group: root
+    mode: "0660"
+
+- name: "Template project stack"
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ nginx_docker_project_path }}/docker-compose.yml"
+    owner: root
+    group: root
+    mode: "0660"
+
+- name: "Push Nginx configuration file"
+  ansible.builtin.copy:
+    src: "{{ site_config }}"
+    dest: "{{ nginx_docker_project_path }}/conf.d/{{ site_config | basename }}"
+    owner: root
+    group: www-data
+    mode: "0660"
+
+- name: "Build and start the Compose stack"
+  community.docker.docker_compose_v2:
+    tls_hostname: localhost
+    project_src: "{{ nginx_docker_project_path }}"
+    files:
+      - "docker-compose.yml"
+    build: always
+    state: present
+
+- name: "Reload Nginx configuration"
+  changed_when: false
+  community.docker.docker_container_exec:
+    container: nginx
+    command: "nginx -s reload"
