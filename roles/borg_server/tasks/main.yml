@@ -1,0 +1,62 @@
+---
+- name: "Read secret variables"
+  ansible.builtin.include_vars:
+    file: "{{ borg_secrets_path }}"  # `borg_secrets`
+
+- name: "Install packages"
+  ansible.builtin.package:
+    name:
+      - borgbackup
+      - openssh-server
+    state: present
+    update_cache: true
+
+- name: "Create a group for borgs"
+  ansible.builtin.group:
+    name: borgs
+    state: present
+
+- name: "Create Borg users"
+  no_log: "{{ hide_logs }}"
+  loop: "{{ borg_repos }}"
+  ansible.builtin.user:
+    name: "{{ item.user }}"
+    comment: "Borg agent"
+    state: "present"
+    create_home: true
+    shell: "/bin/bash"
+    generate_ssh_key: true
+    groups: [ borgs ]
+    append: true
+
+- name: "Configure SSH authorized keys for Borg users"
+  no_log: "{{ hide_logs }}"
+  loop: "{{ borg_repos }}"
+  ansible.builtin.lineinfile:
+    path: /home/{{ item.user }}/.ssh/authorized_keys
+    create: true
+    owner: "{{ item.user }}"
+    group: "{{ item.user }}"
+    mode: "0600"
+    regexp: '^restrict,command="borg serve --append-only --restrict-to-repository'
+    line: >
+      restrict,command="borg serve --append-only --restrict-to-repository {{ borg_repo_root }}/{{ item.name }}"
+      {{ item.ssh_key }}
+
+- name: "Create a root folder for backups"
+  ansible.builtin.file:
+    path: "{{ borg_repo_root }}"
+    state: "directory"
+    owner: "root"
+    group: "borgs"
+    mode: "0770"
+
+- name: "Create repository folders"
+  no_log: "{{ hide_logs }}"
+  loop: "{{ borg_repos }}"
+  ansible.builtin.file:
+    path: "{{ borg_repo_root }}/{{ item.name }}"
+    state: "directory"
+    owner: "{{ item.user }}"
+    group: "{{ item.user }}"
+    mode: "0770"

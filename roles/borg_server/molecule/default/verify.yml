@@ -1,0 +1,11 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: "Check if `borg` is available from PATH"  # noqa: no-changed-when
+      register: br_test__borg_version
+      ansible.builtin.command:
+        cmd: "borg --version"
