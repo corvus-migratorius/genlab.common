@@ -1,13 +1,8 @@
-genlab.karma
+karma
 =========
-This is the ansible role to install and configure Karma - alert dashboard for Prometheus Alertmanager (https://github.com/prymitive/karma)
 
-------------
-⚠️ Do not forget to update:
+Install and configure Karma - an alert dashboard for Prometheus Alertmanager (https://github.com/prymitive/karma)
 
-- `meta/main.yml`
-- Conda/Mamba manifests
-- this README =) including *the name at the top* and *maintainers*.
 
 Requirements
 ------------
@@ -33,14 +28,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.karma
-      karma_version: "0.121"
-      config_source_dir: "karma/"
-      karma_dir: "/etc/karma"
-      karma_config_dir: "/etc/karma/config"
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

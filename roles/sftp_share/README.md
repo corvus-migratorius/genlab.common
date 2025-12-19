@@ -1,7 +1,7 @@
-SFTP Share Ansible Role
+sftp_share
 =========
 
-Creates a user account and directories for secured SFTP data exchange (one user = one share).
+Creates a user account and directories for a secured SFTP data exchange (one user = one share).
 
 The role creates a dedicated SSH config under `/etc/ssh/sshd_config.d/`, configuring:
 
@@ -60,7 +60,7 @@ None
 Example Playbook
 ----------------
 
-See `molecule/default/converge.yml` for an example role invocation.
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

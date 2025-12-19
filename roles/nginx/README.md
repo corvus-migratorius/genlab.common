@@ -1,5 +1,5 @@
-ansible-nginx
-=========
+nginx
+=====
 
 Deploy NGINX with a minimal configuration.
 
@@ -21,10 +21,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.nginx
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

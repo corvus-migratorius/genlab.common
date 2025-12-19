@@ -1,5 +1,5 @@
-ansible-mount-device
-=========
+mount_device
+============
 
 Mount the given block device.
 

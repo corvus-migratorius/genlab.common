@@ -1,5 +1,5 @@
-Role Name
-=========
+node_exporter
+=============
 
 Deploy `prometheus/node_exporter` binary as a systemd unit.
 

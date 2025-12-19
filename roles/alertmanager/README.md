@@ -1,4 +1,4 @@
-genlab.alertmanager
+alertmanager
 =========
 
 The [Alertmanager](https://github.com/prometheus/alertmanager) handles alerts sent by client applications such as the Prometheus server. It takes care of deduplicating, grouping, and routing them to the correct receiver integration such as email, PagerDuty, or OpsGenie. It also takes care of silencing and inhibition of alerts.
@@ -34,13 +34,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.template
-      config_source_dir: alertmanager
-      alertmanager_version: 0.28.1
-
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------
