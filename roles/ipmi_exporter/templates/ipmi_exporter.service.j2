@@ -7,7 +7,7 @@ StartLimitBurst=5
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/ipmi_exporter \
+ExecStart=/usr/sbin/ipmi_exporter \
     --web.listen-address={{ ipmi_exporter_web_listen_address }} \
     --log.level={{ ipmi_exporter_log_level }} \
     --log.format={{ ipmi_exporter_log_format }} \
