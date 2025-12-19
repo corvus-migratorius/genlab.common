@@ -1,0 +1,314 @@
+---
+# tasks file for platform1c
+
+# example platform download with shell
+# export ONEC_USERNAME=user
+# export ONEC_PASSWORD=password
+# oneget get --path ./tmp/dist/ platform@8.3.18.1334
+
+# current 1C version (by systemd service):
+# systemctl status | grep srv1cv8-8.3 | cut -d "-" -f 2 | cut -d "@" -f 1 | sed '/^$/d'
+# or just look at /opt/1cv8/...
+- name: "Verify that required variables are defined"
+  ansible.builtin.assert:
+    that:
+      - required_var is defined
+      - required_var | length > 0
+      - required_var != None
+    fail_msg: "{{ required_var }} needs to be set for the role to work"
+    success_msg: "Required variable {{ required_var }} is defined"
+  loop_control:
+    loop_var: required_var
+  with_items:
+    - platform1c_version
+    - platform1c_config
+    - platform1c_admin_pw_path
+    - platform1c_oneget_pw_path
+    - platform1c_download_method
+
+- name: "Verify that platform1c_download_method are defined correct"
+  ansible.builtin.assert:
+    that:
+      - platform1c_download_method == 'manual' or (platform1c_download_method == 'oneget')
+    fail_msg: "{{ platform1c_download_method }} needs to be set for the role to work"
+    success_msg: "Method {{ platform1c_download_method }} is defined"
+
+- name: "Install unzip, apache2, ufw"
+  ansible.builtin.apt:
+    name:
+      - unzip
+      - apache2
+      - ufw
+    state: present
+    update_cache: true
+
+- name: "Deny access to 1c platform ports with ufw"
+  community.general.ufw:
+    rule: deny
+    port: "{{ item.port }}"
+  loop:
+    - { port: "1545" } # 1c ras
+    - { port: "1540" } # 1c server agent
+    - { port: "1541" } # 1c server manager
+
+- name: "Deny access to 1c platform ports with ufw (1c workers)"
+  community.general.ufw:
+    rule: deny
+    port: 1560:1591 # 1c server workers
+    proto: tcp
+
+- name: "Enable ufw"
+  community.general.ufw:
+    state: enabled
+
+- name: "Read variables from the configuration file"
+  ansible.builtin.include_vars:
+    file: "{{ platform1c_config }}"
+
+- name: "Populate service facts"
+  ansible.builtin.service_facts:
+
+- name: "Parse active platform 1C version"
+  ansible.builtin.set_fact:
+    platform1c_version_active: "{{ ansible_facts.services
+    | dict2items
+    | selectattr('value.name', 'search', 'srv1cv8-')
+    | map(attribute='value.name')
+    | regex_search('[0-9].[0-9].[0-9]{2}.[0-9]{4}') }}" # using regexp to parse 8.3.12.1234
+  failed_when: false # Handled follows after
+
+- name: "Get platform1c_versions_installed"
+  ansible.builtin.find:
+    paths: "/opt/1cv8/x86_64/"
+    recurse: true
+    file_type: directory
+  register: platform1c_versions_installed
+
+- name: "Check the requested 1C version"
+  block:
+    - name: "Assert version correctness"
+      ansible.builtin.assert:
+        that: "platform1c_version in platform1c_version_active"
+        success_msg: "Expected 1C version available ({{ platform1c_version_active }})"
+        fail_msg: "Expected version '{{ platform1c_version }}'; available is '{{ platform1c_version_active }}'"
+
+  rescue:
+    - name: "Using manual method"
+      when: platform1c_download_method == 'manual'
+      block:
+        - name: "Create tmp archive dir"
+          ansible.builtin.file:
+            path: /root/platform83/{{ platform1c_version }}
+            state: directory
+            owner: root
+            group: root
+            recurse: true
+            mode: '0755'
+
+        - name: "Copy platform file from controller"
+          ansible.builtin.copy:
+            src: "{{ platform1c_platformfile }}"
+            dest: /root/platform83/{{ platform1c_version }}/server64_with_all_clients_{{ platform1c_version | replace('.', '_') }}.zip
+            owner: "root"
+            mode: '0755'
+
+    - name: "Using manual oneget"
+      when: platform1c_download_method == 'oneget'
+      block:
+        - name: "Get oneget credentials"
+          ansible.builtin.include_vars:
+            file: "{{ platform1c_oneget_pw_path }}"
+
+        - name: "Download 1C platform (version - {{ platform1c_version }})"
+          environment:
+            PATH: "/opt/oneget:{{ ansible_env.PATH }}"
+            ONEC_USERNAME: "{{ platform1c_oneget_user }}"
+            ONEC_PASSWORD: "{{ platform1c_oneget_pw }}"
+          ansible.builtin.command:
+            cmd: "oneget get --path /root/ --filter platform=server64_with_all_clients platform:linux.full.x64@{{ platform1c_version }}"
+            creates: "/root/platform83/{{ platform1c_version }}/server64_with_all_clients_{{ platform1c_version | replace('.', '_') }}.zip"
+
+    - name: "Create tmp install dir"
+      ansible.builtin.file:
+        path: /root/tmp1c
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: "Unarchive distro"
+      ansible.builtin.unarchive:
+        src: /root/platform83/{{ platform1c_version }}/server64_with_all_clients_{{ platform1c_version | replace('.', '_') }}.zip
+        dest: /root/tmp1c
+        remote_src: true
+
+    - name: "Install 1C platform"
+      ansible.builtin.command:
+        cmd: "/root/tmp1c/setup-full-{{ platform1c_version }}-x86_64.run --mode unattended --enable-components ws,server,ru"
+        creates: "/opt/1cv8/x86_64/{{ platform1c_version }}"
+        # https://its.1c.ru/db/v8324doc#bookmark:adm:TI000001075
+
+    - name: "Install 1C clients"
+      ansible.builtin.command:
+        cmd: "/root/tmp1c/all-clients-distr-{{ platform1c_version }}-x86_64.run --mode unattended"
+        creates: "/opt/1cv8/x86_64/{{ platform1c_version }}/distr/linux64tc.zip"
+
+    - name: "Stop and disable current 1C platform"
+      ansible.builtin.systemd_service:
+        name: "srv1cv8-{{ platform1c_version_active }}@default.service"
+        state: stopped
+        enabled: false
+      when: platform1c_version_active is defined
+      failed_when: false # if exists. The service name contains the version, it is not possible to get the state of the service in a safe way.
+
+    - name: "Stop and disable current 1C rac"
+      ansible.builtin.systemd_service:
+        name: "ras-{{ platform1c_version_active }}"
+        state: stopped
+        enabled: false
+      when: platform1c_version_active is defined
+      failed_when: false # if exists. The service name contains the version, it is not possible to get the state of the service in a safe way.
+
+    - name: "Copy new 1C platform service"
+      ansible.builtin.copy:
+        src: /opt/1cv8/x86_64/{{ platform1c_version }}/srv1cv8-{{ platform1c_version }}@.service
+        dest: /etc/systemd/system/srv1cv8-{{ platform1c_version }}@.service
+        owner: root
+        group: root
+        mode: '0755'
+        remote_src: true
+
+    - name: "Copy new 1C ras service"
+      ansible.builtin.copy:
+        src: /opt/1cv8/x86_64/{{ platform1c_version }}/ras-{{ platform1c_version }}.service
+        dest: /etc/systemd/system/ras-{{ platform1c_version }}.service
+        owner: root
+        group: root
+        mode: '0755'
+        remote_src: true
+
+    - name: "Enable ans start new 1С ras service"
+      ansible.builtin.systemd_service:
+        name: "ras-{{ platform1c_version }}"
+        state: started
+        enabled: true
+
+    - name: "Enable and start new 1C platform"
+      ansible.builtin.systemd_service:
+        name: "srv1cv8-{{ platform1c_version }}@default.service"
+        state: started
+        enabled: true
+
+    - name: "Remove old installation"
+      ansible.builtin.command:
+        cmd: "{{ item }}/unistaller-full"
+        removes: "{{ item }}"
+      loop: "{{ platform1c_versions_installed.files }}"
+      when: "platform1c_versions_installed.files | length > 0"
+      poll: 0 # Just make it async
+      failed_when: false # if exists
+
+    - name: "Clear installed unarchived 1C platform"
+      ansible.builtin.file:
+        path: "/root/tmp1c/"
+        state: absent
+      poll: 0 # Just make it async
+
+    - name: "Clear installed 1C platform archive"
+      ansible.builtin.file:
+        path: "/root/platform83/"
+        state: absent
+      poll: 0 # Just make it async
+
+    - name: "Delete old 1C platform service"
+      ansible.builtin.file:
+        path: "/etc/systemd/system/srv1cv8-{{ platform1c_version_active }}@.service"
+        state: absent
+      when: platform1c_version_active is defined
+      poll: 0 # Just make it async
+
+    - name: "Delete old 1C ras service"
+      ansible.builtin.file:
+        path: "/etc/systemd/system/ras-{{ platform1c_version_active }}.service"
+        state: absent
+      when: platform1c_version_active is defined
+      poll: 0 # Just make it async
+
+- name: "Create 1C cluster user (if first install)"
+  when: "platform1c_versions_installed.files | length == 0"
+  block:
+    - name: "Get 1С server credentials"
+      ansible.builtin.include_vars:
+        file: "{{ platform1c_admin_pw_path }}"
+
+    - name: "Start 1c ras service"
+      ansible.builtin.systemd_service:
+        name: "ras-{{ platform1c_version }}"
+        state: started
+        enabled: true
+
+    - name: "Create 1c server agent admin user"
+      ansible.builtin.command:
+        cmd: "/opt/1cv8/x86_64/{{ platform1c_version }}/rac agent admin register --name={{ platform1c_admin_user }} --pwd={{ platform1c_admin_pw }} --auth=pwd"
+      changed_when: false
+
+    - name: "Get 1c cluster info"
+      ansible.builtin.shell:
+        cmd: "set -o pipefail && cat /home/usr1cv8/.1cv8/1C/1cv8/1cv8wsrv.lst"
+        executable: /bin/bash
+      changed_when: false
+      register: platform1c_1cv8wsrv
+
+    - name: "Parse 1c cluster id"
+      ansible.builtin.set_fact:
+        platform1c_cluster: "{{ platform1c_1cv8wsrv | regex_search('(?<={)[0-z]{8}-[0-z]{4}-[0-z]{4}-[0-z]{4}-[0-z]{12}(?=,)') }}"
+
+    - name: "Create 1c server cluster admin user"
+      ansible.builtin.command:
+        cmd: "/opt/1cv8/x86_64/{{ platform1c_version }}/rac cluster admin register \
+        --cluster={{ platform1c_cluster }} --pwd={{ platform1c_admin_pw }} \
+        --name={{ platform1c_admin_user }} --agent-user={{ platform1c_admin_user }} \
+        --agent-pwd={{ platform1c_admin_pw }} --auth=pwd"
+      changed_when: false
+
+    # - name: "Stop 1c ras service"
+    #   ansible.builtin.systemd_service:
+    #     name: "ras-{{ platform1c_version }}"
+    #     state: stopped
+    #     enabled: false
+
+- name: "Create/update apache2 config"
+  ansible.builtin.template:
+    src: apache2.conf.j2
+    dest: /etc/apache2/apache2.conf
+    owner: root
+    group: root
+    mode: '0755'
+  register: platform1c_apache2config
+
+- name: "Create 1C publications dirs"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: root
+    group: root
+    state: directory
+    mode: '0755'
+  loop: "{{ platform1c_pubs }}"
+  register: platform1c_pubsdirs
+
+- name: "Create/update 1C publications configs"
+  ansible.builtin.template:
+    src: default.vrd.j2
+    dest: "{{ item.path }}/default.vrd"
+    owner: root
+    group: root
+    mode: '0755'
+  loop: "{{ platform1c_pubs }}"
+  register: platform1c_pubsconfigs
+
+- name: "Restart apache"
+  ansible.builtin.systemd_service:
+    name: apache2
+    state: restarted
+    daemon_reload: true
+  when: platform1c_pubsdirs.changed or platform1c_pubsdirs.changed or platform1c_pubsconfigs.changed
