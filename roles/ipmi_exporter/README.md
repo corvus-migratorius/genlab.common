@@ -29,16 +29,16 @@ The following collectors are available and can be enabled or disabled in the con
 - sm-lan-mode: collects the "LAN mode" setting in the current BMC config. If it fails, the LAN mode metric (see below) will not be available
 
 ```yaml
-ipmi_exp_version: 1.10.1
-ipmi_exp_dir: "/etc/exporters"
-ipmi_exp_config_dir: "/etc/exporters/config"
-ipmi_exp_args: "" # --[no-]native-ipmi Use native IPMI implementation instead of FreeIPMI (EXPERIMENTAL)
+ipmi_exporter_version: 1.10.1
+ipmi_exporter_dir: "/etc/exporters"
+ipmi_exporter_config_dir: "/etc/exporters/config"
+ipmi_exporter_args: "" # --[no-]native-ipmi Use native IPMI implementation instead of FreeIPMI (EXPERIMENTAL)
                   # --[no-]web.systemd-socket Use systemd socket activation listeners instead of port listeners (Linux only).
-ipmi_exp_log_level: "info" # Only log messages with the given severity or above. One of: [debug, info, warn, error]
-ipmi_exp_log_format: "logfmt" # Output format of log messages. One of: [logfmt, json]
-ipmi_exp_web_listen_address: "localhost:9290" # Addresses on which to expose metrics and web interface. Repeatable for multiple addresses. Examples: `:9100` or `[::1]:9100` for http, vsock://:9100` for vsock
-ipmi_exp_source_dir: ipmi_local.conf # Path to configuration file. See: https://github.com/prometheus-community/ipmi_exporter/blob/master/docs/configuration.md
-ipmi_exp_web_source_dir: web_conf.yaml # Path to configuration file that can enable TLS or authentication. See: https://github.com/prometheus/exporter-toolkit/blob/master/docs/web-configuration.md
+ipmi_exporter_log_level: "info" # Only log messages with the given severity or above. One of: [debug, info, warn, error]
+ipmi_exporter_log_format: "logfmt" # Output format of log messages. One of: [logfmt, json]
+ipmi_exporter_web_listen_address: "localhost:9290" # Addresses on which to expose metrics and web interface. Repeatable for multiple addresses. Examples: `:9100` or `[::1]:9100` for http, vsock://:9100` for vsock
+ipmi_exporter_source_dir: ipmi_local.conf # Path to configuration file. See: https://github.com/prometheus-community/ipmi_exporter/blob/master/docs/configuration.md
+ipmi_exporter_web_source_dir: web_conf.yaml # Path to configuration file that can enable TLS or authentication. See: https://github.com/prometheus/exporter-toolkit/blob/master/docs/web-configuration.md
 ```
 
 Dependencies
