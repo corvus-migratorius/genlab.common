@@ -5,6 +5,8 @@
   gather_facts: false
   any_errors_fatal: true
   tasks:
-    - name: Blank
-      ansible.builtin.command: echo
-      changed_when: false
+    - name: Check that samba-server container is running
+      community.docker.docker_container_info:
+        name: samba-server
+      register: samba_info
+      failed_when: samba_info.container.State.Status != "running"
