@@ -8,5 +8,5 @@
     - name: Check that samba-server container is running
       community.docker.docker_container_info:
         name: samba-server
-      register: samba_info
-      failed_when: samba_info.container.State.Status != "running"
+      register: samba_crazymax_info
+      failed_when: samba_crazymax_info.container.State.Status != "running"
