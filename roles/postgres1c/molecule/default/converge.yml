@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: genlab.common.postgres1c
+      postgres1c_version: 15
+      postgres1c_postgres_pw_path: "secrets/postgresql.yaml"
+      postgres1c_backup_timer: "Sat *-*-* 02:00:00"
+      postgres1c_backup_compression: "5"
+      # backup enabled by default at /var/backups/postgres1c/backup_<db_name>.dump

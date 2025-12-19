@@ -1,0 +1,58 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: "Include default role vars"
+      ansible.builtin.include_vars:
+        dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
+        extensions: [ 'yml' ]
+
+    - name: "Get 'postgres' user password"
+      tags: [postgres1c]
+      ansible.builtin.include_vars:
+        file: "secrets/postgresql.yaml"
+
+    - name: "Check that PostgreSQL server responds to the 'postgres' user credentials"
+      register: postgres1c__verify_db_version
+      community.postgresql.postgresql_info:
+        login_host: localhost
+        login_user: postgres
+        login_password: "{{ postgres1c_postgres_pw }}"
+        filter: "version"
+
+    - name: "Verify that correct PostgreSQL version is installed"
+      ansible.builtin.assert:
+        that: postgres1c__verify_db_version.version.major == postgres1c_major_ver
+        success_msg: >
+          Detected expected PostgreSQL version
+          '{{ postgres1c__verify_db_version.version.major }}'
+          ({{ postgres1c__verify_db_version.version }})"
+        fail_msg: >
+          Expected PostgreSQL version '{{ postgres1c_major_ver }}';
+          Actual '{{ postgres1c__verify_db_version.version.major }}'
+          ({{ postgres1c__verify_db_version.version.major }})"
+
+    - name: Start service postgrespro-1c (i.e. do nothing and throw fail if it start)
+      ansible.builtin.service:
+        name: "postgrespro-1c-{{ postgres1c_version }}"
+        state: started
+      register: start_postgrespro1c
+      failed_when: start_postgrespro1c.changed
+
+    - name: Create a new database with name "test"
+      tags: [postgres1c]
+      become: true
+      become_user: postgres
+      community.postgresql.postgresql_db:
+        name: test
+        comment: "test-db"
+        login_unix_socket: "/tmp"
+
+    - name: Test backup without cron
+      tags: [postgres1c]
+      become: true
+      become_user: postgres
+      ansible.builtin.command: /opt/postgres1c_backup/backup.sh
+      args:
+        creates: /var/backups/postgres1c/backup_test.tar

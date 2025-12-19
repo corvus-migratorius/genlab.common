@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  role_name: postgres1c
+  namespace: genlab
+  author: Danila Danilkin
+  description: Install PostgreSQL (1C version) as a system service
+  platforms:
+    - name: "Ubuntu"
+      versions: [ "jammy" ]
+  company: Genlab, LLC
+  license: BSD
+  min_ansible_version: "2.1"
+  galaxy_tags: []
+dependencies: []
