@@ -1,0 +1,10 @@
+---
+
+- name: "Configure | push Samba configuration file template"
+  tags: [samba-srv, samba-srv-configure]
+  ansible.builtin.template:
+    src: config.yml.j2
+    dest: "{{ smb_compose_path }}/data/config.yml"
+    owner: root
+    group: root
+    mode: "0600"

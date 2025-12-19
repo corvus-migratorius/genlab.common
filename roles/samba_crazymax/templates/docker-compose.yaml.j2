@@ -1,0 +1,16 @@
+version: "3.5"
+
+services:
+  samba:
+    image: crazymax/samba:{{ smb_image_version }}
+    container_name: samba-server
+    network_mode: host
+    volumes:
+      - "./data:/data"
+{% for share in samba.shares %}
+      - "{{ smb_root_path }}/{{ share.name }}:/samba/{{ share.name }}"
+{% endfor %}
+    environment:
+      - "TZ={{ smb_tz }}"
+      - "SAMBA_LOG_LEVEL=2"
+    restart: unless-stopped
