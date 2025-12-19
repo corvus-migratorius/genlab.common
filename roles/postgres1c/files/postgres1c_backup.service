@@ -1,0 +1,9 @@
+[Unit]
+Description=Backup 1C script
+Documentation=https://github.com/corvus-migratorius/genlab-ansible
+
+[Service]
+User=postgres
+Group=postgres
+Type=oneshot
+ExecStart=/bin/bash /opt/postgres1c_backup/backup.sh

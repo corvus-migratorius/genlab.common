@@ -1,0 +1,12 @@
+[Unit]
+Description=Run backup 1C script.
+Documentation=https://github.com/corvus-migratorius/genlab-ansible
+
+[Timer]
+Unit=postgres1c_backup.service
+OnCalendar={{ postgres1c_backup_timer }}
+Persistent=true
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

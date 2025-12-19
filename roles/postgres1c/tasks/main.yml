@@ -1,0 +1,88 @@
+---
+- name: "Ensure ACL is installed"
+  tags: [postgres1c]
+  ansible.builtin.apt:
+    name: acl
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Install PostgreSQL distribution for 1C"
+  tags: [postgres1c]
+  block:
+    - name: "Сheck if already installed"
+      tags: [postgres1c]
+      check_mode: true
+      ansible.builtin.package:
+        name: "postgrespro-1c-{{ postgres1c_version }}-contrib"
+        state: present
+
+  rescue:
+    - name: "Download the offical postgrespro1c installation script"
+      tags: [postgres1c]
+      ansible.builtin.get_url:
+        url: "https://repo.postgrespro.ru/1c/1c-{{ postgres1c_version }}/keys/pgpro-repo-add.sh"
+        dest: "/root/pgpro-repo-add.sh"
+        mode: '0755'
+
+    - name: "Add repos using the installation script"
+      tags: [postgres1c]
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "/root/pgpro-repo-add.sh"
+
+    - name: "Install the 'postgrespro1c' package (and force apt update)"
+      tags: [postgres1c]
+      ansible.builtin.apt:
+        name: "postgrespro-1c-{{ postgres1c_version }}-contrib"
+        state: present
+        update_cache: true # we just added new repo, so we need to apt update
+
+    - name: "Ensure the 'ru_RU.UTF-8' locale exists"
+      tags: [postgres1c]
+      community.general.locale_gen:
+        name: ru_RU.UTF-8
+        state: present
+
+    - name: "Run initdb"
+      tags: [postgres1c]
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "/opt/pgpro/1c-{{ postgres1c_version }}/bin/pg-setup initdb --locale ru_RU.UTF-8"
+
+    - name: "Enable postgrespro1c service"
+      tags: [postgres1c]
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "/opt/pgpro/1c-{{ postgres1c_version }}/bin/pg-setup service enable"
+
+    - name: "Start postgrespro1c service"
+      tags: [postgres1c]
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "/opt/pgpro/1c-{{ postgres1c_version }}/bin/pg-setup service start"
+
+- name: "Install psycopg2 (to connect to postgres)"
+  tags: [postgres1c]
+  ansible.builtin.package:
+    name: "python3-psycopg2"
+    state: present
+
+- name: "Get 'postgres' user password"
+  tags: [postgres1c]
+  ansible.builtin.include_vars:
+    file: "{{ postgres1c_postgres_pw_path }}"
+
+- name: "Set password for user 'postgres' via the Unix socket"
+  tags: [postgres1c]
+  become: true
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    db: "postgres"
+    name: "postgres"
+    password: "{{ postgres1c_postgres_pw }}"
+    login_unix_socket: "/tmp"
+
+- name: "Create local postgres1c backup with systemd-timer"
+  tags: [postgres1c, postgres1c-backup]
+  ansible.builtin.include_tasks: backup.yaml
