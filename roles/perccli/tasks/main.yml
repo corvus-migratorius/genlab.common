@@ -1,0 +1,51 @@
+---
+- name: "Check prior perccli installation"
+  block:
+    - name: "Test perccli output"
+      register: perccli_version_get
+      changed_when: false
+      failed_when: '"PercCli SAS Customization Utility" not in perccli_version_get.stdout | trim'
+      ansible.builtin.command:
+        cmd: "perccli help | grep Ver."
+
+    - name: "Assert perccli version correctness"
+      ansible.builtin.assert:
+        that: "perccli_version in perccli_version_get.stdout"
+        success_msg: "Expected perccli version is available: '{{ perccli_version }}'"
+        fail_msg: "Expected version '{{ perccli_version }}'; version string is '{{ perccli_version_get.stdout | trim }}'"
+
+
+  rescue:
+    - name: "Download and unarchive a perccli tarball"
+      ansible.builtin.unarchive:
+        src: "{{ perccli_url }}"
+        remote_src: true
+        dest: "/tmp"
+        group: root
+
+    - name: "Install perccli using dpkg"
+      changed_when: false
+      ansible.builtin.command:
+        cmd: dpkg -i /tmp/{{ perccli_deb_name }}
+
+    - name: "Set perccli executable permissions"
+      ansible.builtin.file:
+        path: /opt/MegaRAID/perccli/perccli64
+        owner: root
+        group: root
+        mode: "0770"
+
+    - name: "Link perccli to /usr/sbin"
+      ansible.builtin.file:
+        state: link
+        src: /opt/MegaRAID/perccli/perccli64
+        dest: /usr/sbin/perccli
+
+    # - name: "Install perccli"
+    #   changed_when: false
+    #   ansible.builtin.command:
+    #     cmd: >-
+    #       install /tmp/PERCCLI_{{ perccli_versions }}_Linux/perccli64 /usr/sbin/perccli
+    #       -o root
+    #       -g root
+    #       -m 0770

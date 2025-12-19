@@ -1,0 +1,6 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: genlab.common.perccli
+      perccli_versionsion: "7.2616.0"
