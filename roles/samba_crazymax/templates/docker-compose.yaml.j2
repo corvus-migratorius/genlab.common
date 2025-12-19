@@ -6,7 +6,7 @@ services:
     volumes:
       - "./data:/data"
 {% for share in samba.shares %}
-      - "{{ smb_root_path }}/{{ share.name }}:/samba/{{ share.name }}"
+      - "{{ samba_crazymax_root_path }}/{{ share.name }}:/samba/{{ share.name }}"
 {% endfor %}
     environment:
       - "TZ={{ smb_tz }}"

@@ -1,23 +1,23 @@
 ---
 
 - name: "Prepare | read Samba variables from the configuration file"
-  tags: [ samba-srv, samba-srv-prepare ]
+  tags: [samba-srv, samba-srv-prepare]
   ansible.builtin.include_vars:
     file: "{{ config }}"
 
 - name: "Prepare | read Samba variables from the secrets file"
-  tags: [ samba-srv, samba-srv-prepare ]
+  tags: [samba-srv, samba-srv-prepare]
   ansible.builtin.include_vars:
     file: "{{ secrets }}"
 
 - name: "Prepare | read Wireguard variables from its secrets file"
-  tags: [ samba-srv, samba-srv-prepare ]
+  tags: [samba-srv, samba-srv-prepare]
   ansible.builtin.include_vars:
     file: "{{ secrets_wg }}"
 
 - name: "Prepare | build variables based on the loaded settings"
-  tags: [ samba-srv, samba-srv-prepare ]
+  tags: [samba-srv, samba-srv-prepare]
   ansible.builtin.set_fact:
-    smb_subnet: "{{ network.allowed_ip | regex_replace('.\\d/32', '.0/24') }}"  ## turn the server IP into a subnet mask
-    smb_primary_user: "{{ (samba.users | selectattr('primary', 'equalto', true))[0].name }}"
-    smb_root_path: "{{ path_storage }}/samba-shares"
+    samba_crazymax_subnet: "{{ network.allowed_ip | regex_replace('.\\d/32', '.0/24') }}"  ## turn the server IP into a subnet mask
+    samba_crazymax_primary_user: "{{ (samba.users | selectattr('primary', 'equalto', true))[0].name }}"
+    samba_crazymax_root_path: "{{ path_storage }}/samba-shares"

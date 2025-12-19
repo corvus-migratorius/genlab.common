@@ -3,7 +3,7 @@
   hosts: all
   roles:
     - role: genlab.common.docker_ubuntu
-    
+
     - role: genlab.common.samba_crazymax
       config: files/config.yml
       secrets: files/secrets.yml

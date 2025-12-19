@@ -8,9 +8,9 @@ auth:
 {% endfor %}
 
 global:
-  - "force user = {{ smb_primary_user }}"
-  - "force group = {{ smb_primary_user }}"
-  - "hosts allow = {{ smb_subnet }}"
+  - "force user = {{ samba_crazymax_primary_user }}"
+  - "force group = {{ samba_crazymax_primary_user }}"
+  - "hosts allow = {{ samba_crazymax_subnet }}"
   - "server min protocol = {{ smb_min_protocol }}"
   - "client signing = required"
   - "server signing = mandatory"
@@ -20,7 +20,7 @@ global:
   - "restrict anonymous = 2"
   - "usershare allow guests = no"
   - "invalid users = root @sudo @wheel"
-  - "server string = {{ smb_server_string }}"
+  - "server string = {{ samba_crazymax_server_string }}"
 
 share:
 {% for share in samba.shares %}
