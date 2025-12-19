@@ -1,7 +1,7 @@
 promtail
-=========
+========
 
-Installs promtail as systemd service.
+Installs `promtail` as a systemd service.
 
 Requirements
 ------------
@@ -19,15 +19,12 @@ Role Variables
 Dependencies
 ------------
 
-No
+None
 
 Example Playbook
 ----------------
 
-    - hosts: servers
-      roles:
-         - role: promtail
-           promtail_version: 2.7.3
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------
@@ -38,7 +35,5 @@ Author Information
 ------------------
 
 Alexander Gorelyshev and Danilkin Danila (MIPT)
-
-Genlab LLC
 
 corvus-migratorius@proton.me

@@ -7,3 +7,4 @@ collections:
   - name: community.crypto
   - name: maxhoesel.borgbackup
   - name: lucasheld.uptime_kuma
+  - name: community.postgresql

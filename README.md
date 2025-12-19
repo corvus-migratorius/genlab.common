@@ -22,6 +22,7 @@
 - [nginx_docker](roles/nginx_docker/README.md)
 - [node_exporter](roles/node_exporter/README.md)
 - [platform1c](roles/platform1c/README.md)
+- [postgres1c](roles/postgres1c/README.md)
 - [prometheus](roles/prometheus/README.md)
 - [promtail](roles/promtail/README.md)
 - [rclone_yandex](roles/rclone_yandex/README.md)

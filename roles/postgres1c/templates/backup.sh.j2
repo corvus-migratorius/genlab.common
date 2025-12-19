@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -eu -o pipefail
+
+readonly POSTGRES_VER={{ postgres1c_version }}
+readonly POSTGRES_COMPRESS={{ postgres1c_backup_compression }}
+
+echo "Starting 1C backup at $(date +F'%Y-%m-%d %H:%M:%S')"
+
+# db list array
+echo "getting a list of database names via psql ..."
+databases=($(/opt/pgpro/1c-${POSTGRES_VER}/bin/psql -t -A -c "SELECT datname FROM pg_database WHERE datname <> ALL ('{template0,template1,postgres}')"))
+echo "database names: ${databases[@]}"
+
+# get current seconds since shell invocation
+start_time=$SECONDS
+
+# iterate over the db list array
+for db in "${databases[@]}"; do
+  start_one_time=$SECONDS
+  echo "${db} - backup started"
+
+  # local backup command (don't forget to sync to a remote server by borg or some other tool)
+  # -Fc: "custom format" https://www.postgresql.org/docs/current/app-pgdump.html
+  # -Z: compression
+  /opt/pgpro/1c-${POSTGRES_VER}/bin/pg_dump -d ${db} -Fc -Z ${POSTGRES_COMPRESS} -f /var/backups/postgres1c/backup_${db}.dump
+
+  # notify about the db dump completion
+  echo "${db} - backup done"
+  total_one_time=$(($SECONDS - start_one_time))
+  echo "${db} - total time: ${total_one_time} sec"
+done
+
+total_time=$(($SECONDS - start_time))
+echo "job completed at $(date); total time elapsed: ${total_time} sec"

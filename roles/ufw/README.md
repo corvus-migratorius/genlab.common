@@ -1,5 +1,5 @@
-template
-=========
+ufw
+===
 
 Whitelist network ports with UFW
 
@@ -21,10 +21,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.ufw
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

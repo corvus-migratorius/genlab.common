@@ -1,5 +1,5 @@
-ansible-swapfile
-=========
+swapfile
+========
 
 Create/destroy a swapfile and run swapon/-off on it.
 
@@ -23,10 +23,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.swapfile
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------
