@@ -6,13 +6,19 @@ This Ansible role installs ipmi_exporter on target host. This is a Prometheus ex
 Requirements
 ------------
 
-By default, the exporter relies on tools from the FreeIPMI suite for the actual IPMI implementation.
+Target node:
+
+- `tar`
+- `gzip`
+- `freeipmi`
 
 Role Variables
 --------------
-Configuration files must have names ```web_conf.yaml``` and ```ipmi_local.conf```. If ipmi_exp_source_dir is specified, the role searches for ```web_conf.yaml``` and ```ipmi_local.conf``` in that directory and copy to target host in ```ipmi_exp_config_dir```. If the source directory is not specified, the role skips this step. In ipmi_local.conf user can describe what modules to use for metric collection.
+Configuration files must have names `web_conf.yaml` and `ipmi_local.conf`. If ipmi_exp_source_dir is specified, the role searches for `web_conf.yaml` and `ipmi_local.conf` in that directory and copy to target host in `ipmi_exp_config_dir`. If the source directory is not specified, the role skips this step. In ipmi_local.conf user can describe what modules to use for metric collection.
 
-ipmi_up{collector="<NAME>"} is 1 if the data for this collector could successfully be retrieved from the remote host, 0 otherwise. The following collectors are available and can be enabled or disabled in the config:
+ipmi_up{collector="<NAME>"} is 1 if the data for this collector could successfully be retrieved from the remote host, 0 otherwise.
+
+The following collectors are available and can be enabled or disabled in the config:
 - ipmi: collects IPMI sensor data. If it fails, sensor metrics (see below) will not be available
 - dcmi: collects DCMI data, currently only power consumption. If it fails, power consumption metrics (see below) will not be available
 - bmc: collects BMC details. If it fails, BMC info metrics (see below) will not be available
