@@ -1,0 +1,23 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    # https://github.com/ansible/molecule/issues/3587#issuecomment-1158650179
+    - name: "Include default vars"
+      ansible.builtin.include_vars:
+        dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
+        extensions: ['yml']
+
+    - name: "Test perccli output"
+      register: perccli_version_get
+      changed_when: false
+      failed_when: '"PercCli SAS Customization Utility" not in perccli_version_get.stdout | trim'
+      ansible.builtin.command:
+        cmd: "perccli help | grep Ver."
+
+    - name: "Assert perccli version correctness"
+      ansible.builtin.assert:
+        that: "perccli_version in perccli_version_get.stdout"
+        success_msg: "Expected perccli version is available: '{{ perccli_version }}'"
+        fail_msg: "Expected version '{{ perccli_version }}'; version string is '{{ perccli_version_get.stdout | trim }}'"
