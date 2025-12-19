@@ -26,6 +26,7 @@
 - [promtail](roles/promtail/README.md)
 - [rclone_yandex](roles/rclone_yandex/README.md)
 - [rustdesk](roles/rustdesk/README.md)
+- [samba_crazymax](roles/samba_crazymax/README.md)
 - [sftp_share](roles/sftp_share/README.md)
 - [smartctl_exporter](roles/smartctl_exporter/README.md)
 - [sshd](roles/sshd/README.md)

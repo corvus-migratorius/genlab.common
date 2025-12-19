@@ -1,31 +1,33 @@
-Role Name
+samba_crazymax
 =========
 
-A brief description of the role goes here.
+Deploys a crazymax/samba docker container
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- docker
+- community.docker collection installed
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+samba_crazymax_compose_path — samba crazymax docker compose path
+samba_crazymax_server_string — server string
+config — path for config (see [config.yml](molecule/default/files/config.yml))
+secrets — path for secrets (see [config.yml](molecule/default/files/secrets.yml))
+secrets_wg — path for secrets_wg (see [config.yml](molecule/default/files/secrets_wg.yml))
+path_storage — storage path
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+- genlab.common.docker_ubuntu — for docker installation
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+see [converge.yml](molecule/default/converge.yml)
 
 License
 -------
@@ -35,4 +37,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Alexander Gorelyshev corvus-migratorius@proton.me
