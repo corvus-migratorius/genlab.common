@@ -1,5 +1,5 @@
 ---
-- name: "Upload ipmi_exporter local configure file"
+- name: "Configure | Upload local configuration file"
   notify: "(Re)start and enable ipmi_exporter"
   when: ipmi_exporter_source_dir is defined and ipmi_exporter_source_dir | length > 0
   ansible.builtin.template:
@@ -9,7 +9,7 @@
     group: root
     mode: '0640'
 
-- name: "Upload ipmi_exporter web configure file"
+- name: "Configure | Upload web configuration file"
   notify: "(Re)start and enable ipmi_exporter"
   when: ipmi_exporter_web_source_dir is defined and ipmi_exporter_web_source_dir | length > 0
   ansible.builtin.template:
