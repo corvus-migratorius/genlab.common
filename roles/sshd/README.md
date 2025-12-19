@@ -1,7 +1,7 @@
-ansible-sshd
-=========
+sshd
+====
 
-Deploy a hardened sshd server
+Deploy a hardened `sshd` server
 
 Requirements
 ------------
@@ -21,10 +21,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.common.sshd
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

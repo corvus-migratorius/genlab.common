@@ -1,7 +1,7 @@
-ansible-dnsmasq
+dnsmasq
 =========
 
-Deploy dnsmasq on the target node. For now, supports only DNS functionality (DHCP and TFTP are not configuratble).
+Deploy `dnsmasq` on the target node. For now, supports only DNS functionality (DHCP and TFTP are not configurable).
 
 Requirements
 ------------
@@ -21,10 +21,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.dnsmasq
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

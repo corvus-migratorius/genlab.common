@@ -1,5 +1,5 @@
 loki
-=========
+====
 
 Installs Loki as a `systemd` service.
 
@@ -23,11 +23,7 @@ No
 Example Playbook
 ----------------
 
-```yaml
-roles:
-  - role: loki
-    loki_version: 2.7.3
-```
+See: [converge.yml](molecule/default/converge.yml)
       
 
 License

@@ -1,18 +1,18 @@
-genlab.smartctl-exporter
-=========
+smartctl_exporter
+=================
 
-```smartctl``` is a command-line utility used to control and monitor the Self-Monitoring, Analysis and Reporting Technology (SMART) system in hard disk drives (HDDs) and solid-state drives (SSDs). ```smartctl-exporter``` exports ```smartctl``` statistics to Prometheus.
+`smartctl` is a command-line utility used to control and monitor the Self-Monitoring, Analysis and Reporting Technology (SMART) system in hard disk drives (HDDs) and solid-state drives (SSDs). `smartctl-exporter` exports `smartctl` statistics to Prometheus.
 
 Requirements
 ------------
 
-smartctl 
+- `smartctl` 
 
 Role Variables
 --------------
-The exporter will scan the system for available devices if no ```--smartctl.device``` flags are used. The format of web.config file id described [here](https://github.com/prometheus/exporter-toolkit/blob/master/docs/web-configuration.md). If ```smartctl_exp_source_web_config_dir``` is defined, role searches for ```web_smartctl.conf``` file and copy it to target host to ```smartctl_exp_web_config_dir``` directory
+The exporter will scan the system for available devices if no `--smartctl.device` flags are used. The format of web.config file id described [here](https://github.com/prometheus/exporter-toolkit/blob/master/docs/web-configuration.md). If `smartctl_exp_source_web_config_dir` is defined, role searches for `web_smartctl.conf` file and copy it to target host to `smartctl_exp_web_config_dir` directory
+
 ```yaml
----
 smartctl_exp_port: "localhost:9633"  # Addresses on which to expose metrics and web interface. Repeatable for multiple addresses.
 smartctl_exp_version: "0.14.0" # exporter version to install
 smartctl_exp_dir: "/etc/exporters" # where to download and unarchive expoter 
@@ -37,13 +37,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-- role: genlab.smartctl_exporter
-    smartctl_exp_version: "0.14.0"
-    smartctl_exp_dir: "/etc/exporters"
-    smartctl_exp_config_dir: "/etc/exporters/config"
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

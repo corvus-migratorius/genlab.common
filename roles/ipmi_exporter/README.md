@@ -1,4 +1,4 @@
-genlab.ipmi_exporter
+ipmi_exporter
 =========
 
 This Ansible role installs ipmi_exporter on target host. This is a Prometheus exporter for Intelligent Platform Management Interface [metrics](https://github.com/prometheus-community/ipmi_exporter/blob/master/docs/metrics.md)
@@ -43,12 +43,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-  roles:
-    - role: genlab.ipmi_exporter
-      ipmi_exp_version: "1.10.1"
-      ipmi_exp_source_dir: "molecule/default/"
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

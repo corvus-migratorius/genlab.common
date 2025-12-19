@@ -1,4 +1,4 @@
-ansible-borgmatic
+borgmatic
 =========
 
 This is a wrapper around the `borgmatic` role from the `maxhoesel.borgbackup` collection.
@@ -12,7 +12,7 @@ In the case of Borgmatic we are installing it via `pipx`, as recommended by thei
 Requirements
 ------------
 
-- `maxhoesel.borgbackup` collection installed (see `requirements.yml`);
+- `maxhoesel.borgbackup` collection installed;
 
 Role Variables
 --------------
@@ -27,7 +27,7 @@ None
 Example Playbook
 ----------------
 
-See `molecule/default/converge.yml`
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------

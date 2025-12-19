@@ -1,7 +1,9 @@
-genlab.prometheus
-=========
+prometheus
+==========
 
-This ansible role installs [Prometheus](https://github.com/prometheus/prometheus) from binary distribution. Prometheus is a systems and service monitoring system. It collects metrics from configured targets at given intervals, evaluates rule expressions, displays the results, and can trigger alerts when specified conditions are observed.
+Install [Prometheus](https://github.com/prometheus/prometheus) binary from GitHub.
+
+Prometheus collects metrics from configured targets at given intervals, evaluates rule expressions, displays the results, and can trigger alerts when specified conditions are observed.
 
 Prometheus configuration files and rules should be placed in separate directories in the source. They must have a `*.yml` suffix. You'll need to manually specify the paths to your rule files in the main Prometheus configuration file (prometheus.yml) on the target machine
 
@@ -31,13 +33,7 @@ None
 Example Playbook
 ----------------
 
-```yaml
-roles:
-    - role: genlab.prometheus
-      prometheus_config_source_dir: mydir/configs
-      prometheus_alertrules_source_dir: mydir/configs/rules
-      prometheus_version: 3.2.1
-```
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------
@@ -48,3 +44,4 @@ Author Information
 ------------------
 
 corvus-migratorius@proton.me
+sayganova@genlab.llc

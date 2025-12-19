@@ -1,12 +1,12 @@
 wg_spoke
 =========
 
-Configure the host as a Spoke in Wireguard Spoke&Hub topology.
+Configure the host as a Spoke in the Wireguard Spoke-and-Hub topology.
 
 Requirements
 ------------
 
-Ubuntu 20.04, 22.04 or 24.04.
+Ubuntu 22.04 or 24.04.
 
 Role Variables
 --------------
@@ -33,7 +33,7 @@ None
 Example Playbook
 ----------------
 
-See `molecule/default/converge.yml`.
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------
