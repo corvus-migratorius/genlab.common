@@ -1,0 +1,16 @@
+---
+platform1c_pubs:           # all fields are required.
+  - path: "/www/root/zup/" # mind the trailing / at the end.
+    name: "zup"
+    odata_enabled: true    # REST API
+    ws_enabled: true       # sync between different products (e.g. zup<->buh sync).
+
+  - path: "/www/root/buh/"
+    name: "buh"
+    odata_enabled: true
+    ws_enabled: false
+
+  - path: "/www/root/doc/"
+    name: "doc"
+    odata_enabled: false
+    ws_enabled: false

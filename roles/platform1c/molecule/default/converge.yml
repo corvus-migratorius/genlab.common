@@ -1,0 +1,14 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    # - role: oneget
+    #   oneget_version: 0.6.0
+
+    - role: genlab.common.platform1c
+      platform1c_version: "8.3.26.1540"                                            # required
+      platform1c_config: "{{ role_path }}/molecule/default/files/test.yaml"        # required
+      platform1c_admin_pw_path: "secrets/platform1c.yaml"                          # required
+      platform1c_oneget_pw_path: "secrets/oneget.yaml"                             # required if using oneget
+      platform1c_platformfile: "{{ role_path }}/molecule/default/files/server64_with_all_clients_8_3_26_1540.zip"  # if platfrom1c_download_methond == manual
+      platform1c_download_method: 'manual' # required. manual or oneget
