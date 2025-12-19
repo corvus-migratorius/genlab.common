@@ -1,0 +1,5 @@
+smb_image_version: "4.18.3"
+smb_min_protocol: "SMB3_02"
+smb_compose_path: "/root/samba-server"
+smb_tz: "Europe/Moscow"
+smb_server_string: "NGS Cache"
