@@ -1,7 +1,7 @@
 ---
 ipmi_exporter_version: 1.10.1
 ipmi_exporter_dir: "/etc/exporters"
-ipmi_exporter_config_dir: "/etc/exporters/config"
+ipmi_exporter_config_dir: "/etc/ipmi_exporter"
 ipmi_exporter_log_level: "info"
 ipmi_exporter_log_format: "logfmt"
 ipmi_exporter_web_listen_address: "localhost:9290"

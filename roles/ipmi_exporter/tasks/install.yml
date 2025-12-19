@@ -16,7 +16,6 @@
   rescue:
     - name: "Install | Create directories"
       loop:
-        - "{{ ipmi_exporter_dir }}"
         - "{{ ipmi_exporter_config_dir }}"
       ansible.builtin.file:
         path: "{{ item }}"

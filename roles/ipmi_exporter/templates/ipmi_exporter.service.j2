@@ -14,11 +14,11 @@ ExecStart=/usr/local/bin/ipmi_exporter \
 {% if ipmi_exporter_args is defined and ipmi_exporter_args | length > 0 %}
       {{ ipmi_exporter_args }} \
 {% endif %}
-{% if ipmi_exporter_source_dir is defined and ipmi_exporter_source_dir | length > 0 %}
-    --config.file={{ ipmi_exporter_config_dir }}/ipmi_local.conf \
+{% if ipmi_exporter_local_conf is defined %}
+    --config.file={{ ipmi_exporter_config_dir }}/local.conf \
 {% endif %}
-{% if ipmi_exporter_web_source_dir is defined and ipmi_exporter_web_source_dir | length > 0 %}
-    --web.config.file={{ ipmi_exporter_config_dir }}/web_conf.yaml
+{% if ipmi_exporter_web_conf is defined %}
+    --web.config.file={{ ipmi_exporter_config_dir }}/web.yaml
 {% endif %}
 
 SyslogIdentifier=ipmi_exporter
