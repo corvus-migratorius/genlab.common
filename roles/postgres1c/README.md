@@ -18,7 +18,7 @@ Role Variables
 Dependencies
 ------------
 
-None
+- community.postgresql
 
 Example Playbook
 ----------------
