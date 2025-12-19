@@ -3,4 +3,4 @@
   hosts: all
   roles:
     - role: genlab.common.ipmi_exporter
-      ipmi_exp_source_dir: "molecule/default/"
+      ipmi_exporter_local_conf: "configs/local.conf"
