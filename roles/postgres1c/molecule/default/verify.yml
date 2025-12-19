@@ -2,11 +2,14 @@
 - name: Verify
   hosts: all
   gather_facts: false
+  vars:
+    postgres1c_major_ver: 15
+    postgres1c_version: 15
   tasks:
     - name: "Include default role vars"
       ansible.builtin.include_vars:
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
-        extensions: [ 'yml' ]
+        extensions: ['yml']
 
     - name: "Get 'postgres' user password"
       tags: [postgres1c]
@@ -37,8 +40,8 @@
       ansible.builtin.service:
         name: "postgrespro-1c-{{ postgres1c_version }}"
         state: started
-      register: start_postgrespro1c
-      failed_when: start_postgrespro1c.changed
+      register: postgres1c_start_postgrespro1c
+      failed_when: postgres1c_start_postgrespro1c.changed
 
     - name: Create a new database with name "test"
       tags: [postgres1c]

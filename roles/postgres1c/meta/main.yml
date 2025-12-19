@@ -6,7 +6,7 @@ galaxy_info:
   description: Install PostgreSQL (1C version) as a system service
   platforms:
     - name: "Ubuntu"
-      versions: [ "jammy" ]
+      versions: ["jammy", "noble"]
   company: Genlab, LLC
   license: BSD
   min_ansible_version: "2.1"
