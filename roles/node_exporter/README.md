@@ -6,12 +6,16 @@ Deploy `prometheus/node_exporter` binary as a systemd unit.
 Requirements
 ------------
 
-None
+Target node:
+
+- `tar`
+- `gzip`
+
 
 Role Variables
 --------------
 
-`node_exporter_bin_path`: where to install the binary (default: `/usr/bin`).
+- `node_exporter_bin_path`: where to install the binary (default: `/usr/bin`).
 
 Dependencies
 ------------

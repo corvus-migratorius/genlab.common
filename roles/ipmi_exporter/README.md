@@ -6,7 +6,11 @@ This Ansible role installs ipmi_exporter on target host. This is a Prometheus ex
 Requirements
 ------------
 
-By default, the exporter relies on tools from the FreeIPMI suite for the actual IPMI implementation.
+Target node:
+
+- `tar`
+- `gzip`
+- `freeipmi`
 
 Role Variables
 --------------

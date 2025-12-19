@@ -10,7 +10,10 @@ Prometheus configuration files and rules should be placed in separate directorie
 Requirements
 ------------
 
-None
+Target node:
+
+- `tar`
+- `gzip`
 
 Role Variables
 --------------
