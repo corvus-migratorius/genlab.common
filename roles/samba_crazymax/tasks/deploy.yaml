@@ -3,9 +3,8 @@
 - name: "Deploy | spin-up the server container via docker compose"
   tags: [samba-srv, samba-srv-deploy]
   changed_when: false
-  community.docker.docker_compose:
-    tls_hostname: localhost
+  community.docker.docker_compose_v2:
     project_src: "{{ smb_compose_path }}"
-    build: true
+    build: always
     state: present
-    restarted: true
+    recreate: always
