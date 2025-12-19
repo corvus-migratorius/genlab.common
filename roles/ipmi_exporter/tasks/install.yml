@@ -24,8 +24,10 @@
         group: root
         mode: "0755"
 
-    - name: "Install | Unarchive the tarball"
+    - name: "Install | Fetch and unarchive the release tarball"
       notify: "(Re)start and enable ipmi_exporter"
+      delay: 3
+      retries: 3
       ansible.builtin.unarchive:
         src: "https://github.com/prometheus-community/ipmi_exporter/releases/\
             download/v{{ ipmi_exporter_version }}/ipmi_exporter-{{ ipmi_exporter_version }}.linux-amd64.tar.gz"
