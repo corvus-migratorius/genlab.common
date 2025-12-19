@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: genlab.common.docker_ubuntu
+
+    - role: genlab.common.samba_crazymax
+      config: files/config.yml
+      secrets: files/secrets.yml
+      secrets_wg: files/secrets_wg.yml
+      path_storage: /mnt/storage

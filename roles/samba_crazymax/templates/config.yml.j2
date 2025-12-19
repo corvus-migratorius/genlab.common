@@ -1,0 +1,35 @@
+auth:
+{% for user in samba.users %}
+  - user: {{ user.name }}
+    group: {{ user.name }}
+    uid: {{ user.id }}
+    gid: {{ user.id }}
+    password: {{ user.password }}
+{% endfor %}
+
+global:
+  - "force user = {{ samba_crazymax_primary_user }}"
+  - "force group = {{ samba_crazymax_primary_user }}"
+  - "hosts allow = {{ samba_crazymax_subnet }}"
+  - "server min protocol = {{ smb_min_protocol }}"
+  - "client signing = required"
+  - "server signing = mandatory"
+  - "server smb encrypt = required"
+  - "client ipc signing = required"
+  - "guest ok = no"
+  - "restrict anonymous = 2"
+  - "usershare allow guests = no"
+  - "invalid users = root @sudo @wheel"
+  - "server string = {{ samba_crazymax_server_string }}"
+
+share:
+{% for share in samba.shares %}
+  - name: {{ share.name }}
+    path: /samba/{{ share.name }}
+    browsable: {{ share.browsable }}
+    readonly: {{ share.readonly }}
+    guestok: {{ share.guestok }}
+    writelist: {{ share.writelist | join(' ') }}
+    veto: no
+    validusers: {{ share.validusers | join(' ') }}
+{% endfor %}

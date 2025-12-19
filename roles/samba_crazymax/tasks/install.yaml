@@ -1,0 +1,61 @@
+---
+
+- name: "Install | groups for Samba accounts"
+  tags: [samba-srv, samba-srv-install]
+  with_items: "{{ samba.users }}"
+  ansible.builtin.group:
+    name: "{{ item.name }}"
+    gid: "{{ item.id }}"
+    state: present
+
+- name: "Install | accounts for working with Samba"
+  tags: [samba-srv, samba-srv-install]
+  with_items: "{{ samba.users }}"
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    uid: "{{ item.id }}"
+    group: "{{ item.name }}"
+    comment: "{{ item.comment }}"
+    state: "{{ item.state }}"
+    shell: /sbin/nologin
+    create_home: false
+
+- name: "Install | Create Samba project root path"
+  tags: [samba-srv, samba-srv-install]
+  ansible.builtin.file:
+    path: "{{ samba_crazymax_root_path }}"
+    state: directory
+    owner: "{{ samba_crazymax_primary_user }}"
+    group: "{{ samba_crazymax_primary_user }}"
+    mode: "0770"
+
+- name: "Install | Create directories for Samba shares"
+  tags: [samba-srv, samba-srv-install]
+  with_items: "{{ samba.shares }}"
+  ansible.builtin.file:
+    path: "{{ samba_crazymax_root_path }}/{{ item.name }}"
+    state: directory
+    owner: "{{ samba_crazymax_primary_user }}"
+    group: "{{ samba_crazymax_primary_user }}"
+    mode: ug=rwx,o=-,g+s
+
+- name: "Install | directories for the server itself"
+  tags: [samba-srv, samba-srv-install]
+  with_items:
+    - "{{ samba_crazymax_compose_path }}"
+    - "{{ samba_crazymax_compose_path }}/data"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0770"
+
+- name: "Install | docker-compose file for the Samba image"
+  tags: [samba-srv, samba-srv-install]
+  ansible.builtin.template:
+    src: docker-compose.yaml.j2
+    dest: "{{ samba_crazymax_compose_path }}/docker-compose.yaml"
+    owner: root
+    group: "{{ samba_crazymax_primary_user }}"
+    mode: "0660"
