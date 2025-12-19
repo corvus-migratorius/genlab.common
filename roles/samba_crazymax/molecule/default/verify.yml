@@ -1,0 +1,10 @@
+---
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  tasks:
+    - name: Blank
+      ansible.builtin.command: echo
+      changed_when: false
