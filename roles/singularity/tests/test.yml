@@ -1,0 +1,6 @@
+---
+- name: "Tests for the role"
+  hosts: localhost
+  remote_user: root
+  roles:
+    - singularity
