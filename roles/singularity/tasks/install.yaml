@@ -1,0 +1,93 @@
+---
+- name: "Install | install Singularity"
+  tags: [singularity, singularity-install]
+  block:
+    - name: "Install | check the Singularity version"
+      tags: [singularity, singularity-install]
+      register: this
+      failed_when: this is not ansible.builtin.success
+      changed_when: false
+      ansible.builtin.command:
+        cmd: singularity --version
+
+  rescue:
+    - name: "Install | install dependencies (Debian)"
+      tags: [singularity, singularity-install]
+      when: ansible_os_family == "Debian"
+      ansible.builtin.apt:
+        state: present
+        update_cache: true
+        name:
+          - build-essential
+          - cryptsetup-bin
+          - git
+          - libgpgme-dev
+          - libseccomp-dev
+          - pkg-config
+          - squashfs-tools
+          - uuid-dev
+          - wget
+
+    - name: "Install | install the 'Development Tools' package group (EL)"
+      tags: [singularity, singularity-install]
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.yum:
+        state: present
+        update_cache: true
+        name: "@Development tools"
+
+    - name: "Install | install dependencies (EL)"
+      tags: [singularity, singularity-install]
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.yum:
+        state: present
+        update_cache: true
+        name:
+          - cryptsetup
+          - libuuid-devel
+          - libseccomp-devel
+          - openssl-devel
+          - squashfs-tools
+          - wget
+
+    - name: "Install | clone the Singularity repo"
+      tags: [singularity, singularity-install]
+      ansible.builtin.git:
+        repo: 'https://github.com/hpcng/singularity.git'
+        dest: "{{ src_dir }}"
+        version: "v{{ singularity_version }}"
+
+    - name: "Install | prepare the source code" # noqa: no-changed-when
+      tags: [singularity, singularity-install]
+      environment:
+        PATH: "/usr/local/go/bin:{{ ansible_env.PATH }}"
+      ansible.builtin.command:
+        cmd: "./mconfig"
+        chdir: "{{ src_dir }}"
+
+    - name: "Install | build Singularity" # noqa: no-changed-when
+      tags: [singularity, singularity-install]
+      environment:
+        PATH: "/usr/local/go/bin:{{ ansible_env.PATH }}"
+      ansible.builtin.command:
+        cmd: "make -C ./builddir"
+        chdir: "{{ src_dir }}"
+
+    - name: "Install | install Singularity system-wide" # noqa: no-changed-when
+      tags: [singularity, singularity-install]
+      ansible.builtin.command:
+        cmd: "make -C ./builddir install"
+        chdir: "{{ src_dir }}"
+
+    - name: "Install | clean up the sources"
+      tags: [singularity, singularity-install]
+      ansible.builtin.file:
+        path: "{{ src_dir }}"
+        state: absent
+
+
+- name: "Install | test Singularity deployment with a 'hello-world' job"
+  tags: [singularity, singularity-install]
+  changed_when: false
+  ansible.builtin.command:
+    cmd: "singularity --debug run shub://GodloveD/lolcow"

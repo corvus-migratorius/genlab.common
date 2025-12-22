@@ -1,0 +1,6 @@
+---
+# tasks file for playbooks/roles/singularity
+
+- name: "Include installation tasks"
+  tags: [singularity, singularity-install]
+  ansible.builtin.include_tasks: "install.yaml"
