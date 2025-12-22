@@ -23,7 +23,7 @@
     - name: "Install | install the 'Development Tools' package group (EL)"
       tags: [singularity, singularity-install]
       when: ansible_os_family == "RedHat"
-      ansible.builtin.yum:
+      ansible.builtin.dnf:
         state: present
         update_cache: true
         name: "@Development tools"
@@ -31,7 +31,7 @@
     - name: "Install | install dependencies (EL)"
       tags: [singularity, singularity-install]
       when: ansible_os_family == "RedHat"
-      ansible.builtin.yum:
+      ansible.builtin.dnf:
         state: present
         update_cache: true
         name:

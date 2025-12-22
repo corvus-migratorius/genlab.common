@@ -9,8 +9,8 @@
   tasks:
     - name: "Install | check the Singularity version"
       tags: [singularity, singularity-install]
-      register: this
-      failed_when: this.stdout != "singularity version " + singularity_version
+      register: singularity_this
+      failed_when: singularity_this.stdout != "singularity version " + singularity_version
       changed_when: false
       ansible.builtin.command:
         cmd: singularity --version

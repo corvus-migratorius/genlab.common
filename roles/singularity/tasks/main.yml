@@ -4,8 +4,8 @@
   block:
     - name: "Install | check the Singularity version"
       tags: [singularity, singularity-install]
-      register: this
-      failed_when: this.stdout != "singularity version " + singularity_version
+      register: singularity_this
+      failed_when: singularity_this.stdout != "singularity version " + singularity_version
       changed_when: false
       ansible.builtin.command:
         cmd: singularity --version
@@ -15,7 +15,7 @@
       tags: [singularity, singularity-install]
       ansible.builtin.git:
         repo: 'https://github.com/hpcng/singularity.git'
-        dest: "{{ src_dir }}"
+        dest: "{{ singularity_src_dir }}"
         version: "v{{ singularity_version }}"
 
     - name: "Install | prepare the source code" # noqa: no-changed-when
@@ -24,7 +24,7 @@
         PATH: "/usr/local/go/bin:{{ ansible_env.PATH }}"
       ansible.builtin.command:
         cmd: "./mconfig"
-        chdir: "{{ src_dir }}"
+        chdir: "{{ singularity_src_dir }}"
 
     - name: "Install | build Singularity" # noqa: no-changed-when
       tags: [singularity, singularity-install]
@@ -32,16 +32,16 @@
         PATH: "/usr/local/go/bin:{{ ansible_env.PATH }}"
       ansible.builtin.command:
         cmd: "make -C ./builddir"
-        chdir: "{{ src_dir }}"
+        chdir: "{{ singularity_src_dir }}"
 
     - name: "Install | install Singularity system-wide" # noqa: no-changed-when
       tags: [singularity, singularity-install]
       ansible.builtin.command:
         cmd: "make -C ./builddir install"
-        chdir: "{{ src_dir }}"
+        chdir: "{{ singularity_src_dir }}"
 
     - name: "Install | clean up the sources"
       tags: [singularity, singularity-install]
       ansible.builtin.file:
-        path: "{{ src_dir }}"
+        path: "{{ singularity_src_dir }}"
         state: absent
