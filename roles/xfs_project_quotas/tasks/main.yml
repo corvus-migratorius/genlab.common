@@ -1,0 +1,57 @@
+---
+- name: "Quotas | Ensure xfsprogs package is installed"
+  ansible.builtin.apt:
+    name: xfsprogs
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Quotas | Ensure all /etc/projects entries exist"
+  loop: "{{ projects }}"
+  ansible.builtin.lineinfile:
+    path: /etc/projects
+    state: present
+    backup: true
+    regexp: "^{{ item.id }}:"
+    line: "{{ item.id }}:{{ item.path }}"
+
+- name: "Quotas | Ensure all /etc/projects entries exist"
+  loop: "{{ projects }}"
+  ansible.builtin.lineinfile:
+    path: /etc/projid
+    state: present
+    backup: true
+    regexp: "^{{ item.name }}:"
+    line: "{{ item.name }}:{{ item.id }}"
+
+- name: "Quotas | Ensure all project paths exist"
+  loop: "{{ projects }}"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+
+- name: "Quotas | Initialize project quotas"
+  changed_when: false
+  loop: "{{ projects }}"
+  ansible.builtin.command:
+    cmd: >-
+      xfs_quota
+      -x
+      -c
+      'project -s {{ item.name }}'
+      {{ storage_mountpoint }}
+
+- name: "Quotas | Apply quota limits"
+  loop: "{{ projects }}"
+  community.general.xfs_quota:
+    type: project
+    name: "{{ item.name }}"
+    mountpoint: "{{ storage_mountpoint }}"
+    bsoft: "{{ item.bsoft | default('100G', false) }}"
+    bhard: "{{ item.bhard | default('100G', false) }}"
+    isoft: "{{ item.isoft | default(0, false) }}"
+    ihard: "{{ item.ihard | default(0, false) }}"
+    state: present
