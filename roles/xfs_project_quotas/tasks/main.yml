@@ -6,6 +6,17 @@
     update_cache: true
     cache_valid_time: 3600
 
+- name: Touch /etc/projects and /etc/projid
+  loop:
+    - /etc/projects
+    - /etc/projid
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: touch
+    owner: root
+    group: root
+    mode: "0644"
+
 - name: "Quotas | Ensure all /etc/projects entries exist"
   loop: "{{ projects }}"
   ansible.builtin.lineinfile:

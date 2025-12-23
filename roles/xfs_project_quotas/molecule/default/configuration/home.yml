@@ -1,0 +1,6 @@
+- id: 1
+  path: /home/test
+  name: home-test
+  owner: root
+  group: root
+  mode: "0700"

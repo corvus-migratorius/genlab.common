@@ -1,5 +1,72 @@
 ---
 - name: Converge
   hosts: all
+  pre_tasks:
+    - name: Get /root/image.img stats
+      ansible.builtin.stat:
+        path: /root/image.img
+      register: img_stat
+
+    - name: Create image file
+      when: not img_stat.stat.exists
+      ansible.builtin.command: dd if=/dev/zero of=/root/image.img bs=1M count=400
+      register: dd_result
+      changed_when: dd_result.rc == 0
+
+    - name: Get linked loop devices
+      ansible.builtin.command: losetup -a
+      changed_when: false
+      register: loop_devs
+
+    - name: Link image to loop device
+      when: "'/root/image.img' not in loop_devs.stdout"
+      ansible.builtin.command: losetup --find --show -P /root/image.img
+      register: loop_device
+      changed_when: "'/dev/loop' in loop_device.stdout"
+
+    - name: Get all loop devices
+      ansible.builtin.command: losetup -a
+      register: losetup_out
+      changed_when: false
+
+    - name: Find line with /root/image.img
+      ansible.builtin.set_fact:
+        matched_line: "{{ losetup_out.stdout_lines
+                          | select('search', '/root/image.img')
+                          | list
+                          | first
+                          | default('') }}"
+
+    - name: Extract loop device name (/dev/loopN)
+      ansible.builtin.set_fact:
+        loop_dev: "{{ matched_line | regex_search('(/dev/loop[0-9]+)', '\\1') | default('') }}"
+
+    - name: Debug result
+      ansible.builtin.debug:
+        msg: "/root/image.img is linked to {{ loop_dev[0] }}"
+      when: loop_dev != ''
+    
+    - name: "Quotas | Ensure xfsprogs package is installed"
+      ansible.builtin.apt:
+        name: xfsprogs
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Make xfs filesystem
+      ansible.builtin.filesystem:
+        fstype: xfs
+        dev: "{{ loop_dev[0] }}"
+    
+    - name: Mount xfs virtual disk
+      ansible.posix.mount:
+        path: /mnt
+        src: /root/image.img
+        fstype: xfs
+        opts: defaults,prjquota
+        state: mounted
+
   roles:
-    - role: "genlab.common.xfs_project_quotas"
+    - role: genlab.common.xfs_project_quotas
+      projects: "{{ lookup('file', 'configuration/example.yml') | from_yaml }}"
+      storage_mountpoint: "/mnt"
