@@ -1,2 +1,2 @@
-ansible-core==2.18.11
+ansible-core==2.20.1
 passlib==1.7.4
