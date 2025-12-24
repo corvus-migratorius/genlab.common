@@ -6,12 +6,19 @@
     update_cache: true
     cache_valid_time: 3600
 
-- name: Touch /etc/projects and /etc/projid
+- name: Check files
   loop:
     - /etc/projects
     - /etc/projid
-  ansible.builtin.file:
+  ansible.builtin.stat:
     path: "{{ item }}"
+  register: proj_files
+
+- name: Create missing files
+  loop: "{{ proj_files.results }}"
+  when: not item.stat.exists
+  ansible.builtin.file:
+    path: "{{ item.invocation.module_args.path }}"
     state: touch
     owner: root
     group: root
