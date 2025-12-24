@@ -12,10 +12,10 @@
     - /etc/projid
   ansible.builtin.stat:
     path: "{{ item }}"
-  register: proj_files
+  register: xfs_project_quotas_proj_files
 
 - name: Create missing files
-  loop: "{{ proj_files.results }}"
+  loop: "{{ xfs_project_quotas_proj_files.results }}"
   when: not item.stat.exists
   ansible.builtin.file:
     path: "{{ item.invocation.module_args.path }}"
