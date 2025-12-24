@@ -6,6 +6,8 @@
   any_errors_fatal: true
 
   tasks:
-    - name: Blank
-      ansible.builtin.command: echo
+    - name: Check XFS project quotas on /mnt
+      ansible.builtin.command: xfs_quota -x -c 'report -p' /mnt
+      register: quota_output
       changed_when: false
+      failed_when: "'Project quota on /mnt' not in quota_output.stdout"
