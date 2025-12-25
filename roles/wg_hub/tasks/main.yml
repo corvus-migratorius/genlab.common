@@ -44,10 +44,10 @@
     owner: root
     group: root
     mode: "0600"
-    marker: "# {mark} ANSIBLE MANAGED SPOKE BLOCK: {{ wg_hub_domain_name }}"
+    marker: "# {mark} ANSIBLE MANAGED SPOKE BLOCK: {{ domain_name }}"
     block: |
       #
-      [Peer]  # {{ wg_hub_domain_name }}
+      [Peer]  # {{ domain_name }}
       PublicKey = {{ item.wg_pubkey }}
       PresharedKey = {{ item.wg_psk }}
       AllowedIPs = {{ item.ipv4_vpn_addr }}/32
