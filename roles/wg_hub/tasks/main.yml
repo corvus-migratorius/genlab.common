@@ -28,7 +28,7 @@
       PrivateKey = {{ wg_hub_wg_pkey }}
 
       PreUp = sysctl -w net.ipv4.ip_forward=1
-      {% if dns_server is defined %}
+      {% if wg_hub_dns_server is defined %}
       PostUp = resolvectl dns %i {{ wg_hub_dns_server }}; resolvectl domain %i {{ wg_hub_iface_name }}.local
       {% endif %}
       PostDown = sysctl -w net.ipv4.ip_forward=0
