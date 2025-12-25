@@ -38,7 +38,7 @@
   notify: "Run the Wireguard service"
   loop: "{{ peers }}"
   vars:
-    domain_name: "{{ item.wg_hub_host_id }}.{{ wg_hub_iface_name }}.local"
+    domain_name: "{{ item.host_id }}.{{ wg_hub_iface_name }}.local"
   ansible.builtin.blockinfile:
     path: "/etc/wireguard/{{ wg_hub_iface_name }}.conf"
     owner: root

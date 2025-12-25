@@ -11,13 +11,13 @@
     wg_hub_hide_secrets: false
     # dns_server: 127.0.0.1:5300  # doesn't work in Github Actions environment
     peers:
-      - wg_hub_host_id: alpha
-        wg_hub_ipv4_vpn_addr: 10.0.0.1
-        wg_hub_wg_pubkey: LfEJgNiJ05nx4nWB0Pj3wS3WRyFq567fsdDh4XZqRF0=
+      - host_id: alpha
+        ipv4_vpn_addr: 10.0.0.1
+        wg_pubkey: LfEJgNiJ05nx4nWB0Pj3wS3WRyFq567fsdDh4XZqRF0=
         wg_psk: i3JCrQOfptZhgpL+BTm/65MPW/ljJexCgiuWMIqZJYo=
-      - wg_hub_host_id: beta
-        wg_hub_ipv4_vpn_addr: 10.0.0.2
-        wg_hub_wg_pubkey: oq3Fcwwfxsi5f5UHcZKtxMwQ2aSeHOUe3r35soUUYzU=
+      - host_id: beta
+        ipv4_vpn_addr: 10.0.0.2
+        wg_pubkey: oq3Fcwwfxsi5f5UHcZKtxMwQ2aSeHOUe3r35soUUYzU=
         wg_psk: Z/z7Qo8hW97UcImYE/ZbCxpNmizfVhvl0dzygtvtYYg=
 
   roles:
