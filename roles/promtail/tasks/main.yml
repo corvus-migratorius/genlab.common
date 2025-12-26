@@ -17,9 +17,11 @@
   ansible.builtin.user:
     name: promtail
     groups:
+      - adm
       - promtail
       - systemd-journal
-      - adm
+    shell: /bin/false
+    home: /var/lib/promtail
     state: present
     system: true
 
