@@ -1,7 +1,6 @@
 ---
-promtail_version: 2.7.3
+promtail_version: 3.6.3
 promtail_positions_path: /var/lib/promtail/positions.yaml
 promtail_http_port: 9080
-promtail_loki_server: localhost
 promtail_loki_port: 3100
 promtail_add_var_logs: true
