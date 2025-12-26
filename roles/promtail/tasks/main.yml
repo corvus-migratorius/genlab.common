@@ -84,12 +84,19 @@
     group: root
     mode: "0644"
 
+- name: "Ensure '/etc/promtail' exists"
+  ansible.builtin.file:
+    path: /etc/promtail
+    state: directory
+    owner: promtail
+    group: promtail
+    mode: "0755"
 
 - name: "Template Promtail config file"
   notify: "Enable and restart the Promtail daemon"
   ansible.builtin.template:
     src: templates/promtail.yml.j2
-    dest: /usr/local/bin/config-promtail.yml
+    dest: /etc/promtail/config.yml
     owner: root
     group: root
     mode: "0644"
