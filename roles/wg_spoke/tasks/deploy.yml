@@ -33,8 +33,8 @@
 
       [Peer]  # Settings for the Hub peer
       PublicKey = {{ wg_spoke_hub_pubkey }}
-      {% if spoke_psk is defined %}
-      PresharedKey = {{ spoke_psk }}
+      {% if  wg_spoke_spoke_psk is defined %}
+      PresharedKey = {{  wg_spoke_spoke_psk }}
       {% endif %}
       AllowedIPs = {{ wg_spoke_subnet }}/{{ wg_spoke_netmask }}
       Endpoint = {{ wg_spoke_hub_ipv4_wan }}:{{ wg_spoke_hub_port }}
