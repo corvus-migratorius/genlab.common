@@ -28,7 +28,7 @@
       PrivateKey = {{ wg_spoke_spoke_pkey }}
 
       {% if wg_spoke_dns_server is defined and wg_spoke_domain is defined %}
-      PostUp = resolvectl dns %i {{ wg_spoke_dns_server }}; resolvectl wg_spoke_domain %i {{ wg_spoke_domain }}
+      PostUp = resolvectl dns %i {{ wg_spoke_dns_server }}; resolvectl domain %i {{ wg_spoke_domain }}
       {% endif %}
 
       [Peer]  # Settings for the Hub peer
