@@ -32,9 +32,9 @@
       {% endif %}
 
       [Peer]  # Settings for the Hub peer
-      PublicKey = {{ hub_pubkey }}
-      {% if spoke_psk is defined %}
-      PresharedKey = {{ spoke_psk }}
+      PublicKey = {{ wg_spoke_hub_pubkey }}
+      {% if wg_spoke_spoke_psk is defined %}
+      PresharedKey = {{ wg_spoke_spoke_psk }}
       {% endif %}
       AllowedIPs = {{ subnet }}/{{ netmask }}
       Endpoint = {{ hub_ipv4_wan }}:{{ hub_port }}
