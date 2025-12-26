@@ -7,18 +7,11 @@
     cache_valid_time: 3600
 
 
-- name: "Create the 'promtail' group"
-  ansible.builtin.group:
-    name: promtail
-    state: present
-
-
 - name: "Create the 'promtail' user"
   ansible.builtin.user:
     name: promtail
     groups:
       - adm
-      - promtail
       - systemd-journal
     shell: /bin/false
     home: /var/lib/promtail
