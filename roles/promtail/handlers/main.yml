@@ -1,11 +1,7 @@
 ---
-
-- name: "Restart the Promtail daemon"
+- name: "Enable and restart the Promtail daemon"
   ansible.builtin.systemd:
     name: promtail
     state: restarted
-
-
-- name: "Reload the Promtail daemon configuration"
-  ansible.builtin.systemd:
+    enabled: true
     daemon_reload: true

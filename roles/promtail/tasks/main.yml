@@ -7,19 +7,14 @@
     cache_valid_time: 3600
 
 
-- name: "Create the 'promtail' group"
-  ansible.builtin.group:
-    name: promtail
-    state: present
-
-
 - name: "Create the 'promtail' user"
   ansible.builtin.user:
     name: promtail
     groups:
-      - promtail
-      - systemd-journal
       - adm
+      - systemd-journal
+    shell: /bin/false
+    home: /var/lib/promtail
     state: present
     system: true
 
@@ -51,7 +46,6 @@
       changed_when: false
 
     - name: "Assert version correctness"
-      notify: "Restart the Promtail daemon"
       ansible.builtin.assert:
         that: "promtail_version in promtail_version_check.stdout"
         success_msg: "Expected Promtail version available ({{ promtail_version }})"
@@ -59,6 +53,7 @@
 
   rescue:
     - name: "Install Promtail if its not present"
+      notify: "Enable and restart the Promtail daemon"
       ansible.builtin.unarchive:
         src: "https://github.com/grafana/loki/releases/download/v\
              {{ promtail_version }}/promtail-linux-amd64.zip"
@@ -81,7 +76,7 @@
 
 
 - name: "Template the systemd unit file"
-  notify: "Reload the Promtail daemon configuration"
+  notify: "Enable and restart the Promtail daemon"
   ansible.builtin.template:
     src: promtail.service.j2
     dest: /etc/systemd/system/promtail.service
@@ -89,19 +84,19 @@
     group: root
     mode: "0644"
 
+- name: "Ensure '/etc/promtail' exists"
+  ansible.builtin.file:
+    path: /etc/promtail
+    state: directory
+    owner: promtail
+    group: promtail
+    mode: "0755"
 
 - name: "Template Promtail config file"
-  notify: "Restart the Promtail daemon"
+  notify: "Enable and restart the Promtail daemon"
   ansible.builtin.template:
     src: templates/promtail.yml.j2
-    dest: /usr/local/bin/config-promtail.yml
+    dest: /etc/promtail/config.yml
     owner: root
     group: root
     mode: "0644"
-
-
-- name: "Enable and start Promtail daemon"
-  ansible.builtin.systemd:
-    name: promtail
-    state: started
-    enabled: true
