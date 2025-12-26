@@ -4,4 +4,4 @@
   roles:
     - role: genlab.common.smartctl_exporter
       smartctl_exporter_dir: "/etc/exporters"
-      smartctl_exp_config_dir: "/etc/exporters/config"
+      smartctl_exporter_config_dir: "/etc/exporters/config"

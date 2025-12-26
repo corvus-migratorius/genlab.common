@@ -23,7 +23,7 @@
         mode: "0755"
       with_items:
         - "{{ smartctl_exporter_dir }}"
-        - "{{ smartctl_exp_config_dir }}"
+        - "{{ smartctl_exporter_config_dir }}"
 
     - name: "Unarchive smartctl_exporter tar file"
       notify: "(Re)start and enable smartctl_exporter"
