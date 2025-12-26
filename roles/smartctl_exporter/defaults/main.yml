@@ -2,8 +2,7 @@
 smartctl_exporter_web_listen_address: "localhost:9633"
 smartctl_exporter_args: ""
 smartctl_exporter_version: "0.14.0"
-smartctl_exporter_dir: "/etc/exporters"
-smartctl_exporter_web_config_dir: "/etc/exporters/config"
+smartctl_exporter_config_dir: "/etc/exporters"
 smartctl_exporter_interval: "60s"
 smartctl_exporter_rescan: "10m"
 smartctl_exporter_devices: []

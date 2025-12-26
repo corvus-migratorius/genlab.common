@@ -1,10 +1,10 @@
 ---
-- name: "Upload smartctl_exporter local configure file"
+- name: "Upload 'web' configuration file"
   notify: "(Re)start and enable smartctl_exporter"
-  when: smartctl_exp_source_web_config_dir is defined and smartctl_exp_source_web_config_dir | length > 0
+  when: smartctl_exporter_web_conf is defined
   ansible.builtin.template:
-    src: "{{ smartctl_exp_source_web_config_dir }}/web_smartctl.conf"
-    dest: "{{ smartctl_exporter_web_config_dir }}/web_smartctl.conf"
+    src: "{{ smartctl_exporter_config_dir }}/web.conf"
+    dest: "{{ smartctl_exporter_config_dir }}/web.conf"
     owner: root
     group: root
     mode: '0640'
