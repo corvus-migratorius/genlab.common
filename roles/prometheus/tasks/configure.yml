@@ -12,7 +12,7 @@
 
 - name: "Copy alert rules"
   notify: "(Re)start Prometheus service"
-  when: alertrules_source_dir is defined
+  when: prometheus_alertrules_source_dir is defined
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ prometheus_config_dir }}/{{ item | basename }}"
@@ -20,4 +20,4 @@
     group: "{{ prometheus_group }}"
     mode: "0660"
   with_fileglob:
-    - "{{ alertrules_source_dir }}/*.yml"
+    - "{{ prometheus_alertrules_source_dir }}/*.yml"
