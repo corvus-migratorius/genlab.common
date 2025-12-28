@@ -8,16 +8,18 @@
     mode: "0755"
 
 - name: "Copy dashboard files from source to target"
+  with_fileglob:
+    - "{{ dashboard_source_path }}/*.json"
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ grafana_dashboard_dir }}/{{ item | basename }}"
     mode: "0644"
     owner: "{{ grafana_user }}"
     group: "{{ grafana_group }}"
-  with_fileglob:
-    - "{{ dashboard_source_path }}/*.json"
 
 - name: "Import Grafana dashboards to Grafana"
+  with_fileglob:
+    - "{{ dashboard_source_path }}/*.json"
   community.grafana.grafana_dashboard:
     grafana_url: "http://127.0.0.1:{{ grafana_port }}"
     url_username: "{{ admin_api_username }}"
@@ -26,8 +28,6 @@
     commit_message: Updated by ansible
     overwrite: false
     path: "{{ grafana_dashboard_dir }}/{{ item | basename }}"
-  with_fileglob:
-    - "{{ dashboard_source_path }}/*.json"
 
 - name: "Run | Reload provisioned Grafana dashboards configuration"
   ansible.builtin.uri:
