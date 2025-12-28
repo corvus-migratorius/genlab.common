@@ -19,8 +19,8 @@
     - name: "Check Alertmanager version"
       ansible.builtin.assert:
         that: "alertmanager_installed_version.stdout is regex('{{ alertmanager_version }}')"
-        success_msg: "Alertmanager version {{ alertmanager_version }} is installed and working"
-        fail_msg: "Alertmanager version {{ alertmanager_version }} is not installed or not working correctly"
+        success_msg: "Alertmanager version {{ alertmanager_version }} is installed and executable"
+        fail_msg: "Alertmanager version {{ alertmanager_version }} is not installed or not executable "
 
     # kics-scan ignore-block
     - name: "Check if Alertmanager is reachable"
