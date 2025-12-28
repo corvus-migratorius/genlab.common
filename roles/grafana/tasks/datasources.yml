@@ -9,7 +9,7 @@
 
 - name: "Configure | provision datasources for Grafana"
   ansible.builtin.copy:
-    src: "{{ datasource_source_path }}/{{ item | basename }}"
+    src: "{{ grafana_datasource_source_path }}/{{ item | basename }}"
     dest: "{{ grafana_datasource_dir }}/{{ item | basename }}"
     owner: "{{ grafana_user }}"
     group: "{{ grafana_group }}"

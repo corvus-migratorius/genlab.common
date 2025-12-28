@@ -8,3 +8,4 @@ grafana_plugins_dir: "/var/lib/grafana/plugins"
 grafana_datasource_dir: "/etc/grafana/provisioning/datasources"
 grafana_log_dir: "/var/log/grafana"
 grafana_data_dir: "/var/lib/grafana"
+grafana_no_log_secrets: true
