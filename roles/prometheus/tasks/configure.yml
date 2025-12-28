@@ -1,5 +1,5 @@
 ---
-- name: "Configure| Copy Prometheus configuration files"
+- name: "Configure | Copy Prometheus configuration files"
   notify: "(Re)start Prometheus service"
   with_fileglob:
     - "{{ prometheus_config_source_dir }}/*.yml"
