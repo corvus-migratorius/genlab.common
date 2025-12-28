@@ -13,7 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-
       - uses: mamba-org/setup-micromamba@4d84239119b14cba1690b971f05c0bab912bea04
         with:
           micromamba-version: '2.4.0-0'
@@ -21,14 +20,6 @@ jobs:
           init-shell: bash
           post-cleanup: 'all'
           cache-environment: true
-
-    #   - name: "Install role dependencies"
-    #     run: ansible-galaxy install -r requirements.yml
-    #     shell: micromamba-shell {0}
-
-      - name: "Install community.general collection"
-        run: ansible-galaxy collection install community.general
-        shell: micromamba-shell {0}
 
       - name: Check workflow files themselves with ActionLint
         run: actionlint
@@ -38,7 +29,7 @@ jobs:
         run: yamllint ci/*.yml
         shell: micromamba-shell {0}
 
-      - name: "Install collection dependencies"
+      - name: Install collection dependencies
         run: ansible-galaxy install -r requirements.yml
         shell: micromamba-shell {0}
 
