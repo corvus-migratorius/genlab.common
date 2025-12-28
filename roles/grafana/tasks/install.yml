@@ -35,6 +35,7 @@
         - "{{ grafana_plugins_dir }}"
 
     - name: "Install | Download Grafana .deb package"
+      notify: "(Re)start and enable Grafana"
       ansible.builtin.get_url:
         url: "https://dl.grafana.com/oss/release/grafana_{{ grafana_version }}_amd64.deb"
         dest: "/tmp/grafana-{{ grafana_version }}_amd64.deb"
