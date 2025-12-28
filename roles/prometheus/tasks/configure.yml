@@ -6,8 +6,8 @@
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ prometheus_config_dir }}/{{ item | basename }}"
-    owner: "{{ prometheus_user }}"
-    group: "{{ prometheus_group }}"
+    owner: "prometheus"
+    group: "prometheus"
     mode: "0660"
 
 - name: "Configure | Copy alert rules"
@@ -18,6 +18,6 @@
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ prometheus_config_dir }}/{{ item | basename }}"
-    owner: "{{ prometheus_user }}"
-    group: "{{ prometheus_group }}"
+    owner: "prometheus"
+    group: "prometheus"
     mode: "0660"

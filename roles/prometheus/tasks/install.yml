@@ -1,14 +1,7 @@
 ---
-- name: "Install | Create Prometheus system group"
-  ansible.builtin.group:
-    name: "{{ prometheus_group }}"
-    system: true
-    state: present
-
 - name: "Install | Create Prometheus system user"
   ansible.builtin.user:
-    name: "{{ prometheus_user }}"
-    group: "{{ prometheus_group }}"
+    name: "prometheus"
     system: true
     shell: "/sbin/nologin"
     create_home: false
@@ -30,23 +23,23 @@
 
   rescue:
     - name: "Install | Create directories {{ item }}"
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        owner: "{{ prometheus_user }}"
-        group: "{{ prometheus_group }}"
-        mode: "0755"
       with_items:
         - "{{ prometheus_config_dir }}"
         - "{{ prometheus_dir }}"
         - "{{ prometheus_db_dir }}"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "prometheus"
+        group: "prometheus"
+        mode: "0755"
 
     - name: "Install | Download the binary distribution"
       ansible.builtin.get_url:
         url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
         dest: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
-        owner: "{{ prometheus_user }}"
-        group: "{{ prometheus_group }}"
+        owner: "prometheus"
+        group: "prometheus"
         mode: "0644"
 
     - name: "Install | Unpack the distribution"
@@ -70,8 +63,8 @@
         src: "{{ prometheus_dir }}/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }}"
         dest: "/usr/local/bin/{{ item }}"
         mode: "0755"
-        owner: "{{ prometheus_user }}"
-        group: "{{ prometheus_group }}"
+        owner: "prometheus"
+        group: "prometheus"
         remote_src: true
 
 - name: "Install | Create a systemd service unit"
@@ -79,6 +72,6 @@
   ansible.builtin.template:
     src: prometheus.service.j2
     dest: /etc/systemd/system/prometheus.service
-    owner: "{{ prometheus_user }}"
-    group: "{{ prometheus_group }}"
+    owner: "prometheus"
+    group: "prometheus"
     mode: "0660"
