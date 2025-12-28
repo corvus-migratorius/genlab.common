@@ -9,7 +9,7 @@
     group: "{{ grafana_group }}"
     mode: "0660"
 
-- name: "Run | Reload provisioned Grafana datasource configuration"
+- name: "Datasources | Reload provisioned Grafana datasource configuration"
   ansible.builtin.uri:
   # kics-scan ignore-line
     url: "http://127.0.0.1:{{ grafana_port }}/api/admin/provisioning/datasources/reload"

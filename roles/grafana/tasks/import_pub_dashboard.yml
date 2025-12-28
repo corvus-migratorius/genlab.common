@@ -1,5 +1,5 @@
 ---
-- name: "Import public dashboard: '{{ public_dashboard.name }}'"
+- name: "Import Public Dashboard | Import: '{{ public_dashboard.name }}'"
   community.grafana.grafana_dashboard:
     grafana_url: "http://127.0.0.1:{{ grafana_port }}"
     state: "{{ public_dashboard.state | default('present') }}"

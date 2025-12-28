@@ -1,5 +1,5 @@
 ---
-- name: "Create dashboard directory"
+- name: "Dashboards | Create dashboard directory"
   ansible.builtin.file:
     path: "{{ grafana_dashboard_dir }}"
     state: directory
@@ -7,7 +7,7 @@
     group: "{{ grafana_group }}"
     mode: "0755"
 
-- name: "Copy dashboard files from source to target"
+- name: "Dashboards | Copy dashboard files from source to target"
   with_fileglob:
     - "{{ dashboard_source_path }}/*.json"
   ansible.builtin.copy:
@@ -17,7 +17,7 @@
     owner: "{{ grafana_user }}"
     group: "{{ grafana_group }}"
 
-- name: "Import Grafana dashboards to Grafana"
+- name: "Dashboards | Import Grafana dashboards to Grafana"
   with_fileglob:
     - "{{ dashboard_source_path }}/*.json"
   community.grafana.grafana_dashboard:
@@ -29,7 +29,7 @@
     overwrite: false
     path: "{{ grafana_dashboard_dir }}/{{ item | basename }}"
 
-- name: "Run | Reload provisioned Grafana dashboards configuration"
+- name: "Dashboards | Reload provisioned Grafana dashboards configuration"
   ansible.builtin.uri:
   # kics-scan ignore-line
     url: "http://127.0.0.1:{{ grafana_port }}/api/admin/provisioning/dashboards/reload"
