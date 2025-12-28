@@ -34,38 +34,30 @@
         group: "prometheus"
         mode: "0755"
 
-    - name: "Install | Download the binary distribution"
-      ansible.builtin.get_url:
-        url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
-        dest: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
-        owner: "prometheus"
-        group: "prometheus"
-        mode: "0644"
-
-    - name: "Install | Unpack the distribution"
+    - name: "Install | Fetch and unpack the distribution"
       notify: "(Re)start Prometheus service"
       ansible.builtin.unarchive:
-        src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
-        dest: "{{ prometheus_dir }}"
-        creates: "{{ prometheus_dir }}/prometheus-{{ prometheus_version }}.linux-amd64"
+        src: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
+        dest: "/tmp"
+        creates: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64"
         remote_src: true
 
-    - name: "Install | Clean up downloads"
-      ansible.builtin.file:
-        path: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
-        state: absent
-
-    - name: "Install | Move official prometheus and promtool binaries"
+    - name: "Install | Put the binaries under the PATH"
       with_items:
         - prometheus
         - promtool
       ansible.builtin.copy:
-        src: "{{ prometheus_dir }}/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }}"
-        dest: "/usr/local/bin/{{ item }}"
-        mode: "0755"
+        remote_src: true
+        src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }}"
+        dest: "/usr/bin/{{ item }}"
         owner: "prometheus"
         group: "prometheus"
-        remote_src: true
+        mode: "0755"
+
+    - name: "Install | Clean up the downloads"
+      ansible.builtin.file:
+        path: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64"
+        state: absent
 
 - name: "Install | Create a systemd service unit"
   notify: "(Re)start Prometheus service"
