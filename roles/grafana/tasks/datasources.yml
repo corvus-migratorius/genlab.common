@@ -1,11 +1,4 @@
 ---
-- name: "Create datasource directory"
-  ansible.builtin.file:
-    path: "{{ grafana_datasource_dir }}"
-    state: directory
-    owner: "{{ grafana_user }}"
-    group: "{{ grafana_group }}"
-    mode: "0755"
 - name: "Datasources | Provision a datasource for Grafana: {{ item | basename }}"
   with_fileglob:
     "{{ grafana_datasource_source_path }}/*.y*ml"

@@ -9,6 +9,12 @@
     state: started
     delay: 10
 
+- name: "Reset default admin password"
+  no_log: "{{ grafana_no_log_secrets }}"
+  changed_when: false
+  ansible.builtin.command: >
+    grafana-cli admin reset-admin-password "{{ admin_api_password }}"
+
 - name: "Include user creation tasks"
   when: grafana_users is defined
   loop: "{{ grafana_users }}"
@@ -27,12 +33,28 @@
     loop_var: public_dashboard
   ansible.builtin.include_tasks: import_pub_dashboard.yml
 
+- name: "Create a plugin directory"
+  ansible.builtin.file:
+    path: "{{ grafana_plugins_dir }}"
+    state: directory
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: "0755"
+
 - name: "Configure plugins"
   when: grafana_plugins is defined
   loop: "{{ grafana_plugins }}"
   loop_control:
     loop_var: plugin
   ansible.builtin.include_tasks: plugins.yml
+
+- name: "Create a datasources directory"
+  ansible.builtin.file:
+    path: "{{ grafana_datasource_dir }}"
+    state: directory
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: "0755"
 
 - name: "Configure datasources"
   when: grafana_datasource_source_path is defined
