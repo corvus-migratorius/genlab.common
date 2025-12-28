@@ -1,7 +1,7 @@
 ---
 grafana_user: "grafana"
 grafana_group: "grafana"
-grafana_version: 11.5.0
+grafana_version: "12.3.1"
 grafana_port: 3000
 grafana_dashboard_dir: "/tmp/grafana/dashboards"
 grafana_plugins_dir: "/var/lib/grafana/plugins"
