@@ -1,9 +1,9 @@
 [Unit]
-Description=IPMI exporter
+Description=Prometheus IPMI exporter
 Documentation=https://github.com/prometheus-community/ipmi_exporter
 After=network.target
-StartLimitIntervalSec=120
-StartLimitBurst=5
+StartLimitIntervalSec=60
+StartLimitBurst=3
 
 [Service]
 Type=simple
