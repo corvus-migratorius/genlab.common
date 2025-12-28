@@ -1,5 +1,5 @@
 ---
-- name: "Users | Update a Grafana user"
+- name: "Users | Update a Grafana user: '{{ user.name }}'"
   no_log: "{{ grafana_no_log_secrets }}"
   community.grafana.grafana_user:
     state: present
