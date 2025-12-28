@@ -13,9 +13,9 @@
 
 - name: "Configuration | Copy templates"
   notify: "(Re)start and enable Alertmanager"
-  when: template_source_dir is defined
+  when: alertmanager_template_source_dir is defined
   with_fileglob:
-    - "{{ template_source_dir }}/*.tmpl"
+    - "{{ alertmanager_template_source_dir }}/*.tmpl"
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ alertmanager_config_dir }}/{{ item | basename }}"
