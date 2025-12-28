@@ -6,8 +6,7 @@
     owner: "{{ grafana_user }}"
     group: "{{ grafana_group }}"
     mode: "0755"
-
-- name: "Install Grafana plugins"
+- name: "Plugins | Install Grafana plugin: {{ item.name }}"
   community.grafana.grafana_plugin:
     name: "{{ plugin.name }}"
     version: "{{ plugin.version }}"

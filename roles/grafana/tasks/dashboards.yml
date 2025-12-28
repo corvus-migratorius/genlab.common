@@ -29,7 +29,7 @@
   with_fileglob:
     - "{{ dashboard_source_path }}/*.json"
 
-- name: "Run | reload Grafana provisioned dashboard configurations"
+- name: "Run | Reload provisioned Grafana dashboards configuration"
   ansible.builtin.uri:
   # kics-scan ignore-line
     url: "http://127.0.0.1:{{ grafana_port }}/api/admin/provisioning/dashboards/reload"

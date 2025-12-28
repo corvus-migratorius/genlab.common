@@ -6,8 +6,7 @@
     owner: "{{ grafana_user }}"
     group: "{{ grafana_group }}"
     mode: "0755"
-
-- name: "Configure | provision datasources for Grafana"
+- name: "Datasources | Provision a datasource for Grafana: {{ item | basename }}"
   ansible.builtin.copy:
     src: "{{ grafana_datasource_source_path }}/{{ item | basename }}"
     dest: "{{ grafana_datasource_dir }}/{{ item | basename }}"
@@ -17,7 +16,7 @@
   with_fileglob:
     "{{ datasource_source_path }}/*.y*ml"
 
-- name: "Run | reload Grafana datasource provisioned configurations"
+- name: "Run | Reload provisioned Grafana datasource configuration"
   ansible.builtin.uri:
   # kics-scan ignore-line
     url: "http://127.0.0.1:{{ grafana_port }}/api/admin/provisioning/datasources/reload"

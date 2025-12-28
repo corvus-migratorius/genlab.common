@@ -4,8 +4,7 @@
   changed_when: false
   ansible.builtin.command: >
     grafana-cli admin reset-admin-password "{{ admin_api_password }}"
-
-- name: "Create | update a Grafana user"
+- name: "Users | Update a Grafana user"
   no_log: "{{ grafana_no_log_secrets }}"
   community.grafana.grafana_user:
     state: present

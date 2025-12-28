@@ -1,35 +1,28 @@
 ---
-- name: "Create Grafana system group"
-  ansible.builtin.group:
-    name: grafana
-    system: true
-    state: present
-
-- name: "Create Grafana system user"
+- name: "Install | Create Grafana system user"
   ansible.builtin.user:
     name: grafana
-    group: grafana
     system: true
     shell: "/sbin/nologin"
     create_home: false
     state: present
 
-- name: "Install Grafana deb package"
+- name: "Install | Install Grafana"
   block:
-    - name: "Check Grafana version"
+    - name: "Install | Check Grafana version"
       changed_when: false
       ansible.builtin.command:
         cmd: "grafana-server --version"
       register: grafana_ver
 
-    - name: "Assert version correctness"
+    - name: "Install | Assert version correctness"
       ansible.builtin.assert:
         that: "grafana_ver.stdout is regex('{{ grafana_version }}')"
         success_msg: "grafana version {{ grafana_version }} is installed and working"
         fail_msg: "grafana version {{ grafana_version }} is not installed or not working correctly"
 
   rescue:
-    - name: "Ensure that directories exist"
+    - name: "Install | Ensure that directories exist"
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
@@ -41,7 +34,7 @@
         - "{{ grafana_data_dir }}"
         - "{{ grafana_plugins_dir }}"
 
-    - name: "Download Grafana DEB package"
+    - name: "Install | Download Grafana .deb package"
       ansible.builtin.get_url:
         url: "https://dl.grafana.com/oss/release/grafana_{{ grafana_version }}_amd64.deb"
         dest: "/tmp/grafana-{{ grafana_version }}_amd64.deb"
@@ -50,19 +43,19 @@
         mode: "0644"
       register: grafana_package_tmp
 
-    - name: "Install DEB package"
+    - name: "Install | Install .deb package"
       notify: "(Re)start and enable Grafana"
       ansible.builtin.apt:
         deb: "{{ grafana_package_tmp.dest }}"
         state: present
         update_cache: true
 
-    - name: "Cleanup downloaded file"
+    - name: "Install | Cleanup downloads"
       ansible.builtin.file:
         path: "/tmp/grafana-{{ grafana_version }}_amd64.deb"
         state: absent
 
-    - name: "Create env file for systemd service unit"
+    - name: "Install | Create a .env file for systemd service unit"
       notify: "(Re)start and enable Grafana"
       ansible.builtin.template:
         src: grafana-server.env.j2
