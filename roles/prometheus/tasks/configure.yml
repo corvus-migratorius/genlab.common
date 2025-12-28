@@ -17,7 +17,7 @@
     - "{{ prometheus_alertrules_source_dir }}/*.yml"
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: "{{ prometheus_config_dir }}/{{ item | basename }}"
+    dest: "{{ prometheus_config_dir }}/rules/{{ item | basename }}"
     owner: "prometheus"
     group: "prometheus"
     mode: "0660"

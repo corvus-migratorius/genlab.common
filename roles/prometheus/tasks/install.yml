@@ -25,7 +25,7 @@
     - name: "Install | Create directories {{ item }}"
       with_items:
         - "{{ prometheus_config_dir }}"
-        - "{{ prometheus_dir }}"
+        - "{{ prometheus_config_dir }}/rules"
         - "{{ prometheus_db_dir }}"
       ansible.builtin.file:
         path: "{{ item }}"
