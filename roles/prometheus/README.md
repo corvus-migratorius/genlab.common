@@ -17,15 +17,12 @@ Target node:
 
 Role Variables
 --------------
-```
-prometheus_version: 3.2.1                 # prometheus version
-prometheus_dir: "/etc/prometheus"         # where to install prometheus
-prometheus_user: prometheus               # user name
-prometheus_group: prometheus              # groups name
-prometheus_config_dir: "/etc/prometheus/conf"        # where to place prometheus config
-prometheus_db_dir: "/var/lib/prometheus"             # where to store prometheus db
-prometheus_config_source_dir: prometheus             # path to config files on source
-prometheus_alertrules_source_dir: prometheus/rules   # path to rule files  on source
+
+- `prometheus_version`: the desired Prometheus version
+- `prometheus_config_source_dir`: where to find config files on the controller
+- `prometheus_config_dir`: path for Prometheus configuration file on the target machine 
+- `prometheus_db_dir`: location for the TSDB files
+- `prometheus_alertrules_source_dir`: where to find alert rules on the controller
 ```
 
 Dependencies
