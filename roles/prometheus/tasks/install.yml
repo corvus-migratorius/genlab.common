@@ -7,7 +7,19 @@
     create_home: false
     state: present
 
-- name: "Install | Install the binary"
+- name: "Install | Create directories {{ item }}"
+  loop:
+    - "{{ prometheus_config_dir }}"
+    - "{{ prometheus_config_dir }}/rules"
+    - "{{ prometheus_db_dir }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "prometheus"
+    group: "prometheus"
+    mode: "0755"
+
+- name: "Install | Install the binaries"
   block:
     - name: "Install | Check Prometheus version"
       changed_when: false
@@ -22,18 +34,6 @@
         fail_msg: "prometheus version {{ prometheus_version }} is not installed or not working correctly"
 
   rescue:
-    - name: "Install | Create directories {{ item }}"
-      with_items:
-        - "{{ prometheus_config_dir }}"
-        - "{{ prometheus_config_dir }}/rules"
-        - "{{ prometheus_db_dir }}"
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        owner: "prometheus"
-        group: "prometheus"
-        mode: "0755"
-
     - name: "Install | Fetch and unpack the distribution"
       notify: "(Re)start Prometheus service"
       ansible.builtin.unarchive:
