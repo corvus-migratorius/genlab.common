@@ -8,7 +8,7 @@
     state: present
 
 - name: "Install | Create directories {{ item }}"
-  with_items:
+  loop:
     - "{{ alertmanager_config_dir }}"
     - "{{ alertmanager_storage_dir }}"
   ansible.builtin.file:
@@ -43,7 +43,7 @@
         remote_src: true
 
     - name: "Install | Put the binaries under the PATH"
-      with_items:
+      loop:
         - alertmanager
         - amtool
       ansible.builtin.copy:
