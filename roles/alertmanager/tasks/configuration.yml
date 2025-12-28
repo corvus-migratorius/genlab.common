@@ -1,24 +1,24 @@
 ---
 
-- name: "Copy config file"
+- name: "Configuration | Copy configuration files"
   notify: "(Re)start and enable Alertmanager"
+  with_fileglob:
+    - "{{ alertmanager_config_source_dir }}/*.yml"
   ansible.builtin.template:
     src: "{{ item }}"
     dest: "{{ alertmanager_config_dir }}/{{ item | basename }}"
-    owner: "{{ alertmanager_user }}"
-    group: "{{ alertmanager_group }}"
+    owner: alertmanager
+    group: alertmanager
     mode: "0660"
-  with_fileglob:
-    - "{{ config_source_dir }}/*.yml"
 
-- name: "Copy templates if existed"
+- name: "Configuration | Copy templates"
   notify: "(Re)start and enable Alertmanager"
   when: template_source_dir is defined
+  with_fileglob:
+    - "{{ template_source_dir }}/*.tmpl"
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ alertmanager_config_dir }}/{{ item | basename }}"
-    owner: "{{ alertmanager_user }}"
-    group: "{{ alertmanager_group }}"
+    owner: alertmanager
+    group: alertmanager
     mode: "0660"
-  with_fileglob:
-    - "{{ template_source_dir }}/*.tmpl"

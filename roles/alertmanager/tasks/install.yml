@@ -1,85 +1,156 @@
 ---
-- name: "Create Alertmanager system group"
-  ansible.builtin.group:
-    name: "{{ alertmanager_user }}"
-    system: true
-    state: present
-
-- name: "Create Alertmanager system user"
+- name: "Install | Create alertmanager system user"
   ansible.builtin.user:
-    name: "{{ alertmanager_user }}"
-    group: "{{ alertmanager_group }}"
+    name: "alertmanager"
     system: true
     shell: "/sbin/nologin"
     create_home: false
     state: present
 
-- name: "Install Alertmanager from binary"
+- name: "Install | Create directories {{ item }}"
+  with_items:
+    - "{{ alertmanager_config_dir }}"
+    - "{{ alertmanager_storage_dir }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "alertmanager"
+    group: "alertmanager"
+    mode: "0755"
+
+- name: "Install | Install the binaries"
   block:
-    - name: "Check Alertmanager version"
+    - name: "Install | Check alertmanager version"
       changed_when: false
       ansible.builtin.command:
         cmd: "alertmanager --version"
       register: alertmanager_ver
 
-    - name: "Assert version correctness"
+    - name: "Install | Assert version correctness"
       ansible.builtin.assert:
         that: "alertmanager_ver.stdout is regex('{{ alertmanager_version }}')"
         success_msg: "alertmanager version {{ alertmanager_version }} is installed and working"
         fail_msg: "alertmanager version {{ alertmanager_version }} is not installed or not working correctly"
 
   rescue:
-    - name: "Create Alertmanager directories '{{ item }}'"
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        owner: "{{ alertmanager_user }}"
-        group: "{{ alertmanager_group }}"
-        mode: "0755"
-      with_items:
-        - "{{ alertmanager_config_dir }}"
-        - "{{ alertmanager_dir }}"
-        - "{{ alertmanager_storage_dir }}"
-
-    - name: "Download Alertmanager binary"
-      ansible.builtin.get_url:
-        url: "https://github.com/prometheus/alertmanager/releases/download/v{{ alertmanager_version }}/\
-              alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
-        dest: "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
-        owner: "{{ alertmanager_user }}"
-        group: "{{ alertmanager_group }}"
-        mode: "0644"
-
-    - name: "Unpack Alertmanager binaries"
+    - name: "Install | Fetch and unpack the distribution"
       notify: "(Re)start and enable Alertmanager"
       ansible.builtin.unarchive:
-        src: "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
-        dest: "{{ alertmanager_dir }}"
-        creates: "{{ alertmanager_dir }}/alertmanager-{{ alertmanager_version }}.linux-amd64"
+        src: "https://github.com/prometheus/alertmanager/releases/download/v{{ alertmanager_version }}/\
+              alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
+        dest: "/tmp"
+        creates: "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64"
         remote_src: true
 
-    - name: "Cleanup downloaded file"
-      ansible.builtin.file:
-        path: "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
-        state: absent
-
-    - name: "Move official alertmanager and amtool binaries"
-      ansible.builtin.copy:
-        src: "{{ alertmanager_dir }}/alertmanager-{{ alertmanager_version }}.linux-amd64/{{ item }}"
-        dest: "/usr/local/bin/{{ item }}"
-        mode: "0755"
-        owner: "{{ alertmanager_user }}"
-        group: "{{ alertmanager_group }}"
-        remote_src: true
+    - name: "Install | Put the binaries under the PATH"
       with_items:
         - alertmanager
         - amtool
+      ansible.builtin.copy:
+        remote_src: true
+        src: "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64/{{ item }}"
+        dest: "/usr/bin/{{ item }}"
+        owner: "alertmanager"
+        group: "alertmanager"
+        mode: "0755"
 
+    - name: "Install | Clean up the downloads"
+      ansible.builtin.file:
+        path: "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64"
+        state: absent
 
-- name: "Create systemd service unit"
+- name: "Install | Create a systemd service unit"
+  notify: "(Re)start and enable Alertmanager"
   ansible.builtin.template:
     src: alertmanager.service.j2
     dest: /etc/systemd/system/alertmanager.service
-    owner: "{{ alertmanager_user }}"
-    group: "{{ alertmanager_group }}"
+    owner: "alertmanager"
+    group: "alertmanager"
     mode: "0660"
+
+
+# ---
+# - name: "Create Alertmanager system group"
+#   ansible.builtin.group:
+#     name: "{{ alertmanager_user }}"
+#     system: true
+#     state: present
+
+# - name: "Create Alertmanager system user"
+#   ansible.builtin.user:
+#     name: "{{ alertmanager_user }}"
+#     group: "{{ alertmanager_group }}"
+#     system: true
+#     shell: "/sbin/nologin"
+#     create_home: false
+#     state: present
+
+# - name: "Install Alertmanager from binary"
+#   block:
+#     - name: "Check Alertmanager version"
+#       changed_when: false
+#       ansible.builtin.command:
+#         cmd: "alertmanager --version"
+#       register: alertmanager_ver
+
+#     - name: "Assert version correctness"
+#       ansible.builtin.assert:
+#         that: "alertmanager_ver.stdout is regex('{{ alertmanager_version }}')"
+#         success_msg: "alertmanager version {{ alertmanager_version }} is installed and working"
+#         fail_msg: "alertmanager version {{ alertmanager_version }} is not installed or not working correctly"
+
+#   rescue:
+#     - name: "Create Alertmanager directories '{{ item }}'"
+#       ansible.builtin.file:
+#         path: "{{ item }}"
+#         state: directory
+#         owner: "{{ alertmanager_user }}"
+#         group: "{{ alertmanager_group }}"
+#         mode: "0755"
+#       with_items:
+#         - "{{ alertmanager_config_dir }}"
+#         - "{{ alertmanager_dir }}"
+#         - "{{ alertmanager_storage_dir }}"
+
+#     - name: "Download Alertmanager binary"
+#       ansible.builtin.get_url:
+#         url: "https://github.com/alertmanager/alertmanager/releases/download/v{{ alertmanager_version }}/\
+#               alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
+#         dest: "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
+#         owner: "{{ alertmanager_user }}"
+#         group: "{{ alertmanager_group }}"
+#         mode: "0644"
+
+#     - name: "Unpack Alertmanager binaries"
+#       notify: "(Re)start and enable Alertmanager"
+#       ansible.builtin.unarchive:
+#         src: "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
+#         dest: "{{ alertmanager_dir }}"
+#         creates: "{{ alertmanager_dir }}/alertmanager-{{ alertmanager_version }}.linux-amd64"
+#         remote_src: true
+
+#     - name: "Cleanup downloaded file"
+#       ansible.builtin.file:
+#         path: "/tmp/alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"
+#         state: absent
+
+#     - name: "Move official alertmanager and amtool binaries"
+#       ansible.builtin.copy:
+#         src: "{{ alertmanager_dir }}/alertmanager-{{ alertmanager_version }}.linux-amd64/{{ item }}"
+#         dest: "/usr/local/bin/{{ item }}"
+#         mode: "0755"
+#         owner: "{{ alertmanager_user }}"
+#         group: "{{ alertmanager_group }}"
+#         remote_src: true
+#       with_items:
+#         - alertmanager
+#         - amtool
+
+
+# - name: "Create systemd service unit"
+#   ansible.builtin.template:
+#     src: alertmanager.service.j2
+#     dest: /etc/systemd/system/alertmanager.service
+#     owner: "{{ alertmanager_user }}"
+#     group: "{{ alertmanager_group }}"
+#     mode: "0660"
