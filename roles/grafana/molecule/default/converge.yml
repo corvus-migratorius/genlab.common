@@ -2,7 +2,7 @@
 - name: Converge
   hosts: all
   vars:
-    grafana_users:
+    users:
       - name: "test"
         user_login: "test"
        # kics-scan ignore-line
@@ -15,14 +15,14 @@
         user_password: "test2"
         user_email: "test2@mail.ru"
         is_admin: true
-    grafana_plugins:
+    plugins:
       - name: grafana-metricsdrilldown-app
         version: 1.0.0
       - name: grafana-clock-panel
         version: 2.1.8
       - name: aceiot-svg-panel
         version: 0.1.5
-    grafana_public_dashboards:
+    public_dashboards:
       - name: Node Full Exporter
         id: 1860
         revision: 36
@@ -35,10 +35,10 @@
       grafana_version: "12.3.1"
       admin_api_username: "{{ grafana.admin_api_username }}"
       admin_api_password: "{{ grafana.admin_api_password }}"
-      users: "{{ grafana_users }}"
-      plugins: "{{ grafana_plugins }}"
-      public_dashboards: "{{ grafana_public_dashboards }}"
-      dashboard_source_path: "molecule/default/dashboards"
-      datasource_source_path: "molecule/default/datasources"
+      grafana_users: "{{ users }}"
+      grafana_plugins: "{{ plugins }}"
+      grafana_public_dashboards: "{{ public_dashboards }}"
+      grafana_dashboard_source_path: "molecule/default/dashboards"
+      grafana_datasource_source_path: "molecule/default/datasources"
       grafana_log_dir: "/opt/grafana/data"
       grafana_data_dir: "/opt/grafana/lib"

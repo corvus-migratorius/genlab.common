@@ -1,5 +1,5 @@
 ---
-- name: "Datasources | Provision a datasource for Grafana: {{ item | basename }}"
+- name: "Datasources | Provision datasources"
   with_fileglob:
     "{{ grafana_datasource_source_path }}/*.y*ml"
   ansible.builtin.copy:

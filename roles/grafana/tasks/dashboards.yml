@@ -9,7 +9,7 @@
 
 - name: "Dashboards | Copy dashboard files from source to target"
   with_fileglob:
-    - "{{ dashboard_source_path }}/*.json"
+    - "{{ grafana_dashboard_source_path }}/*.json"
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ grafana_dashboard_dir }}/{{ item | basename }}"
@@ -17,9 +17,9 @@
     owner: "{{ grafana_user }}"
     group: "{{ grafana_group }}"
 
-- name: "Dashboards | Import Grafana dashboards to Grafana"
+- name: "Dashboards | Import dashboards"
   with_fileglob:
-    - "{{ dashboard_source_path }}/*.json"
+    - "{{ grafana_dashboard_source_path }}/*.json"
   community.grafana.grafana_dashboard:
     grafana_url: "http://127.0.0.1:{{ grafana_port }}"
     url_username: "{{ admin_api_username }}"
