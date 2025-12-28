@@ -1,10 +1,10 @@
 ---
 collections:
   - name: ansible.posix
+  - name: community.crypto
+  - name: community.docker
   - name: community.general
   - name: community.grafana
-  - name: community.docker
-  - name: community.crypto
-  - name: maxhoesel.borgbackup
-  - name: lucasheld.uptime_kuma
   - name: community.postgresql
+  - name: lucasheld.uptime_kuma
+  - name: maxhoesel.borgbackup
