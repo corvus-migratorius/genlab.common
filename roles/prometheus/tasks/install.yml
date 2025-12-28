@@ -63,6 +63,9 @@
         state: absent
 
     - name: "Install | Move official prometheus and promtool binaries"
+      with_items:
+        - prometheus
+        - promtool
       ansible.builtin.copy:
         src: "{{ prometheus_dir }}/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }}"
         dest: "/usr/local/bin/{{ item }}"
@@ -70,9 +73,6 @@
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
         remote_src: true
-      with_items:
-        - prometheus
-        - promtool
 
 - name: "Install | Create a systemd service unit"
   notify: "(Re)start Prometheus service"
