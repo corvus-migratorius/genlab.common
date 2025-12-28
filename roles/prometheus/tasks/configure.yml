@@ -1,5 +1,5 @@
 ---
-- name: "Copy config file"
+- name: "Configure| Copy Prometheus configuration files"
   notify: "(Re)start Prometheus service"
   ansible.builtin.copy:
     src: "{{ item }}"
@@ -10,7 +10,7 @@
   with_fileglob:
     - "{{ prometheus_config_source_dir }}/*.yml"
 
-- name: "Copy alert rules"
+- name: "Configure | Copy alert rules"
   notify: "(Re)start Prometheus service"
   when: prometheus_alertrules_source_dir is defined
   ansible.builtin.copy:

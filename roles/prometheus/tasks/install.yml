@@ -1,11 +1,11 @@
 ---
-- name: "Create Prometheus system group"
+- name: "Install | Create Prometheus system group"
   ansible.builtin.group:
     name: "{{ prometheus_group }}"
     system: true
     state: present
 
-- name: "Create Prometheus system user"
+- name: "Install | Create Prometheus system user"
   ansible.builtin.user:
     name: "{{ prometheus_user }}"
     group: "{{ prometheus_group }}"
@@ -14,22 +14,22 @@
     create_home: false
     state: present
 
-- name: "Install prometheus from binary"
+- name: "Install | Install the binary"
   block:
-    - name: "Check Prometheus version"
+    - name: "Install | Check Prometheus version"
       changed_when: false
       ansible.builtin.command:
         cmd: "prometheus --version"
       register: prometheus_ver
 
-    - name: "Assert version correctness"
+    - name: "Install | Assert version correctness"
       ansible.builtin.assert:
         that: "prometheus_ver.stdout is regex('{{ prometheus_version }}')"
         success_msg: "prometheus version {{ prometheus_version }} is installed and working"
         fail_msg: "prometheus version {{ prometheus_version }} is not installed or not working correctly"
 
   rescue:
-    - name: "Create prometheus directories {{ item }}"
+    - name: "Install | Create directories {{ item }}"
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
@@ -41,7 +41,7 @@
         - "{{ prometheus_dir }}"
         - "{{ prometheus_db_dir }}"
 
-    - name: "Download Prometheus binary"
+    - name: "Install | Download the binary distribution"
       ansible.builtin.get_url:
         url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
         dest: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
@@ -49,7 +49,7 @@
         group: "{{ prometheus_group }}"
         mode: "0644"
 
-    - name: "Unpack Prometheus binaries"
+    - name: "Install | Unpack the distribution"
       notify: "(Re)start Prometheus service"
       ansible.builtin.unarchive:
         src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
@@ -57,12 +57,12 @@
         creates: "{{ prometheus_dir }}/prometheus-{{ prometheus_version }}.linux-amd64"
         remote_src: true
 
-    - name: "Cleanup downloaded file"
+    - name: "Install | Clean up downloads"
       ansible.builtin.file:
         path: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
         state: absent
 
-    - name: "Move official prometheus and promtool binaries"
+    - name: "Install | Move official prometheus and promtool binaries"
       ansible.builtin.copy:
         src: "{{ prometheus_dir }}/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }}"
         dest: "/usr/local/bin/{{ item }}"
@@ -74,7 +74,7 @@
         - prometheus
         - promtool
 
-- name: "Create systemd service unit"
+- name: "Install | Create a systemd service unit"
   notify: "(Re)start Prometheus service"
   ansible.builtin.template:
     src: prometheus.service.j2
