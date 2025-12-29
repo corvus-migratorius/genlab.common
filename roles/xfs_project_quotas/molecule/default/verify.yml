@@ -1,0 +1,13 @@
+---
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: Check XFS project quotas on /mnt
+      ansible.builtin.command: xfs_quota -x -c 'report -p' /mnt
+      register: xfs_project_quotas_quota_output
+      changed_when: false
+      failed_when: "'Project quota on /mnt' not in xfs_project_quotas_quota_output.stdout"
