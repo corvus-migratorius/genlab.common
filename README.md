@@ -29,6 +29,7 @@
 - [rclone_yandex](roles/rclone_yandex/README.md)
 - [rustdesk](roles/rustdesk/README.md)
 - [sftp_share](roles/sftp_share/README.md)
+- [singularity](roles/singularity/README.md)
 - [smartctl_exporter](roles/smartctl_exporter/README.md)
 - [sshd](roles/sshd/README.md)
 - [swapfile](roles/swapfile/README.md)
