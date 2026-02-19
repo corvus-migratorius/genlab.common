@@ -37,3 +37,4 @@
 - [users](roles/users/README.md)
 - [wg_hub](roles/wg_hub/README.md)
 - [wg_spoke](roles/wg_spoke/README.md)
+- [xfs_project_quotas](roles/xfs_project_quotas/README.md)
