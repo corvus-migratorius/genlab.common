@@ -17,6 +17,13 @@
     group: root
     mode: "0644"
 
+- name: "Quotas | Ensure xfsprogs package is installed"
+  ansible.builtin.apt:
+    name: xfsprogs
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
 - name: "Quotas | Ensure all /etc/projects entries exist"
   loop: "{{ projects }}"
   ansible.builtin.lineinfile:
