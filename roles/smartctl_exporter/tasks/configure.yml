@@ -3,7 +3,7 @@
   notify: "(Re)start and enable smartctl_exporter"
   when: smartctl_exporter_web_conf is defined
   ansible.builtin.template:
-    src: "{{ smartctl_exporter_config_dir }}/web.conf"
+    src: "{{ smartctl_exporter_web_conf }}"
     dest: "{{ smartctl_exporter_config_dir }}/web.conf"
     owner: root
     group: root

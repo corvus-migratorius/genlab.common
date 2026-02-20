@@ -15,7 +15,8 @@ The exporter will scan the system for available devices if no `--smartctl.device
 ```yaml
 - `smartctl_exp_port`: "0.0.0.0:9633"  # Addresses on which to expose metrics and web interface. Repeatable for multiple addresses.
 - `smartctl_exp_version`: "0.14.0" # exporter version to install
-- `smartctl_exp_config_dir`:  "/etc/exporters/config" # Path to configuration file that can enable TLS or authentication
+- `smartctl_exp_config_dir`: "/etc/exporters/smartctl" # Path to configuration file on target node that can enable TLS or authentication
+- `smartctl_exporter_web_conf`: "" # local path to web.conf file
 - `smartctl_exp_interval`: "60s" # The interval between smartctl polls
 - `smartctl_exp_rescan`: "10m" # The interval between rescanning for new/disappeared devices. If the interval is smaller than 1s no rescanning takes place. If any devices are configured with smartctl.device also no rescanning takes place.
 - `smartctl_exp_devices`: [] # The device to monitor (repeatable)
@@ -27,9 +28,6 @@ The exporter will scan the system for available devices if no `--smartctl.device
 - `smartctl_exp_args`: 
     - `--version`: Show application version.
     - `--web.systemd-socket`: Use systemd socket activation listeners instead of port listeners (Linux only).
-
-
-- smartctl_exporter_web_conf: ""
 ```
 Dependencies
 ------------
