@@ -1,7 +1,14 @@
+wireguard exporter
+----------------
+
 The role uses asynchronous Prometheus exporter for wireguard (https://github.com/kbknapp/wireguard_exporter).
 
+Requirements
+------------
+Exporter parses output of `wg show` and scrapes it to build Prometheus metrics.
 
-**Metrics Provided**
+Metrics Provided
+----------------
 
 - *wireguard_bytes_total*: Total number of bytes per direction per interface
 - *wireguard_duration_since_latest_handshake*: Duration in milliseconds since latest handshake for a peer
@@ -13,7 +20,8 @@ The role uses asynchronous Prometheus exporter for wireguard (https://github.com
 - *wireguard_scrape_success*: If the scrape was a success
 
 
-**Variables**
+Role Мariables
+----------------
 
 - *wg_exporter_version*: version of exporter
 - *wg_exporter_alias*: Add an alias for a given public key in the form of 'pubkey:alias' (separate multiple with commas)
@@ -23,7 +31,8 @@ The role uses asynchronous Prometheus exporter for wireguard (https://github.com
 - *wg_exporter_quiet*: Supress output at a level or lower. -q: INFO, -qq: WARN, -qqq: ERROR (i.e everything)
 - *wg_exporter_verbose*: Show verbose output at a level or higher. -v:  DEBUG, -vv: TRACE
 
-**Example playbook**
+Example playbook
+----------------
 
 ```yaml
 ---
@@ -33,3 +42,13 @@ The role uses asynchronous Prometheus exporter for wireguard (https://github.com
   roles:
     - role: genlab.common.wg_exporter
 ```
+
+License
+-------
+
+BSD
+
+Author Information
+------------------
+
+corvus-migratorius@proton.me
