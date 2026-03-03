@@ -20,7 +20,7 @@ Metrics Provided
 - *wireguard_scrape_success*: If the scrape was a success
 
 
-Role Мariables
+Role Variables
 ----------------
 
 - *wg_exporter_version*: version of exporter
