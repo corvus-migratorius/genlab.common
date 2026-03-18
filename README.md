@@ -12,6 +12,7 @@
 - [dnsmasq](roles/dnsmasq/README.md)
 - [docker_ubuntu](roles/docker_ubuntu/README.md)
 - [grafana](roles/grafana/README.md)
+- [hostname](roles/hostname/README.md)
 - [ipmi_exporter](roles/ipmi_exporter/README.md)
 - [karma](roles/karma/README.md)
 - [loki](roles/loki/README.md)
