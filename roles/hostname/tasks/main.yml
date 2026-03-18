@@ -1,0 +1,6 @@
+---
+# tasks file for roles/hostname
+- name: "Set the hostname to '{{ hostname }}'"
+  tags: [ hostname ]
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
