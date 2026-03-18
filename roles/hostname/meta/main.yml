@@ -1,4 +1,6 @@
 galaxy_info:
+  role_name: "hostname"
+  namespace: genlab
   author: "Alexander Gorelyhsev"
   description: "Set the hostname of the node"
   company: "GenLab LLC"
