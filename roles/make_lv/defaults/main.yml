@@ -1,0 +1,8 @@
+---
+size: 100%FREE
+fs_type: ext4
+storage_mountpoint: "/mnt"
+storage_mountpoint_mode: "0775"
+mountpoint_owner: root
+mountpoint_group: root
+is_container: false
