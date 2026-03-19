@@ -5,33 +5,33 @@
     - name: Get /root/image.img stats
       ansible.builtin.stat:
         path: /root/image.img
-      register: img_stat
+      register: make_lv_img_stat
 
     - name: Create image file
-      when: not img_stat.stat.exists
+      when: not make_lv_img_stat.stat.exists
       ansible.builtin.command: dd if=/dev/zero of=/root/image.img bs=1M count=128
-      register: dd_result
-      changed_when: dd_result.rc == 0
+      register: make_lv_dd_result
+      changed_when: make_lv_dd_result.rc == 0
 
     - name: Get linked loop devices
       ansible.builtin.command: losetup -a
       changed_when: false
-      register: loop_devs
+      register: make_lv_loop_devs
 
     - name: Link image to loop device
-      when: "'/root/image.img' not in loop_devs.stdout"
+      when: "'/root/image.img' not in make_lv_loop_devs.stdout"
       ansible.builtin.command: losetup --find --show -P /root/image.img
-      register: loop_device
-      changed_when: "'/dev/loop' in loop_device.stdout"
+      register: make_lv_loop_device
+      changed_when: "'/dev/loop' in make_lv_loop_device.stdout"
 
     - name: Get all loop devices
       ansible.builtin.command: losetup -a
-      register: losetup_out
+      register: make_lv_losetup_out
       changed_when: false
 
     - name: Find line with /root/image.img
       ansible.builtin.set_fact:
-        matched_line: "{{ losetup_out.stdout_lines
+        make_lv_matched_line: "{{ make_lv_losetup_out.stdout_lines
                           | select('search', '/root/image.img')
                           | list
                           | first
@@ -39,22 +39,22 @@
 
     - name: Extract loop device name (/dev/loopN)
       ansible.builtin.set_fact:
-        loop_dev: "{{ matched_line | regex_search('(/dev/loop[0-9]+)', '\\1') | default('') }}"
+        make_lv_loop_dev: "{{ make_lv_matched_line | regex_search('(/dev/loop[0-9]+)', '\\1') | default('') }}"
 
     - name: Debug result
       ansible.builtin.debug:
-        msg: "/root/image.img is linked to {{ loop_dev[0] }}"
-      when: loop_dev != ''
+        msg: "/root/image.img is linked to {{ make_lv_loop_dev[0] }}"
+      when: make_lv_loop_dev != ''
 
   roles:
-    - role: genlab.make_lv
+    - role: genlab.common.make_lv
       virtual_group: "group"
       logical_volume: "volume"
-      lvm_dev: "{{ loop_dev[0] }}"
-      size: 100%FREE
-      fs_type: ext4
-      storage_mountpoint: "/mnt"
-      storage_mountpoint_mode: "0755"
-      mountpoint_owner: root
-      mountpoint_group: root
-      is_container: true
+      lvm_dev: "{{ make_lv_loop_dev[0] }}"
+      make_lv_size: 100%FREE
+      make_lv_fs_type: ext4
+      make_lv_storage_mountpoint: "/mnt"
+      make_lv_storage_mountpoint_mode: "0755"
+      make_lv_mountpoint_owner: root
+      make_lv_mountpoint_group: root
+      make_lv_is_container: true

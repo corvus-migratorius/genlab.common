@@ -28,13 +28,13 @@ roles:
       virtual_group: "group"
       logical_volume: "volume"
       lvm_dev: "/dev/sda"
-      size: 100%FREE
-      fs_type: ext4
-      storage_mountpoint: "/mnt"
-      storage_mountpoint_mode: "0775"
-      mountpoint_owner: root
-      mountpoint_group: root
-      is_container: false # disables udev in LVM if true
+      make_lv_size: 100%FREE
+      make_lv_fs_type: ext4
+      make_lv_storage_mountpoint: "/mnt"
+      make_lv_storage_mountpoint_mode: "0775"
+      make_lv_mountpoint_owner: root
+      make_lv_mountpoint_group: root
+      make_lv_is_container: false # disables udev in LVM if true
 ```
 
 Minimal variables
@@ -48,13 +48,13 @@ roles:
 
 Defaults
 ```yaml
-size: 100%FREE
-fs_type: ext4
-storage_mountpoint: "/mnt"
-storage_mountpoint_mode: "0775"
-mountpoint_owner: root
-mountpoint_group: root
-is_container: false # disables udev in LVM if true
+make_lv_size: 100%FREE
+make_lv_fs_type: ext4
+make_lv_storage_mountpoint: "/mnt"
+make_lv_storage_mountpoint_mode: "0775"
+make_lv_mountpoint_owner: root
+make_lv_mountpoint_group: root
+make_lv_is_container: false # disables udev in LVM if true
 ```
 
 License
