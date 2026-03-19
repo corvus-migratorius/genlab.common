@@ -1,0 +1,65 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  vars:
+    virtual_group: "group"
+    logical_volume: "volume"
+    lvm_dev: "/dev/loop0"
+    make_lv_fs_type: ext4
+    make_lv_storage_mountpoint: "/mnt"
+
+  tasks:
+    - name: Get volume group list
+      ansible.builtin.shell:
+        cmd: "set -o pipefail ; pvs | grep {{ lvm_dev }}"
+        executable: /bin/bash
+      changed_when: false
+      failed_when: false
+      register: make_lv_vg_list
+
+    - name: Assert that volume group exists
+      ansible.builtin.assert:
+        that: virtual_group in make_lv_vg_list.stdout
+        success_msg: "{{ lvm_dev }} has {{ virtual_group }} group"
+        fail_msg: "{{ lvm_dev }} DOES NOT have {{ virtual_group }} group"
+
+    - name: Get logical volume list
+      ansible.builtin.shell:
+        cmd: "set -o pipefail ; lvs | grep {{ virtual_group }} | grep {{ logical_volume }}"
+        executable: /bin/bash
+      changed_when: false
+      failed_when: false
+      register: make_lv_lv_list
+
+    - name: Assert that logical volume exists
+      ansible.builtin.assert:
+        that: logical_volume in make_lv_lv_list.stdout
+        success_msg: "{{ virtual_group }} has {{ logical_volume }} volume"
+        fail_msg: "{{ virtual_group }} DOES NOT have {{ logical_volume }} volume"
+
+    - name: Get filesystem type
+      ansible.builtin.command: "blkid /dev/mapper/{{ virtual_group }}-{{ logical_volume }} -o value -s TYPE"
+      changed_when: false
+      failed_when: false
+      register: make_lv_current_fs
+
+    - name: Assert that current filesystem is the required one
+      ansible.builtin.assert:
+        that: make_lv_current_fs.stdout == make_lv_fs_type
+        success_msg: "{{ virtual_group }} - {{ logical_volume }} has {{ make_lv_fs_type }} filesystem"
+        fail_msg: "{{ virtual_group }} - {{ logical_volume }} DOES NOT have {{ make_lv_fs_type }} filesystem"
+
+    - name: Get logical volume mount info # noqa: command-instead-of-module — tells ansible-lint to ignore the error, because you can't actually
+                                          #                                   do it with ansible.builtin.mount as the linter begs me to do
+      ansible.builtin.shell: "mount | grep -w '{{ virtual_group }}-{{ logical_volume }}'"
+      register: make_lv_mount_check
+      ignore_errors: true
+      changed_when: false
+
+    - name: Assert that volume is mounted
+      ansible.builtin.assert:
+        that: make_lv_mount_check.rc == 0
+        success_msg: "{{ virtual_group }}-{{ logical_volume }} is mounted at {{ make_lv_storage_mountpoint }}"
+        fail_msg: "{{ virtual_group }}-{{ logical_volume }} IS NOT mounted at {{ make_lv_storage_mountpoint }}"
