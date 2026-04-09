@@ -9,3 +9,4 @@ collections:
   - name: lucasheld.uptime_kuma
   - name: maxhoesel.borgbackup
   - name: ansible.windows
+  - name: community.windows
