@@ -1,0 +1,13 @@
+---
+win_firewall_action: allow
+win_firewall_direction: in
+win_firewall_enabled: true
+win_firewall_localip: any
+win_firewall_localport: any
+win_firewall_profiles: domain,private,public
+win_firewall_program: any
+win_firewall_protocol: any
+win_firewall_remoteip: any
+win_firewall_remoteport: any
+win_firewall_service: any
+win_firewall_state: present
