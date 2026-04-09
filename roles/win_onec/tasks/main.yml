@@ -1,0 +1,54 @@
+---
+- name: Check 1C installation
+  block:
+    - name: Get 1C stats
+      register: win_onec_dir
+      ansible.windows.win_stat:
+        path: 'C:\Program Files 64\1cv8\{{ win_onec_version }}'
+
+    - name: Assert that 1C directory exists
+      ansible.builtin.assert:
+        that: win_onec_dir.stat.exists
+        success_msg: "1C {{ win_onec_version }} is installed"
+        fail_msg: "1C {{ win_onec_version }} IS NOT installed"
+  rescue:
+    - name: Create temp directory
+      ansible.windows.win_file:
+        path: C:\tmp
+        state: directory
+
+    - name: Push 1C archive
+      ansible.windows.win_copy:
+        src: "{{ win_onec_archive_src }}"
+        dest: C:\tmp\onec_install.rar
+
+    - name: Get 1c installation stats
+      register: win_onec_installation_dir
+      ansible.windows.win_stat:
+        path: C:\tmp\onec_install\
+
+    - name: Extract 1C archive
+      when: not win_onec_installation_dir.stat.exists
+      ansible.windows.win_shell: |
+        7z x "C:\tmp\onec_install.rar" -o"C:\tmp\onec_install" -y
+
+    - name: Install 1C
+      ansible.windows.win_shell: |
+        C:\tmp\onec_install\setup.exe /S /a /l "ru" /debuglog "C:\tmp\onec_install\setup.log"
+
+    - name: Find source files
+      ansible.windows.win_find:
+        paths: C:\tmp\onec_install
+        file_type: file
+      register: win_onec_found_files
+
+    - name: Clean up on C:\ after 1C installation
+      loop: "{{ win_onec_found_files.files }}"
+      ansible.windows.win_file:
+        path: "C:\\{{ item.filename }}"
+        state: absent
+
+    - name: Delete tmp directory
+      ansible.windows.win_file:
+        path: C:\tmp
+        state: absent

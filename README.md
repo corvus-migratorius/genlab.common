@@ -41,4 +41,5 @@
 - [wg_spoke](roles/wg_spoke/README.md)
 - [win_chocolatey_install](roles/win_chocolatey_install/README.md)
 - [win_firewall](roles/win_firewall/README.md)
+- [win_onec](roles/win_onec/README.md)
 - [xfs_project_quotas](roles/xfs_project_quotas/README.md)
