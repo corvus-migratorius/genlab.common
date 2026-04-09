@@ -8,3 +8,4 @@ collections:
   - name: community.postgresql
   - name: lucasheld.uptime_kuma
   - name: maxhoesel.borgbackup
+  - name: ansible.windows
