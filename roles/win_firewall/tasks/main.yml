@@ -1,0 +1,50 @@
+---
+- name: Print out rule name for convenient debugging
+  ansible.builtin.debug:
+    msg: "{{ win_firewall_name }}"
+
+- name: Check if firewall is configured
+  block:
+    - name: Get firewall flag stat
+      ansible.windows.win_stat:
+        path: C:\firewall.flag
+      register: win_firewall_firewall_flag
+
+    - name: Assert that firewall.flag exists
+      ansible.builtin.assert:
+        that: win_firewall_firewall_flag.stat.exists
+        success_msg: "firewall.flag exists"
+        fail_msg: "firewall.flag DOES NOT exist"
+
+  rescue:
+    - name: Disable Windows Firewall
+      ansible.windows.win_firewall:
+        state: disabled
+
+    - name: Delete all firewall rules
+      ansible.windows.win_shell: netsh advfirewall firewall delete rule name=all
+
+    - name: Create firewall.flag
+      ansible.windows.win_file:
+        path: C:\firewall.flag
+        state: touch
+
+- name: Create firewall rule
+  community.windows.win_firewall_rule:
+    name: "{{ win_firewall_name }}"
+    action: "{{ win_firewall_action }}"
+    direction: "{{ win_firewall_direction }}"
+    enabled: "{{ win_firewall_enabled }}"
+    localip: "{{ win_firewall_localip }}"
+    localport: "{{ win_firewall_localport }}"
+    profiles: "{{ win_firewall_profiles }}"
+    program: "{{ win_firewall_program }}"
+    protocol: "{{ win_firewall_protocol }}"
+    remoteip: "{{ win_firewall_remoteip }}"
+    remoteport: "{{ win_firewall_remoteport }}"
+    service: "{{ win_firewall_service }}"
+    state: "{{ win_firewall_state }}"
+
+- name: Enable Windows Firewall
+  ansible.windows.win_firewall:
+    state: enabled
