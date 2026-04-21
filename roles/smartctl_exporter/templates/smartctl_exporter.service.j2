@@ -9,7 +9,7 @@ StartLimitBurst=5
 Type=simple
 User=root
 Group=root
-ExecStart=/usr/local/bin/smartctl_exporter \
+ExecStart=/usr/sbin/smartctl_exporter \
     --web.listen-address={{ smartctl_exporter_web_listen_address }} \
     --smartctl.interval={{ smartctl_exporter_interval }} \
     --smartctl.rescan={{ smartctl_exporter_rescan }} \
@@ -26,8 +26,8 @@ ExecStart=/usr/local/bin/smartctl_exporter \
 {% if smartctl_exporter_args is defined and smartctl_exporter_args | length > 0 %}
       {{ smartctl_exporter_args }} \
 {% endif %}
-{% if smartctl_exp_source_web_config_dir is defined and smartctl_exp_source_web_config_dir | length > 0 %} \
-    --web.config.file={{ smartctl_exporter_web_config_dir }}/web_smartctl.conf
+{% if smartctl_exporter_web_conf is defined and smartctl_exporter_web_conf | length > 0 %} \
+    --web.config.file={{ smartctl_exporter_config_dir }}/web.conf
 {% endif %}
 
 SyslogIdentifier=smartctl_exporter
