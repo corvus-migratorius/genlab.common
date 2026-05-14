@@ -1,0 +1,39 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  pre_tasks:
+    - name: "Verify | include default vars"
+      ansible.builtin.include_vars:
+        dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
+        extensions: ['yml']
+
+  tasks:
+    - name: "Verify | check the installed Singularity version"
+      register: singularity_deb_installed_version
+      changed_when: false
+      ansible.builtin.command:
+        cmd: singularity --version
+
+    - name: "Verify | assert installed version correctness"
+      tags: singularity
+      vars:
+        installed: "{{ singularity_deb_installed_version.stdout }}"
+        expected: "singularity-ce version {{ singularity_deb_version }}-{{ singularity_deb_os_name }}"
+      ansible.builtin.assert:
+        that: installed == expected
+        success_msg: "OK, expected version present: '{{ installed }}'"
+        fail_msg: "Unexpected Singularity version: '{{ installed }}'"
+
+    # - name: "Assert version correctness"
+    #   ansible.builtin.assert:
+    #     that: singularity_installed_version.stdout == "singularity version " + singularity_deb_version
+    #     success_msg: "Found the expected Singularity version: '{{ singularity_version }}'"
+    #     fail_msg: "Unexpected Sinagularity version ({{ singularity_installed_version }})"
+
+    - name: "Verify | test Singularity deployment with a 'hello-world' job"  # noqa: no-changed-when
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "singularity --debug run shub://GodloveD/lolcow"
