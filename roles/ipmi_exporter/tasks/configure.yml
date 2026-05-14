@@ -4,7 +4,7 @@
   when: ipmi_exporter_local_conf is defined
   ansible.builtin.template:
     src: "{{ ipmi_exporter_local_conf }}"
-    dest: "{{ ipmi_exporter_config_dir }}/local.conf"
+    dest: "{{ ipmi_exporter_config_dir }}/local.yml"
     owner: root
     group: root
     mode: '0640'
@@ -14,7 +14,7 @@
   when: ipmi_exporter_web_conf is defined
   ansible.builtin.template:
     src: "{{ ipmi_exporter_web_conf }}"
-    dest: "{{ ipmi_exporter_config_dir }}/web.yaml"
+    dest: "{{ ipmi_exporter_config_dir }}/web.yml"
     owner: root
     group: root
     mode: '0640'

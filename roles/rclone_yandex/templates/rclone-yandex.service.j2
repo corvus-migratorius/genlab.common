@@ -6,6 +6,7 @@ Wants=network-online.target
 
 [Service]
 Type=notify
+ExecStartPre=/usr/bin/mkdir -p /tmp/rclone/
 ExecStart= \
   /usr/bin/rclone mount \
       --gid={{ rclone_yandex_group_gid.stdout }} \

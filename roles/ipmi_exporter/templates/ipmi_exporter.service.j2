@@ -1,9 +1,9 @@
 [Unit]
-Description=IPMI exporter
+Description=Prometheus IPMI exporter
 Documentation=https://github.com/prometheus-community/ipmi_exporter
 After=network.target
-StartLimitIntervalSec=120
-StartLimitBurst=5
+StartLimitIntervalSec=60
+StartLimitBurst=3
 
 [Service]
 Type=simple
@@ -15,10 +15,10 @@ ExecStart=/usr/sbin/ipmi_exporter \
       {{ ipmi_exporter_args }} \
 {% endif %}
 {% if ipmi_exporter_local_conf is defined %}
-    --config.file={{ ipmi_exporter_config_dir }}/local.conf \
+    --config.file={{ ipmi_exporter_config_dir }}/local.yml \
 {% endif %}
 {% if ipmi_exporter_web_conf is defined %}
-    --web.config.file={{ ipmi_exporter_config_dir }}/web.yaml
+    --web.config.file={{ ipmi_exporter_config_dir }}/web.yml
 {% endif %}
 
 SyslogIdentifier=ipmi_exporter

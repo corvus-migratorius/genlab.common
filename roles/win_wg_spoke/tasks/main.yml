@@ -1,0 +1,50 @@
+---
+- name: Get wireguard binary stat
+  ansible.windows.win_stat:
+    path: C:\Program Files\WireGuard\wireguard.exe
+  register: win_wg_spoke_binary_stat
+
+- name: Assert wireguard is installed
+  ansible.builtin.assert:
+    that: win_wg_spoke_binary_stat.stat.exists
+    success_msg: Wireguard IS installed
+    fail_msg: Wireguard IS NOT installed
+
+- name: Check config changes or existance
+  block:
+    - name: Ensure WireGuard config directory exists
+      ansible.windows.win_file:
+        path: C:\Program Files\Wireguard\configs
+        state: directory
+
+    - name: Deploy WireGuard config
+      ansible.windows.win_template:
+        src: wg.conf.j2
+        dest: "C:\\Program Files\\Wireguard\\configs\\{{ win_wg_spoke_iface_name }}.conf"
+      register: win_wg_spoke_config_deploy_result
+
+    - name: Ensure no changes in wireguard config were made
+      ansible.builtin.assert:
+        that: not win_wg_spoke_config_deploy_result.changed
+        success_msg: No changes were made in wireguard config
+        fail_msg: Wireguard config HAS CHANGED or NEVER BEEN CREATED
+
+  rescue:
+    - name: Allow PostUp and PostDown in wireguard configs
+      when: win_wg_spoke_dns_server is defined and win_wg_spoke_domain is defined   # PostUp and PostDown are used for dns splitting
+      ansible.windows.win_regedit:
+        path: HKLM:\Software\WireGuard
+        name: DangerousScriptExecution
+        data: 1
+        type: dword
+        state: present
+
+    - name: Install WireGuard tunnel service
+      ansible.windows.win_shell: |
+        & "C:\Program Files\Wireguard\wireguard.exe" /installtunnelservice "C:\Program Files\Wireguard\configs\{{ win_wg_spoke_iface_name }}.conf"
+
+    - name: Ensure WireGuard service is running
+      ansible.windows.win_service:
+        name: "WireGuardTunnel${{ win_wg_spoke_iface_name }}"
+        start_mode: auto
+        state: started

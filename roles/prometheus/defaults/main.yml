@@ -1,7 +1,4 @@
 ---
-prometheus_version: 3.2.1
-prometheus_dir: "/etc/prometheus"
-prometheus_user: prometheus
-prometheus_group: prometheus
-prometheus_config_dir: "/etc/prometheus/conf"
+prometheus_version: "3.5.0"
+prometheus_config_dir: "/etc/prometheus"
 prometheus_db_dir: "/var/lib/prometheus"

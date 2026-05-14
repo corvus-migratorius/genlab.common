@@ -1,6 +1,6 @@
 ---
 - name: "Mount devices"
-  with_items: "{{ devices }}"
+  loop: "{{ mount_device_devices }}"
   ansible.posix.mount:
     fstype: "{{ item.fstype }}"
     path: "{{ item.where }}"

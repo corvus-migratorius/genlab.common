@@ -19,8 +19,8 @@
     - name: "Check Prometheus version"
       ansible.builtin.assert:
         that: "prometheus_installed_version.stdout is regex('{{ prometheus_version }}')"
-        success_msg: "Prometheus version {{ prometheus_version }} is installed and working"
-        fail_msg: "Prometheus version {{ prometheus_version }} is not installed or not working correctly"
+        success_msg: "Prometheus version {{ prometheus_version }} is available and executable"
+        fail_msg: "Prometheus version {{ prometheus_version }} not found or not executable"
 
     # kics-scan ignore-block
     - name: "Check if Prometheus is reachable"

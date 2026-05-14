@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  role_name: "win_onec"
+  namespace: genlab
+  author: "Sergey Malyuk"
+  company: "Genlab, LLC"
+  description: "Installs 1C"
+  license: "MIT"
+  min_ansible_version: "2.16"
+
+  platforms:
+    - name: "Windows"
+
+  galaxy_tags: []
+
+dependencies: []

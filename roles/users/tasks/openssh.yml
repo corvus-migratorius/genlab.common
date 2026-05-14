@@ -1,12 +1,12 @@
 ---
-- name: "OpenSSH | Ensure openssh client tools are installed"
+- name: "OpenSSH | Ensure openssh client tools are installed (Debian)"
   when: ansible_os_family == "Debian"
   ansible.builtin.apt:
     name: openssh-client
     state: present
     cache_valid_time: 3000
 
-- name: "OpenSSH | Ensure openssh client tools are installed"
+- name: "OpenSSH | Ensure openssh client tools are installed (RedHat)"
   when: ansible_os_family == "RedHat"
   ansible.builtin.dnf:
     name: openssh-clients
