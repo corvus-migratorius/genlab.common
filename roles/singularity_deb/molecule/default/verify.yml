@@ -27,12 +27,6 @@
         success_msg: "OK, expected version present: '{{ installed }}'"
         fail_msg: "Unexpected Singularity version: '{{ installed }}'"
 
-    # - name: "Assert version correctness"
-    #   ansible.builtin.assert:
-    #     that: singularity_installed_version.stdout == "singularity version " + singularity_deb_version
-    #     success_msg: "Found the expected Singularity version: '{{ singularity_version }}'"
-    #     fail_msg: "Unexpected Sinagularity version ({{ singularity_installed_version }})"
-
     - name: "Verify | test Singularity deployment with a 'hello-world' job"  # noqa: no-changed-when
       changed_when: false
       ansible.builtin.command:
