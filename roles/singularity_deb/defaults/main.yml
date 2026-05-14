@@ -1,0 +1,3 @@
+---
+singularity_deb_os_name: "jammy"
+singularity_deb_version: "3.9.9"

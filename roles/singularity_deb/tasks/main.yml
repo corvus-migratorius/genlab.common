@@ -1,0 +1,43 @@
+---
+- name: "Install | install Singularity"
+  tags: singularity
+  block:
+    - name: "Install | get the installed Singularity version"
+      tags: singularity
+      register: singularity_deb_installed_version
+      changed_when: false
+      ansible.builtin.command:
+        cmd: singularity --version
+
+    - name: "Install | assert installed version correctness"
+      tags: singularity
+      vars:
+        installed: "{{ singularity_deb_installed_version.stdout }}"
+        expected: "singularity-ce version {{ singularity_deb_version }}-{{ singularity_deb_os_name }}"
+      ansible.builtin.assert:
+        that: installed == expected
+        success_msg: "Expected version already present: '{{ installed }}'"
+        fail_msg: "Found unexpected Singularity version: '{{ installed }}'"
+
+  rescue:
+    - name: "Install | download GitHub release .deb"
+      tags: singularity
+      vars:
+        baseurl: "github.com/sylabs/singularity/releases/download"
+        singver: "{{ singularity_deb_version }}"
+        osname: "{{ singularity_deb_os_name }}"
+      ansible.builtin.get_url:
+        url: "https://{{ baseurl }}/v{{ singver }}/singularity-ce_{{ singver }}-{{ osname }}_amd64.deb"
+        dest: "/tmp/singularity.deb"
+        mode: "0644"
+
+    - name: "Install | install downloaded package"
+      tags: singularity
+      ansible.builtin.apt:
+        deb: "/tmp/singularity.deb"
+
+    - name: "Install | clean up the .deb artifact"
+      tags: singularity
+      ansible.builtin.file:
+        path: "/tmp/singularity.deb"
+        state: absent
