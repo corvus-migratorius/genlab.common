@@ -1,0 +1,22 @@
+---
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+  vars:
+    singularity_version: 3.8.6
+  tasks:
+    - name: "Install | check the Singularity version"
+      tags: [singularity, singularity-install]
+      register: singularity_this
+      failed_when: singularity_this.stdout != "singularity version " + singularity_version
+      changed_when: false
+      ansible.builtin.command:
+        cmd: singularity --version
+
+    - name: "Install | test Singularity deployment with a 'hello-world' job"
+      tags: [singularity, singularity-install]
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "singularity --debug run shub://GodloveD/lolcow"

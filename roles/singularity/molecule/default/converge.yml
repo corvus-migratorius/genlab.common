@@ -1,0 +1,48 @@
+---
+- name: Converge
+  hosts: all
+  pre_tasks:
+    - name: "Install | install dependencies (Debian)"
+      tags: [singularity, singularity-install]
+      when: ansible_os_family == "Debian"
+      ansible.builtin.apt:
+        state: present
+        update_cache: true
+        name:
+          - build-essential
+          - cryptsetup-bin
+          - git
+          - libgpgme-dev
+          - libseccomp-dev
+          - pkg-config
+          - squashfs-tools
+          - uuid-dev
+          - wget
+          - golang
+
+    - name: "Install | install the 'Development Tools' package group (EL)"
+      tags: [singularity, singularity-install]
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.dnf:
+        state: present
+        update_cache: true
+        name: "@Development tools"
+
+    - name: "Install | install dependencies (EL)"
+      tags: [singularity, singularity-install]
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.dnf:
+        state: present
+        update_cache: true
+        name:
+          - cryptsetup
+          - libuuid-devel
+          - libseccomp-devel
+          - openssl-devel
+          - squashfs-tools
+          - wget
+          - golang
+
+  roles:
+    - role: "genlab.common.singularity"
+      singularity_version: 3.8.6
