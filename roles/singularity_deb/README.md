@@ -1,30 +1,23 @@
 singularity
 =========
 
-Install singularity
+Install Singularity from a DEB file hosted on the official Github repo.
 
 Requirements
 ------------
 
-- build-essential
-- cryptsetup-bin
-- git
-- libgpgme-dev
-- libseccomp-dev
-- pkg-config
-- squashfs-tools
-- uuid-dev
-- wget
-- golang
-
 Role Variables
 --------------
-`singularity_version`
+
+- `singularity_deb_os_name`: Ubuntu codename, default: `jammy`
+- `singularity_deb_version`: Singularity version, default: `3.9.9`
+
+Both variables are used in building a Github release URL.
 
 Example Playbook
 ----------------
 
-See `molecule/default/converge.yml`
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------
