@@ -1,0 +1,89 @@
+---
+- name: "Install packages"
+  ansible.builtin.apt:
+    name: unzip
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: "Create the 'caddy' user"
+  ansible.builtin.user:
+    name: caddy
+    comment: "Caddy web server"
+    shell: /bin/nologin
+    home: /var/lib/caddy
+    state: present
+    system: true
+
+- name: "Install the requested caddy version"
+  block:
+    - name: "Check caddy version"
+      register: caddy_version_check
+      changed_when: false
+      ansible.builtin.command:
+        cmd: /usr/bin/caddy version
+
+    - name: "Assert version correctness"
+      ansible.builtin.assert:
+        that: "caddy_version in caddy_version_check.stdout"
+        success_msg: "OK, expected caddy version already available: '{{ caddy_version }}'"
+        fail_msg: "Expected version '{{ caddy_version }}'; available is '{{ caddy_version_check.stdout }}'"
+
+  rescue:
+    - name: "Create a temporary directory for caddy download"
+      ansible.builtin.file:
+        path: /tmp/caddy
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: "Download caddy"
+      notify: "Enable and restart the caddy daemon"
+      vars:
+        base_url: "github.com/caddyserver/caddy/releases/download"
+      ansible.builtin.unarchive:
+        src: "https://{{ base_url }}/v{{ caddy_version }}/caddy_{{ caddy_version }}_linux_amd64.tar.gz"
+        dest: /tmp/caddy
+        remote_src: true
+
+    - name: "Rename and set permissions for the caddy binary"
+      ansible.builtin.copy:
+        src: "/tmp/caddy/caddy"
+        dest: "/usr/bin/caddy"
+        owner: root
+        group: root
+        mode: "0755"
+        remote_src: true
+
+    - name: "Cleanup the downloaded file"
+      ansible.builtin.file:
+        path: "/tmp/caddy"
+        state: absent
+
+
+- name: "Template the systemd unit file"
+  notify: "Enable and restart the caddy daemon"
+  ansible.builtin.template:
+    src: caddy.service.j2
+    dest: /etc/systemd/system/caddy.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: "Ensure '/etc/caddy' exists"
+  ansible.builtin.file:
+    path: /etc/caddy
+    state: directory
+    owner: caddy
+    group: caddy
+    mode: "0755"
+
+- name: "Template caddy config file"
+  notify: "Enable and restart the caddy daemon"
+  ansible.builtin.template:
+    src: "{{ caddy_src_conf_path }}"
+    dest: "{{ caddy_dest_conf_path }}"
+    owner: root
+    group: root
+    mode: "0644"
