@@ -74,9 +74,9 @@
           hostname
 
     - name: Test ssh connection with a disallowed user
-      register: result
+      register: sshd_verify_conn_result
       changed_when: false
-      failed_when: result.rc == 0
+      failed_when: sshd_verify_conn_result.rc == 0
       ansible.builtin.command:
         cmd: >-
           ssh
