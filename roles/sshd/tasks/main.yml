@@ -14,19 +14,13 @@
 - name: "Configure additional restrictions"
   ansible.builtin.include_tasks: "restrictions.yml"
 
+- name: "Configure whitelists"
+  ansible.builtin.include_tasks: "whitelists.yml"
+
 - name: "Log at VERBOSE level"
   notify: Restart sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^#?LogLevel'
     line: 'LogLevel VERBOSE'
-    validate: sshd -f %s -t
-
-- name: "Configure AllowUsers"
-  when: sshd_allow_users is defined
-  notify: Restart sshd
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^#?\s*AllowUsers\s+'
-    line: "AllowUsers {{ sshd_allow_users }}"
     validate: sshd -f %s -t
