@@ -1,0 +1,101 @@
+---
+# These variables are registered as host vars, for whatever deep reason
+- name: "Miniforge | get current user entity info ({{ user.name }})"
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ user.name }}"
+    split: ":"
+
+- name: "Miniforge | get current user home directory ({{ user.name }})"
+  ansible.builtin.set_fact:
+    miniforge_homedir: "{{ getent_passwd[user.name][4] }}"
+
+- name: "Miniforge | set miniforge dir ({{ user.name }})"
+  ansible.builtin.set_fact:
+    miniforge_dir: "{{ miniforge_homedir }}/miniforge3"
+
+- name: "Miniforge | build miniforge bin path ({{ user.name }})"
+  ansible.builtin.set_fact:
+    miniforge_mamba_bin_path: "{{ miniforge_dir }}/bin/mamba"
+
+- name: "Miniforge | display miniforge script path ({{ user.name }})"
+  ansible.builtin.debug:
+    msg: "{{ miniforge_script_path }}"
+
+- name: "Miniforge | install miniforge ({{ user.name }})"
+  become: true
+  become_user: "{{ user.name }}"
+  vars:
+    allow_world_readable_tmpfiles: true
+  block:
+    - name: "Miniforge | check Mamba availability ({{ user.name }})"
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "{{ miniforge_mamba_bin_path }} info"
+  rescue:
+    - name: "Miniforge | install miniforge in a non-interactive mode ({{ user.name }})"
+      ansible.builtin.command:
+        cmd: "/bin/bash {{ miniforge_script_path }} -b"
+        creates: "{{ miniforge_homedir }}/miniforge3"
+
+    - name: "Miniforge | initialize Mamba/Conda ({{ user.name }})"
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "{{ miniforge_mamba_bin_path }} shell init"
+
+    - name: "Miniforge | check if Mamba has become available ({{ user.name }})"
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "{{ miniforge_mamba_bin_path }} info"
+
+
+- name: "Miniforge | deploy default .condarc if it doesn't exist already ({{ user.name }})"
+  become: true
+  become_user: "{{ user.name }}"
+  block:
+    - name: "Miniforge | check if .condarc already exists ({{ user.name }})"
+      register: miniforge_condarc_stat
+      failed_when: miniforge_condarc_stat.stat.exists is false
+      ansible.builtin.stat:
+        path: "{{ miniforge_homedir }}/.condarc"
+
+  rescue:
+    - name: "Miniforge | set default .condarc from external file if provided ({{ user.name }})"
+      when: condarc_file is defined and condarc_file != ""
+      ansible.builtin.copy:
+        src: "{{ condarc_file }}"
+        dest: "{{ miniforge_homedir }}/.condarc"
+        mode: "0600"
+
+    - name: "Miniforge | set default content via .condarc ({{ user.name }})"
+      when: condarc_file is not defined or condarc_file == ""
+      ansible.builtin.copy:
+        dest: "{{ miniforge_homedir }}/.condarc"
+        content: "{{ miniforge_condarc | to_nice_yaml }}"
+        mode: "0600"
+
+
+- name: "Miniforge | deploy manifest files for user: {{ user.name }}"
+  when:
+    - "manifest_dir is defined"
+    - "user.mamba_files is defined"
+  loop: "{{ user.mamba_files }}"
+  become: true
+  become_user: "{{ user.name }}"
+  ansible.builtin.copy:
+    src: "{{ manifest_dir }}/{{ item }}"
+    dest: "{{ miniforge_homedir }}/{{ item }}"
+    owner: "{{ user.name }}"
+    group: "{{ user.name }}"
+    mode: "0660"
+
+
+# Variables from the outer scope (like 'user') will get passed down to the included tasks
+- name: "Miniforge | create environments from deployed manifests for user: {{ user.name }}"
+  when:
+    - "miniforge_create_envs is true"
+    - "user.mamba_files is defined"
+  loop: "{{ user.mamba_files }}"
+  loop_control:
+    loop_var: file
+  ansible.builtin.include_tasks: "manifests.yml"
