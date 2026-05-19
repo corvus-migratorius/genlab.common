@@ -21,7 +21,6 @@
 
   roles:
     - role: genlab.common.miniforge
-      miniforge_release: 24.3.0-0
       miniforge_users: "{{ mamba_users }}"
       manifest_dir: "manifests"
       miniforge_create_envs: true
