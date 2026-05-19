@@ -3,3 +3,4 @@ miniforge_release: "26.3.2-2"
 miniforge_script_path: "/tmp/{{ miniforge_install_script_name }}.sh"
 miniforge_release_base_url: "https://github.com/conda-forge/miniforge/releases/download/"
 miniforge_create_envs: false
+miniforge_auto_activate_base: true

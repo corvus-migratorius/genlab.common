@@ -99,3 +99,12 @@
   loop_control:
     loop_var: file
   ansible.builtin.include_tasks: "manifests.yml"
+
+
+- name: "Miniforge | auto-activate base environment for user: {{ user.name }}"
+  when: miniforge_auto_activate_base
+  become: true
+  become_user: "{{ user.name }}"
+  changed_when: false
+  ansible.builtin.command:
+    cmd: "{{ miniforge_mamba_bin_path }} config --set auto_activate_base true"
