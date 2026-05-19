@@ -1,0 +1,50 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: "Check Mamba installing correct tools from channels"
+      become: true
+      become_user: alice
+      changed_when: false
+      vars:
+        env: env_alpha
+      register: miniforge_tool_version
+      ansible.builtin.command:
+        cmd: ~/miniforge3/envs/{{ env }}/bin/stress-ng --version
+
+    - name: "Verify the version of the installed tool"
+      ansible.builtin.assert:
+        that: "'stress-ng, version 0.17.03' in miniforge_tool_version.stdout"
+        success_msg: "Correct version installed"
+        fail_msg: "Error: incorrect version installed"
+
+    - name: "Check the deployed environments for Alice (pip)"
+      become: true
+      become_user: alice
+      loop:
+        - { env: 'env_alpha', module: 'humanfriendly' }
+        - { env: 'cucubeta', module: 'arrow' }
+      changed_when: false
+      ansible.builtin.command:
+        cmd: ~/miniforge3/envs/{{ item.env }}/bin/python -c 'import {{ item.module }}'
+
+    - name: "Check the deployed environments for Bob"
+      become: true
+      become_user: bob
+      loop:
+        - { env: 'cucubeta', module: 'arrow' }
+      changed_when: false
+      ansible.builtin.command:
+        cmd: ~/miniforge3/envs/{{ item.env }}/bin/python -c 'import {{ item.module }}'
+
+    - name: "Check that no environments were deployed for Charlie"
+      become: true
+      become_user: charlie
+      register: miniforge_charlie_envs
+      failed_when: miniforge_charlie_envs.stdout_lines | length > 0
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "ls ~/miniforge3/envs"

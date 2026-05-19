@@ -1,0 +1,15 @@
+---
+- name: "Download miniforge from '{{ miniforge_release_base_url }}'"
+  retries: 3
+  delay: 1
+  ansible.builtin.get_url:
+    timeout: 10
+    url: "{{ miniforge_release_base_url }}/{{ miniforge_release }}/{{ miniforge_install_script_name }}.sh"
+    dest: "{{ miniforge_script_path }}"
+    mode: "0664"
+
+- name: "Deploy Mamba in a user loop"
+  loop: "{{ miniforge_users }}"
+  loop_control:
+    loop_var: user
+  ansible.builtin.include_tasks: "miniforge.yml"

@@ -1,0 +1,2 @@
+---
+miniforge_install_script_name: "Miniforge3-{{ ansible_system }}-{{ ansible_architecture }}"
