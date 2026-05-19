@@ -5,13 +5,13 @@
   any_errors_fatal: true
 
   pre_tasks:
-    - name: "Include default vars"
+    - name: "Verify | include default vars"
       ansible.builtin.include_vars:
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
         extensions: ['yml']
 
   tasks:
-    - name: "Get the version of Miniforge installed"
+    - name: "Verify | get the version of Miniforge installed"
       become: true
       become_user: alice
       changed_when: false
@@ -19,13 +19,13 @@
       ansible.builtin.command:
         cmd: ~/miniforge3/bin/conda --version
 
-    - name: "Verify the installed version of Miniforge"
+    - name: "Verify | check the installed version of Miniforge"
       ansible.builtin.assert:
         that: "'{{ miniforge_release | split('-') | first }}' in miniforge_installed_version.stdout"
         success_msg: "OK, expected version installed: '{{ miniforge_installed_version.stdout }}'"
         fail_msg: "FAIL: unexpected version installed: '{{ miniforge_installed_version.stdout }}'"
 
-    - name: "Check Mamba installing correct tools from channels"
+    - name: "Verify | check Mamba installing correct tools from channels"
       become: true
       become_user: alice
       changed_when: false
@@ -35,13 +35,13 @@
       ansible.builtin.command:
         cmd: ~/miniforge3/envs/{{ env }}/bin/stress-ng --version
 
-    - name: "Verify the version of the installed tool"
+    - name: "Verify | check the version of the installed tool"
       ansible.builtin.assert:
         that: "'stress-ng, version 0.17.03' in miniforge_tool_version.stdout"
         success_msg: "OK, expected version installed: '{{ miniforge_tool_version.stdout }}'"
         fail_msg: "FAIL: unexpected version installed: '{{ miniforge_tool_version.stdout }}'"
 
-    - name: "Check the deployed environments for Alice (pip)"
+    - name: "Verify | check the deployed environments for Alice (pip)"
       become: true
       become_user: alice
       loop:
@@ -51,7 +51,7 @@
       ansible.builtin.command:
         cmd: ~/miniforge3/envs/{{ item.env }}/bin/python -c 'import {{ item.module }}'
 
-    - name: "Check the deployed environments for Bob"
+    - name: "Verify | check the deployed environments for Bob"
       become: true
       become_user: bob
       loop:
@@ -60,7 +60,7 @@
       ansible.builtin.command:
         cmd: ~/miniforge3/envs/{{ item.env }}/bin/python -c 'import {{ item.module }}'
 
-    - name: "Check that no environments were deployed for Charlie"
+    - name: "Verify | check that no environments were deployed for Charlie"
       become: true
       become_user: charlie
       register: miniforge_charlie_envs

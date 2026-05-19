@@ -1,20 +1,20 @@
 ---
-- name: "Get contents of the manifest file"
+- name: "Manifests | get contents of the manifest file"
   register: miniforge_manifest_content
   ansible.builtin.slurp:
     src: "{{ miniforge_homedir }}/{{ file }}"
 
 # Since the file can be named whatever, we need to extract the environment name
 # as that is what the actual environment folder name will be
-- name: "Extract enviroment name from manifest file"
+- name: "Manifests | extract environment name from manifest file"
   ansible.builtin.set_fact:
     miniforge_env_name: '{{ (miniforge_manifest_content.content | b64decode | from_yaml).name }}'
 
-- name: "Display the extracted environment name"
+- name: "Manifests | display the extracted environment name"
   ansible.builtin.debug:
     msg: "{{ miniforge_env_name }}"
 
-- name: "Create environment: {{ miniforge_env_name }}"
+- name: "Manifests | create environment: {{ miniforge_env_name }}"
   become: true
   become_user: "{{ user.name }}"
   ansible.builtin.shell:
