@@ -107,4 +107,4 @@
   become_user: "{{ user.name }}"
   changed_when: false
   ansible.builtin.command:
-    cmd: "{{ miniforge_mamba_bin_path }} config --set auto_activate_base true"
+    cmd: "{{ miniforge_mamba_bin_path }} config set auto_activate_base true"
