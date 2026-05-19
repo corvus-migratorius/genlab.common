@@ -14,6 +14,9 @@
 - name: "Configure additional restrictions"
   ansible.builtin.include_tasks: "restrictions.yml"
 
+- name: "Configure whitelists"
+  ansible.builtin.include_tasks: "whitelists.yml"
+
 - name: "Log at VERBOSE level"
   notify: Restart sshd
   ansible.builtin.lineinfile:
