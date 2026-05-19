@@ -38,8 +38,8 @@
     - name: "Verify the version of the installed tool"
       ansible.builtin.assert:
         that: "'stress-ng, version 0.17.03' in miniforge_tool_version.stdout"
-        success_msg: "Correct version installed"
-        fail_msg: "Error: incorrect version installed"
+        success_msg: "OK, expected version installed: '{{ miniforge_tool_version.stdout }}'"
+        fail_msg: "FAIL: unexpected version installed: '{{ miniforge_tool_version.stdout }}'"
 
     - name: "Check the deployed environments for Alice (pip)"
       become: true
