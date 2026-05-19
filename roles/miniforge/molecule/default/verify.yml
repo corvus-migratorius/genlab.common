@@ -4,7 +4,27 @@
   gather_facts: false
   any_errors_fatal: true
 
+  pre_tasks:
+    - name: "Include default vars"
+      ansible.builtin.include_vars:
+        dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
+        extensions: ['yml']
+
   tasks:
+    - name: "Get the version of Miniforge installed"
+      become: true
+      become_user: alice
+      changed_when: false
+      register: miniforge_installed_version
+      ansible.builtin.command:
+        cmd: ~/miniforge3/bin/conda --version
+
+    - name: "Verify the installed version of Miniforge"
+      ansible.builtin.assert:
+        that: "'{{ miniforge_release | split('-') | first }}' in miniforge_installed_version.stdout"
+        success_msg: "OK, expected version installed: '{{ miniforge_installed_version.stdout }}'"
+        fail_msg: "FAIL: unexpected version installed: '{{ miniforge_installed_version.stdout }}'"
+
     - name: "Check Mamba installing correct tools from channels"
       become: true
       become_user: alice
