@@ -18,6 +18,7 @@
         name: "{{ item }}"
         state: present
         create_home: true
+        shell: /bin/bash
 
   roles:
     - role: genlab.common.miniforge
