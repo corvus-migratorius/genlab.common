@@ -1,0 +1,28 @@
+---
+
+- name: Include config dir creation tasks
+  ansible.builtin.include_tasks: _inc_create_config_dir.yml
+  when: slurm_create_dirs
+
+- name: Install log rotation configuration
+  ansible.builtin.template:
+    src: logrotate.j2
+    dest: /etc/logrotate.d/slurm
+    mode: "0644"
+  when: slurm_rotate_logs
+
+- name: Install slurm.conf
+  ansible.builtin.template:
+    src: "slurm.conf.j2"
+    dest: "{{ slurm_config_dir }}/slurm.conf"
+    owner: "{{ slurm_user_name }}"
+    group: "{{ slurm_group_name }}"
+    mode: "0444"
+  notify:
+    - Reconfigure slurmctld
+    - Restart slurmd
+    - Restart slurmctld
+
+- name: Include munge tasks
+  ansible.builtin.include_tasks: munge.yml
+  when: slurm_configure_munge

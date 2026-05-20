@@ -1,0 +1,28 @@
+---
+
+- name: Restart slurmdbd
+  ansible.builtin.service:
+    name: slurmdbd
+    state: restarted
+
+- name: Wait for slurmdbd
+  ansible.builtin.wait_for:
+    host: "{{ __slurmdbd_config_default.DbdHost }}"
+    port: 6819
+    timeout: 30
+
+- name: Get cluster list
+  ansible.builtin.command: sacctmgr -n list cluster -P format=Cluster
+  register: cluster_check
+  changed_when: false
+
+- debug:
+    var: cluster_check.stdout_lines
+
+- name: Set cluster existence
+  ansible.builtin.set_fact:
+    __cluster_exists: "{{ slurmdbd_cluster_name in (cluster_check.stdout_lines | map('trim') | list) }}"
+
+- name: Create slurm cluster
+  ansible.builtin.command: sacctmgr add -i cluster {{ slurmdbd_cluster_name }}
+  when: not __cluster_exists

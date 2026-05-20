@@ -1,0 +1,142 @@
+---
+
+- name: "Install the tarball"
+  block:
+    - name: "Check slurm version"
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "slurmd -V"
+      register: slurm_ver
+
+    - name: "Assert version correctness"
+      ansible.builtin.assert:
+        that: "slurm_ver.stdout is regex('{{ slurm_version }}')"
+        success_msg: "slurm version {{ slurm_version }} is installed and working"
+        fail_msg: "slurm version {{ slurm_version }} is not installed or not working correctly"
+
+  rescue:
+    - name: "Enable EPEL repository (for libjwt-devel and other useful packages)"
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.dnf:
+        name: epel-release
+        state: present
+        update_cache: true
+
+    - name: "Enable CRB repository (required for many devel packages like lua-devel, json-c-devel, etc.)"
+      when: ansible_os_family == "RedHat"
+      community.general.dnf_config_manager:
+        name: crb
+        state: enabled
+
+    - name: "Install Slurm build dependencies on RedHat linux"
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.dnf:
+        name:
+          - gcc
+          - epel-release
+          - make
+          - autoconf
+          - automake
+          - rpm-build
+          - munge
+          - munge-devel
+          - munge-libs
+          - openssl-devel
+          - pam-devel
+          - hwloc-devel
+          - lua-devel
+          - json-c-devel
+          - http-parser-devel
+          - libcurl-devel
+          - readline-devel
+          - libjwt-devel
+          - systemd-devel
+          - dbus-devel
+          - numactl-devel
+          - lz4-devel
+          - python3-devel
+          - git
+        state: present
+        update_cache: true
+
+    - name: "Install Slurm build dependencies on Debian linux"
+      when: ansible_os_family == "Debian"
+      ansible.builtin.apt:
+        name:
+          - build-essential
+          - munge
+          - libmunge-dev
+          - libssl-dev
+          - libpam0g-dev
+          - libhwloc-dev
+          - liblz4-dev
+          - libjson-c-dev
+          - libhttp-parser-dev
+          - libcurl4-openssl-dev
+          - libreadline-dev
+          - libjwt-dev
+          - libcgroup-dev
+          - libsystemd-dev
+          - libdbus-1-dev
+          - lua5.3
+          - liblua5.3-dev
+          - libnuma-dev
+          - python3
+          - python3-dev
+          - git
+        state: present
+        update_cache: true
+
+    - name: "Unarchive slurm tar file"
+      ansible.builtin.unarchive:
+        src: "https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2"
+        dest: /tmp
+        remote_src: true
+
+    - name: "Create Slurm directories"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ slurm_user_name }}"
+        group: "{{ slurm_group_name }}"
+        mode: '0755'
+      loop:
+        - "{{ slurm_config_dir }}"
+        - "{{ slurm_log_dir }}"
+        - "{{ slurm_run_dir }}"
+        # - /var/spool/slurm
+        # - /var/spool/slurm/ctld
+        # - /var/spool/slurm/slurmd
+
+    - name: "Configure Slurm"
+      ansible.builtin.command: >
+        ./configure \
+        --prefix=/usr \
+        --exec-prefix=/usr \
+        --sysconfdir={{ slurm_config_dir }} \
+        --with-hdf5=no \
+        --enable-pam \
+        --enable-deprecated \
+        --enable-multiple-slurmd \
+        --with-munge=/usr \
+        --with-jwt \
+        --with-json \
+        --enable-cgroupv2 \
+        --with-systemdsystemunitdir=/etc/systemd/system/ \
+        --with-slurmctld-port={{ __slurm_config_default.SlurmctldPort }} \
+        --with-slurmd-port={{ __slurm_config_default.SlurmdPort }} \
+        --with-slurmdbd-port={{ __slurmdbd_config_default.DbdPort }} \
+        {{ '--with-mysql_config=/usr/bin' if 'slurmdbdservers' in group_names or 'dbd' in slurm_roles }}
+      args:
+        chdir: "/tmp/slurm-{{ slurm_version }}"
+        creates: "/tmp/slurm-{{ slurm_version }}/config.status"
+
+    - name: "Build Slurm"
+      ansible.builtin.command:
+        cmd: "make -j{{ ansible_processor_vcpus | default(4) }}"
+        chdir: "/tmp/slurm-{{ slurm_version }}"
+
+    - name: "Install Slurm"
+      ansible.builtin.command:
+        cmd: "make install"
+        chdir: "/tmp/slurm-{{ slurm_version }}"
