@@ -14,7 +14,7 @@
         password: "test_molecule"
         priv: "slurm_acct_db.*:ALL"
     mysql_bind_address: "0.0.0.0"
-    slurm_roles: ['dbd']
+    slurm_roles: ['dbd', "controller"]
     slurmdbd_cluster_name: test-cluster
     __slurmdbd_config_default:
       AuthType: auth/munge
@@ -27,7 +27,7 @@
       StorageHost: localhost
       StoragePort: 3306
       StorageUser: slurm
-      StoragePass: SlurmDBPass123!
+      StoragePass: "test_molecule"
       StorageLoc: slurm_acct_db
       MessageTimeout: 60
       PrivateData: accounts,users,jobs
@@ -40,6 +40,10 @@
       AccountingStorageHost: localhost
       AccountingStoragePort: 6819
     slurm_create_user: true
+    slurm_accounts:
+      - account_name: test
+        account_description: "molecule test account"
+        account_organization: molecule
 
   pre_tasks:
     - name: Install MySQL dev libraries (Ubuntu)
@@ -51,4 +55,4 @@
   roles:
     - role: geerlingguy.mysql
 
-    - role: genlab.slurm
+    - role: genlab.common.slurm
