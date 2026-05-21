@@ -18,13 +18,11 @@
     msg: "Existing accounts: {{ existing_accounts }}"
 
 - name: Add accounts
-  ansible.builtin.command: >
-    sacctmgr add account -i {{ item.account_name }}
-    Description={{ item.account_description | default('') }}
-    Organization={{ item.account_organization | default('') }}
-    {% if item.parent is defined and item.parent %}
-    parent={{ item.parent }}
-    {% endif %}
+  ansible.builtin.shell: |
+    sacctmgr -i add account "{{ item.account_name }}" \
+      Description="{{ item.account_description | default('') }}" \
+      Organization="{{ item.account_organization | default('') }}" \
+      {% if item.parent is defined and item.parent %}parent="{{ item.parent }}"{% endif %}
   loop: "{{ slurm_accounts }}"
   when: item.account_name not in existing_accounts
   register: account_creation
