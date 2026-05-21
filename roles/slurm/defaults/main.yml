@@ -24,6 +24,8 @@ __cluster_not_setup: true # Default value. Is modified if cluster already exists
 
 slurm_start_services: true
 
+slurm_accounts: {}
+
 slurm_user_name: slurm
 slurm_group_name: slurm
 slurm_user_gid: 888

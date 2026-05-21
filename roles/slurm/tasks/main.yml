@@ -1,5 +1,4 @@
 ---
-
 - name: Include user creation tasks
   ansible.builtin.include_tasks: user.yml
   when: slurm_create_user
@@ -46,3 +45,10 @@
 - name: Setup cluster on slurmdb
   ansible.builtin.include_tasks: slurmdbd_cluster.yml
   when: "slurm_start_services and ('slurmdbdservers' in group_names or 'dbd' in slurm_roles)"
+
+- name: Setup accounts on slurm controller
+  ansible.builtin.include_tasks: accounts.yml
+  when:
+    - slurm_accounts is defined
+    - slurm_accounts | length > 0
+    - "'slurmdbdservers' in group_names or 'dbd' in slurm_roles"
