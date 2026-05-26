@@ -3,7 +3,7 @@
   ansible.builtin.user:
     name: caddy
     comment: "Caddy web server"
-    shell: /bin/nologin
+    shell: /sbin/nologin
     home: /var/lib/caddy
     state: present
     system: true
@@ -80,3 +80,12 @@
     owner: root
     group: root
     mode: "0644"
+
+- name: "Create a directory for Caddy logs"
+  when: caddy_log_path is defined
+  ansible.builtin.file:
+    state: directory
+    path: "{{ caddy_log_path }}"
+    owner: caddy
+    group: caddy
+    mode: "0755"
