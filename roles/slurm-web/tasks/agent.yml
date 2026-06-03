@@ -1,7 +1,7 @@
 ---
 - name: Install agent configuration
-  ansible.builtin.copy:
-    src: files/agent.ini
+  ansible.builtin.template:
+    src: agent.ini.j2
     dest: /etc/slurm-web/agent.ini
     owner: "{{ slurm_web_user }}"
     group: "{{ slurm_web_group }}"
@@ -9,8 +9,8 @@
   notify: Restart slurm-web-agent
 
 - name: Install policy configuration
-  ansible.builtin.copy:
-    src: files/policy.ini
+  ansible.builtin.template:
+    src: policy.ini.j2
     dest: /etc/slurm-web/policy.ini
     owner: "{{ slurm_web_user }}"
     group: "{{ slurm_web_group }}"
