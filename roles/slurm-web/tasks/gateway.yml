@@ -1,7 +1,7 @@
 ---
 - name: Install gateway configuration
-  ansible.builtin.copy:
-    src: files/gateway.ini
+  ansible.builtin.template:
+    src: gateway.ini.j2
     dest: /etc/slurm-web/gateway.ini
     owner: "{{ slurm_web_user }}"
     group: "{{ slurm_web_group }}"
