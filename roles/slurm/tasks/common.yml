@@ -22,7 +22,3 @@
     - Reconfigure slurmctld
     - Restart slurmd
     - Restart slurmctld
-
-- name: Include munge tasks
-  ansible.builtin.include_tasks: munge.yml
-  when: slurm_configure_munge
