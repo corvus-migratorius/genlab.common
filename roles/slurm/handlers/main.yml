@@ -1,4 +1,8 @@
 ---
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+
 - name: Restart munge
   ansible.builtin.service:
     name: munge
@@ -8,32 +12,37 @@
   ansible.builtin.service:
     name: slurmdbd
     state: reloaded
-  when: "slurm_start_services and ('slurmdbdservers' in group_names or 'dbd' in slurm_roles)"
+
+- name: Restart slurmdbd
+  ansible.builtin.service:
+    name: slurmdbd
+    state: restarted
 
 - name: Reload slurmctld
   ansible.builtin.service:
     name: slurmctld
     state: reloaded
-  when: "slurm_start_services and ('slurmservers' in group_names or 'controller' in slurm_roles)"
 
 - name: Restart slurmctld
   ansible.builtin.service:
     name: slurmctld
     state: restarted
-  when: "slurm_start_services and ('slurmservers' in group_names or 'controller' in slurm_roles)"
 
 - name: Reload slurmd
   ansible.builtin.service:
     name: slurmd
     state: reloaded
-  when: "slurm_start_services and ('slurmexechosts' in group_names or 'exec' in slurm_roles)"
 
 - name: Restart slurmd
   ansible.builtin.service:
     name: slurmd
     state: restarted
-  when: "slurm_start_services and ('slurmexechosts' in group_names or 'exec' in slurm_roles)"
 
 - name: Reconfigure slurmctld
   ansible.builtin.command: scontrol reconfigure
-  when: "slurm_start_services and ('slurmservers' in group_names or 'controller' in slurm_roles)"
+  changed_when: true
+
+- name: Restart slurmrestd
+  ansible.builtin.service:
+    name: slurmrestd
+    state: restarted
