@@ -1,0 +1,39 @@
+[service]
+cluster={{ slurm_web_agent_cluster }}
+{% if slurm_web_agent_interface is defined %}
+interface={{ slurm_web_agent_interface }}
+{% endif %}
+{% if slurm_web_agent_port is defined %}
+port={{ slurm_web_agent_port }}
+{% endif %}
+
+[slurmrestd]
+uri={{ slurm_web_slurmrestd_uri }}
+auth={{ slurm_web_slurmrestd_auth }}
+jwt_key={{ slurm_web_slurmrestd_jwt_key }}
+
+{% if slurm_web_cache_enabled %}
+[cache]
+enabled=yes
+host={{ slurm_web_cache_host }}
+port={{ slurm_web_cache_port }}
+{% if slurm_web_cache_password is defined %}
+password={{ slurm_web_cache_password }}
+{% endif %}
+{% endif %}
+
+{% if slurm_web_metrics_enabled %}
+[metrics]
+enabled=yes
+{% if slurm_web_metrics_restrict is defined %}
+restrict=
+{% for network in slurm_web_metrics_restrict %}
+  {{ network }}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+{% if slurm_web_racksdb_enabled is defined and not slurm_web_racksdb_enabled %}
+[racksdb]
+enabled=no
+{% endif %}
