@@ -12,28 +12,28 @@
     comment: "slurmrestd system user"
     uid: "{{ slurmrestd_user_uid }}"
     group: slurmrestd
-    home: /home/slurm
-    shell: /usr/sbin/nologin
+    shell: /bin/false
+    create_home: false
     system: true
 
-- name: Create slurmrestd log directory
-  ansible.builtin.file:
-    path: "{{ slurmrestd_log_file | dirname }}"
-    state: directory
-    owner: "{{ slurm_user_name }}"
-    group: "{{ slurm_group_name }}"
-    mode: "0755"
-  when:
-    - slurm_create_dirs
-    - slurmrestd_log_file is defined
+# - name: Create slurmrestd log directory
+#   ansible.builtin.file:
+#     path: "{{ slurmrestd_log_file | dirname }}"
+#     state: directory
+#     owner: "{{ slurm_user_name }}"
+#     group: "{{ slurm_group_name }}"
+#     mode: "0755"
+#   when:
+#     - slurm_create_dirs
+#     - slurmrestd_log_file is defined
 
-- name: Create slurmrestd runtime directory
-  ansible.builtin.file:
-    path: "{{ slurmrestd_runtime_dir }}"
-    state: directory
-    owner: "{{ slurm_user_name }}"
-    group: "{{ slurm_group_name }}"
-    mode: "0755"
+# - name: Create slurmrestd runtime directory
+#   ansible.builtin.file:
+#     path: "{{ slurmrestd_runtime_dir }}"
+#     state: directory
+#     owner: "{{ slurm_user_name }}"
+#     group: "{{ slurm_group_name }}"
+#     mode: "0755"
 
 - name: Install slurmrestd systemd unit
   ansible.builtin.template:
@@ -42,13 +42,10 @@
     owner: root
     group: root
     mode: "0644"
-  notify: Reload slurmrestd
+  notify:
+    - Reload systemd daemon
+    - Restart slurmrestd
 
 - name: Install JWT key
   ansible.builtin.include_tasks: jwt.yml
   when: slurm_enable_jwt | bool
-
-- name: Enable slurmrestd
-  ansible.builtin.systemd:
-    name: slurmrestd
-    enabled: true
