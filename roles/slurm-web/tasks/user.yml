@@ -1,0 +1,16 @@
+---
+- name: Create slurm-web group
+  ansible.builtin.group:
+    name: "{{ slurm_web_group }}"
+    system: true
+    state: present
+
+- name: Create slurm-web user
+  ansible.builtin.user:
+    name: "{{ slurm_web_user }}"
+    group: "{{ slurm_web_group }}"
+    comment: "slurm-web system user"
+    system: true
+    shell: /bin/false
+    create_home: false
+    state: present

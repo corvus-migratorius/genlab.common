@@ -1,0 +1,9 @@
+---
+- name: Install gateway configuration
+  ansible.builtin.copy:
+    src: files/gateway.ini
+    dest: /etc/slurm-web/gateway.ini
+    owner: "{{ slurm_web_user }}"
+    group: "{{ slurm_web_group }}"
+    mode: "0640"
+  notify: Restart slurm-web-gateway

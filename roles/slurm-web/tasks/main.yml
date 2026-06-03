@@ -1,0 +1,23 @@
+---
+- name: Include slurm-web user creation tasks
+  ansible.builtin.include_tasks: user.yml
+  when: slurm_web_create_user | default(true) | bool
+
+- name: Include slurm-web installation tasks
+  ansible.builtin.include_tasks: install.yml
+
+- name: Include agent setup tasks
+  ansible.builtin.include_tasks: agent.yml
+
+- name: Include gateway setup tasks
+  ansible.builtin.include_tasks: gateway.yml
+
+- name: Ensure slurm-web services are enabled and running
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - slurm-web-agent
+    - slurm-web-gateway
+  when: slurm_web_start_services | default(true) | bool
