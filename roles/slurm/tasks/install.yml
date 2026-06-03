@@ -114,7 +114,7 @@
         --enable-deprecated \
         --enable-multiple-slurmd \
         --with-munge=/usr \
-        --with-jwt \
+        {{ '--with-jwt' if slurm_enable_jwt else '' }} \
         --with-json \
         --enable-cgroupv2 \
         --with-systemdsystemunitdir=/etc/systemd/system/ \
