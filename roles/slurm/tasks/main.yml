@@ -22,12 +22,16 @@
   ansible.builtin.include_tasks: slurmdbd.yml
   when: "'slurmdbdservers' in group_names or 'dbd' in slurm_roles"
 
+- name: Include slurmrestd installation tasks
+  ansible.builtin.include_tasks: slurmrestd.yml
+  when: "'slurmrestdhosts' in group_names or 'restd' in slurm_roles"
+
 - name: Import common tasks
   ansible.builtin.import_tasks: common.yml
 
 - name: Ensure slurmdbd is enabled and running
   ansible.builtin.service:
-    name: "{{ slurmdbd_service_name }}"
+    name: slurmdbd
     enabled: true
     state: started
   when: "slurm_start_services and ('slurmdbdservers' in group_names or 'dbd' in slurm_roles)"
@@ -45,6 +49,13 @@
     enabled: true
     state: started
   when: "slurm_start_services and ('slurmexechosts' in group_names or 'exec' in slurm_roles)"
+
+- name: Ensure slurmrestd is enabled and running
+  ansible.builtin.service:
+    name: slurmrestd
+    enabled: true
+    state: started
+  when: "slurm_start_services and ('slurmrestdhosts' in group_names or 'restd' in slurm_roles)"
 
 - name: Setup cluster on slurmdb
   ansible.builtin.include_tasks: slurmdbd_cluster.yml
