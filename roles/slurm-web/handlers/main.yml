@@ -1,0 +1,11 @@
+---
+
+- name: Restart slurm-web-agent
+  ansible.builtin.service:
+    name: slurm-web-agent
+    state: restarted
+
+- name: Restart slurm-web-gateway
+  ansible.builtin.service:
+    name: slurm-web-gateway
+    state: restarted
