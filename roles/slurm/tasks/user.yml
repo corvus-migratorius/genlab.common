@@ -12,6 +12,6 @@
     comment: "slurm system user"
     uid: "{{ slurm_user_uid }}"
     group: "{{ slurm_group_name }}"
-    home: /home/slurm
-    shell: /usr/sbin/nologin
+    create_home: false
+    shell: /bin/false
     system: true
