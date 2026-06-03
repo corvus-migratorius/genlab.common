@@ -1,4 +1,5 @@
 ---
+
 slurm_version: 25.11.4
 
 slurm_upgrade: false
@@ -8,19 +9,20 @@ slurm_nodes: []
 
 slurm_config_dir: "/etc/slurm"
 
+slurm_enable_jwt: false  # or false
+slurm_jwt_key_source: "secrets/jwt.key"
+
 slurm_create_user: true
 slurm_create_dirs: true
 slurm_rotate_logs: true
 slurm_configure_munge: true
 
-# Service names are the same on both distros since ??
 slurmd_service_name: slurmd
 slurmctld_service_name: slurmctld
 slurmdbd_service_name: slurmdbd
 
-#Cluster name for slurm config. This is required to correctly setup slurmdbd and attune it to the slurm config.
 slurmdbd_cluster_name: cluster
-__cluster_not_setup: true # Default value. Is modified if cluster already exists.
+__cluster_not_setup: true
 
 slurm_start_services: true
 
@@ -30,6 +32,9 @@ slurm_user_name: slurm
 slurm_group_name: slurm
 slurm_user_gid: 888
 slurm_user_uid: 888
+
+slurmrestd_user_uid: 889
+slurmrestd_user_gid: 889
 
 slurm_run_dir: "/run/slurm"
 slurm_log_dir: "/var/log/slurm"
