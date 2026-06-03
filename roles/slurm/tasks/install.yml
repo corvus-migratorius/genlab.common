@@ -38,9 +38,6 @@
           - autoconf
           - automake
           - rpm-build
-          - munge
-          - munge-devel
-          - munge-libs
           - openssl-devel
           - pam-devel
           - hwloc-devel
@@ -64,8 +61,6 @@
       ansible.builtin.apt:
         name:
           - build-essential
-          - munge
-          - libmunge-dev
           - libssl-dev
           - libpam0g-dev
           - libhwloc-dev

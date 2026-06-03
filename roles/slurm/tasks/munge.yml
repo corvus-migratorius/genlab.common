@@ -1,5 +1,24 @@
 ---
 
+- name: Install munge on RedHat
+  ansible.builtin.dnf:
+    name:
+      - munge
+      - munge-libs
+      - munge-devel
+    state: present
+    update_cache: true
+  when: ansible_os_family == "RedHat"
+
+- name: Install munge on Debian
+  ansible.builtin.apt:
+    name:
+      - munge
+      - libmunge-dev
+    state: present
+    update_cache: true
+  when: ansible_os_family == "Debian"
+
 - name: Check munge dir
   ansible.builtin.file:
     path: /etc/munge
