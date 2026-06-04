@@ -1,0 +1,58 @@
+# agent
+slurm_web_agent_cluster: "{{ inventory_hostname }}"
+slurm_web_agent_interface: localhost
+slurm_web_agent_port: 5012
+
+# slurmrestd connection
+slurm_web_slurmrestd_uri: "unix:/run/slurmrestd/slurmrestd.socket"
+slurm_web_slurmrestd_auth: jwt
+slurm_web_slurmrestd_jwt_key: /var/lib/slurm-web/slurmrestd.key
+
+# cache (redis)
+slurm_web_cache_enabled: false
+slurm_web_cache_host: localhost
+slurm_web_cache_port: 6379
+# slurm_web_cache_password: ""
+
+# metrics
+slurm_web_metrics_enabled: false
+# slurm_web_metrics_restrict:
+#   - 127.0.0.0/24
+#   - ::1/128
+
+# racksdb — set to false if not using RacksDB
+slurm_web_racksdb_enabled: true
+
+# gateway service
+slurm_web_gateway_interface: localhost
+slurm_web_gateway_port: 5011
+
+# agents
+slurm_web_gateway_agents_url: "http://localhost:5012"
+
+# ui — set to the public hostname/IP for external access
+slurm_web_gateway_ui_host: "http://localhost:5011"
+
+# authentication
+slurm_web_gateway_auth_enabled: false
+# slurm_web_ldap_uri: "ldap://ldap.example.org"
+# slurm_web_ldap_user_base: "ou=people,dc=example,dc=org"
+# slurm_web_ldap_group_base: "ou=groups,dc=example,dc=org"
+# slurm_web_ldap_bind_dn: "cn=system,ou=people,dc=example,dc=org"
+# slurm_web_ldap_bind_password_file: "/etc/slurm-web/ldap_password"
+# slurm_web_ldap_restricted_groups: []
+
+# jwt
+slurm_web_gateway_jwt_key: /var/lib/slurm-web/jwt.key
+
+slurm_web_policy_roles:
+  - name: anonymous
+    actions:
+      - view-stats
+      - view-jobs
+      - view-nodes
+      - view-partitions
+      - view-qos
+      - view-accounts
+      - associations-view
+      - view-reservations

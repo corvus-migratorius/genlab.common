@@ -1,5 +1,5 @@
 galaxy_info:
-  role_name: "slurm_web"
+  role_name: slurm_web
   namespace: genlab
   author: Maria Sayganova
   description: Deploy slurm-web monitoring app
