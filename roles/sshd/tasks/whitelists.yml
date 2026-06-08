@@ -1,7 +1,7 @@
 ---
 - name: "Configure AllowUsers"
   when: sshd_allow_users is defined
-  notify: Restart sshd
+  notify: "Restart ssh"
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^#?\s*AllowUsers\s+'
@@ -10,7 +10,7 @@
 
 - name: "Configure AllowGroups"
   when: sshd_allow_groups is defined
-  notify: Restart sshd
+  notify: "Restart ssh"
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^#?\s*AllowGroups\s+'

@@ -31,7 +31,7 @@
     validate: /usr/sbin/sshd -t -f %s
 
 - name: "Restrictions | toggle PAM"
-  notify: Restart sshd
+  notify: "Restart ssh"
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^#?UsePAM'
@@ -39,7 +39,7 @@
     validate: sshd -f %s -t
 
 - name: "Restrictions | ensure the SSHD config is restricted to the root user"
-  notify: Restart sshd
+  notify: "Restart ssh"
   ansible.builtin.file:
     path: /etc/ssh/sshd_config
     owner: root
