@@ -10,6 +10,10 @@
     - { regexp: '^#?\s*KbdInteractiveAuthentication\s+', line: 'KbdInteractiveAuthentication no' }
     - { regexp: '^#?\s*HostbasedAuthentication\s+', line: 'HostbasedAuthentication no' }
     - { regexp: '^#?\s*PermitUserEnvironment\s+', line: 'PermitUserEnvironment no' }
+    - { regexp: '^#?\s*AllowAgentForwarding\s+', line: 'AllowAgentForwarding {{ sshd_allow_agent_forwarding | ternary("yes", "no") }}' }
+    - { regexp: '^#?\s*AllowTcpForwarding\s+', line: 'AllowTcpForwarding {{ sshd_allow_tcp_forwarding | ternary("yes", "no") }}' }
+    - { regexp: '^#?\s*GatewayPorts\s+', line: 'GatewayPorts {{ sshd_gateway_ports | ternary("yes", "no") }}' }
+    - { regexp: '^#?\s*PermitTunnel\s+', line: 'PermitTunnel {{ sshd_permit_tunnel | ternary("yes", "no") }}' }
     - { regexp: '^#?\s*StrictModes\s+', line: 'StrictModes yes' }
     - { regexp: '^#?\s*IgnoreUserKnownHosts\s+', line: 'IgnoreUserKnownHosts yes' }
   ansible.builtin.lineinfile:
