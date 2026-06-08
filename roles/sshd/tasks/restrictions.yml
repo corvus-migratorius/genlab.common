@@ -2,7 +2,7 @@
 - name: "Restrictions | Configure SSH security restrictions"
   loop:
     - { regexp: '^#?Protocol\s+', line: 'Protocol 2' }
-    - { regexp: '^PermitRootLogin yes', line: 'PermitRootLogin no' }
+    - { regexp: '^#?\s*PermitRootLogin\s+', line: 'PermitRootLogin no' }
     - { regexp: '^#?X11Forwarding', line: 'X11Forwarding no' }
     - { regexp: '^#?IgnoreRhosts', line: 'IgnoreRhosts yes' }
     - { regexp: '^#?DebianBanner\s+', line: 'DebianBanner no' }
