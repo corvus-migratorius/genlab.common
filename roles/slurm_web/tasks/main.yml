@@ -20,4 +20,7 @@
   loop:
     - slurm-web-agent
     - slurm-web-gateway
-  when: slurm_web_start_services | default(true) | bool
+
+
+- name: Include JWT key setup tasks
+  ansible.builtin.include_tasks: key.yml

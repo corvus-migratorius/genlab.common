@@ -1,0 +1,15 @@
+---
+
+- name: Generate slurm-web JWT key
+  ansible.builtin.command:
+    cmd: slurm-web gen-jwt-key
+    creates: /var/lib/slurm-web/jwt.key
+
+- name: Copy Slurm JWT signing key for slurmrestd auth
+  ansible.builtin.copy:
+    src: "{{ slurm_jwt_key_src }}"
+    dest: /var/lib/slurm-web/slurmrestd.key
+    owner: slurm-web
+    group: slurm-web
+    mode: "0400"
+    remote_src: false
