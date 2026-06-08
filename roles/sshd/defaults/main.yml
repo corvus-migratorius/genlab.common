@@ -3,3 +3,7 @@ sshd_disable_pam: false
 sshd_password_auth: false
 sshd_challenge_response_auth: false
 sshd_gss_api_auth: false
+sshd_allow_agent_forwarding: false
+sshd_allow_tcp_forwarding: false
+sshd_gateway_ports: false
+sshd_permit_tunnel: false
