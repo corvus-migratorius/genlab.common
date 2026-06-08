@@ -1,0 +1,47 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: Load role default variables
+      ansible.builtin.include_vars:
+        file: "{{ playbook_dir }}/../../defaults/main.yml"
+
+  tasks:
+    - name: Populate service facts
+      ansible.builtin.service_facts:
+
+    - name: Assert slurm-web services are running
+      ansible.builtin.assert:
+        that: ansible_facts.services[item].state == 'running'
+        fail_msg: "{{ item }} is not running"
+      loop:
+        - slurm-web-agent.service
+        - slurm-web-gateway.service
+
+    - name: Check slurm-web agent version endpoint
+      ansible.builtin.uri:
+        url: http://localhost:{{ slurm_web_agent_port }}/version
+        method: GET
+        status_code: 200
+        return_content: true
+      register: agent_version
+
+    - name: Assert agent is responding
+      ansible.builtin.assert:
+        that: "'Slurm-web agent' in agent_version.content"
+        fail_msg: "Agent did not respond correctly: {{ agent_version.content }}"
+
+    - name: Check slurm-web gateway version endpoint
+      ansible.builtin.uri:
+        url: http://localhost:{{ slurm_web_gateway_port }}/api/version
+        method: GET
+        status_code: 200
+        return_content: true
+      register: gateway_version
+
+    - name: Assert gateway is responding
+      ansible.builtin.assert:
+        that: "'Slurm-web gateway' in gateway_version.content"
+        fail_msg: "Gateway did not respond correctly: {{ gateway_version.content }}"
