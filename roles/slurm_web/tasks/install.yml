@@ -26,9 +26,9 @@
     - name: rackslab
       description: Rackslab
       baseurl: "https://pkgs.rackslab.io/rpm/el{{ ansible_distribution_major_version }}/main/$basearch/"
-    - name: rackslab-slurmweb-6
+    - name: "rackslab-slurmweb-{{slurm_web_major_ver}}"
       description: Rackslab slurmweb-6
-      baseurl: "https://pkgs.rackslab.io/rpm/el{{ ansible_distribution_major_version }}/slurmweb-6/$basearch/"
+      baseurl: "https://pkgs.rackslab.io/rpm/el{{ ansible_distribution_major_version }}/slurmweb-{{ slurm_web_major_ver }}/$basearch/"
   when: ansible_os_family == "RedHat"
 
 - name: Install slurm-web packages on RedHat
@@ -58,7 +58,7 @@
       Types: deb
       URIs: https://pkgs.rackslab.io/deb
       Suites: {{ ansible_distribution | lower }}{{ ansible_distribution_version }}
-      Components: main slurmweb-6
+      Components: main slurmweb-{{ slurm_web_major_ver }}
       Architectures: amd64
       Signed-By: /usr/share/keyrings/rackslab.gpg
     dest: /etc/apt/sources.list.d/rackslab.sources

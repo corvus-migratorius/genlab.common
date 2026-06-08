@@ -56,3 +56,5 @@ slurm_web_policy_roles:
       - view-accounts
       - associations-view
       - view-reservations
+
+slurm_web_major_ver: 6
