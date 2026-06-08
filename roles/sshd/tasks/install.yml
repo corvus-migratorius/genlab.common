@@ -1,11 +1,11 @@
 ---
-- name: "Install | install OpenSSH (RHEL flavours)"
+- name: "Install | install OpenSSH server (RHEL flavours)"
   when: ansible_os_family == "RHEL"
   ansible.builtin.dnf:
-    name: openssh
+    name: openssh-server
     state: installed
 
-- name: "Install | Install OpenSSH (Debian flavours)"
+- name: "Install | Install OpenSSH server (Debian flavours)"
   when: ansible_os_family == "Debian"
   ansible.builtin.apt:
     name: openssh-server
