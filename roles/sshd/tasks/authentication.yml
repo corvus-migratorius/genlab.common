@@ -7,6 +7,9 @@
     - { regexp: '^#?\s*PermitEmptyPasswords\s+', line: 'PermitEmptyPasswords no' }
     - { regexp: '^#?\s*ChallengeResponseAuthentication\s+', line: 'ChallengeResponseAuthentication {{ sshd_challenge_response_auth | ternary("yes", "no") }}' }
     - { regexp: '^#?\s*GSSAPIAuthentication\s+', line: 'GSSAPIAuthentication {{ sshd_gss_api_auth | ternary("yes", "no") }}' }
+    - { regexp: '^#?IgnoreRhosts', line: 'IgnoreRhosts yes' }
+    - { regexp: '^#?\s*KbdInteractiveAuthentication\s+', line: 'KbdInteractiveAuthentication no' }
+    - { regexp: '^#?\s*HostbasedAuthentication\s+', line: 'HostbasedAuthentication no' }
     - {
       regexp: '^#?\s*AuthenticationMethods\s+',
       line: "{{ 'AuthenticationMethods publickey password' if sshd_password_auth else 'AuthenticationMethods publickey' }}"

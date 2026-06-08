@@ -4,9 +4,6 @@
     - { regexp: '^#?Protocol\s+', line: 'Protocol 2' }
     - { regexp: '^#?\s*PermitRootLogin\s+', line: 'PermitRootLogin no' }
     - { regexp: '^#?X11Forwarding', line: 'X11Forwarding no' }
-    - { regexp: '^#?IgnoreRhosts', line: 'IgnoreRhosts yes' }
-    - { regexp: '^#?\s*KbdInteractiveAuthentication\s+', line: 'KbdInteractiveAuthentication no' }
-    - { regexp: '^#?\s*HostbasedAuthentication\s+', line: 'HostbasedAuthentication no' }
     - { regexp: '^#?\s*PermitUserEnvironment\s+', line: 'PermitUserEnvironment no' }
     - { regexp: '^#?\s*AllowAgentForwarding\s+', line: 'AllowAgentForwarding {{ sshd_allow_agent_forwarding | ternary("yes", "no") }}' }
     - { regexp: '^#?\s*AllowTcpForwarding\s+', line: 'AllowTcpForwarding {{ sshd_allow_tcp_forwarding | ternary("yes", "no") }}' }
