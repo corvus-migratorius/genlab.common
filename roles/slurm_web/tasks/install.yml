@@ -40,8 +40,15 @@
   when: ansible_os_family == "RedHat"
 
 - name: Download Rackslab APT signing key
-  ansible.builtin.shell:
-    cmd: "curl -sS https://pkgs.rackslab.io/keyring.asc | gpg --dearmor | tee /usr/share/keyrings/rackslab.gpg > /dev/null"
+  ansible.builtin.get_url:
+    url: https://pkgs.rackslab.io/keyring.asc
+    dest: /tmp/rackslab.asc
+    mode: "0644"
+  when: ansible_os_family == "Debian"
+
+- name: Dearmor Rackslab APT signing key
+  ansible.builtin.command:
+    cmd: gpg --dearmor -o /usr/share/keyrings/rackslab.gpg /tmp/rackslab.asc
     creates: /usr/share/keyrings/rackslab.gpg
   when: ansible_os_family == "Debian"
 
@@ -50,7 +57,7 @@
     content: |
       Types: deb
       URIs: https://pkgs.rackslab.io/deb
-      Suites: {{ ansible_distribution_release }}
+      Suites: {{ ansible_distribution | lower }}{{ ansible_distribution_version }}
       Components: main slurmweb-6
       Architectures: amd64
       Signed-By: /usr/share/keyrings/rackslab.gpg
