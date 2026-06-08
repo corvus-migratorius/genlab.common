@@ -36,7 +36,7 @@
     path: /etc/ssh/sshd_config
     regexp: '^#?UsePAM'
     line: "UsePAM {{ sshd_disable_pam | ternary('no', 'yes') }}"
-    validate: sshd -f %s -t
+    validate: /usr/sbin/sshd -t -f %s
 
 - name: "Restrictions | ensure the SSHD config is restricted to the root user"
   notify: "Restart ssh"

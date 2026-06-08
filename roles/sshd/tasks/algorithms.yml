@@ -15,7 +15,7 @@
     path: /etc/ssh/sshd_config
     regexp: '^HostKey /etc/ssh/ssh_host_ed25519_key'
     line: 'HostKey /etc/ssh/ssh_host_ed25519_key'
-    validate: sshd -f %s -t
+    validate: /usr/sbin/sshd -t -f %s
 
 - name: "Algorithms | enable the RSA authentication algorithm"
   notify: "Restart ssh"
@@ -23,7 +23,7 @@
     path: /etc/ssh/sshd_config
     regexp: '^HostKey /etc/ssh/ssh_host_rsa_key'
     line: 'HostKey /etc/ssh/ssh_host_rsa_key'
-    validate: sshd -f %s -t
+    validate: /usr/sbin/sshd -t -f %s
 
 - name: "Algorithms | disable the ECDSA algorithm (deemed to be less safe)"
   notify: "Restart ssh"
@@ -31,7 +31,7 @@
     path: /etc/ssh/sshd_config
     regexp: '^HostKey /etc/ssh/ssh_host_ecdsa_key'
     state: absent
-    validate: sshd -f %s -t
+    validate: /usr/sbin/sshd -t -f %s
 
 - name: "Algorithms | disable the DSA algorithm (considered to be defunct)"
   notify: "Restart ssh"
@@ -39,4 +39,4 @@
     path: /etc/ssh/sshd_config
     regexp: '^HostKey /etc/ssh/ssh_host_dsa_key'
     state: absent
-    validate: sshd -f %s -t
+    validate: /usr/sbin/sshd -t -f %s

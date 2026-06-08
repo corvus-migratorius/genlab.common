@@ -6,7 +6,7 @@
     path: /etc/ssh/sshd_config
     regexp: '^#?\s*AllowUsers\s+'
     line: "AllowUsers {{ sshd_allow_users }}"
-    validate: sshd -f %s -t
+    validate: /usr/sbin/sshd -t -f %s
 
 - name: "Configure AllowGroups"
   when: sshd_allow_groups is defined
@@ -15,4 +15,4 @@
     path: /etc/ssh/sshd_config
     regexp: '^#?\s*AllowGroups\s+'
     line: "AllowGroups {{ sshd_allow_groups }}"
-    validate: sshd -f %s -t
+    validate: /usr/sbin/sshd -t -f %s
