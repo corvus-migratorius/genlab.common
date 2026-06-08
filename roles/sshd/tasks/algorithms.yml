@@ -1,6 +1,6 @@
 ---
 # next task requires this directory to exist for sshd -t flag
-- name: "Algorithms | Ensure /run/sshd exists"
+- name: "Algorithms | ensure /run/sshd exists"
   ansible.builtin.file:
     path: /run/sshd
     state: directory
