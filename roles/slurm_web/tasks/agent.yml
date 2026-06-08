@@ -3,8 +3,8 @@
   ansible.builtin.template:
     src: agent.ini.j2
     dest: /etc/slurm-web/agent.ini
-    owner: "{{ slurm_web_user }}"
-    group: "{{ slurm_web_group }}"
+    owner: slurm-web
+    group: slurm-web
     mode: "0640"
   notify: Restart slurm-web-agent
 
@@ -12,7 +12,7 @@
   ansible.builtin.template:
     src: policy.ini.j2
     dest: /etc/slurm-web/policy.ini
-    owner: "{{ slurm_web_user }}"
-    group: "{{ slurm_web_group }}"
+    owner: slurm-web
+    group: slurm-web
     mode: "0640"
   notify: Restart slurm-web-agent
