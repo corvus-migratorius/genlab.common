@@ -7,6 +7,11 @@
     - { regexp: '^#?IgnoreRhosts', line: 'IgnoreRhosts yes' }
     - { regexp: '^#?DebianBanner\s+', line: 'DebianBanner no' }
   notify: Restart sshd
+    - { regexp: '^#?\s*KbdInteractiveAuthentication\s+', line: 'KbdInteractiveAuthentication no' }
+    - { regexp: '^#?\s*HostbasedAuthentication\s+', line: 'HostbasedAuthentication no' }
+    - { regexp: '^#?\s*PermitUserEnvironment\s+', line: 'PermitUserEnvironment no' }
+    - { regexp: '^#?\s*StrictModes\s+', line: 'StrictModes yes' }
+    - { regexp: '^#?\s*IgnoreUserKnownHosts\s+', line: 'IgnoreUserKnownHosts yes' }
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: "{{ item.regexp }}"
