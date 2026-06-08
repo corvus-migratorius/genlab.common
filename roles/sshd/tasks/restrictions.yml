@@ -1,5 +1,5 @@
 ---
-- name: "Restrictions | Configure SSH security restrictions"
+- name: "Restrictions | configure SSH security restrictions"
   loop:
     - { regexp: '^#?Protocol\s+', line: 'Protocol 2' }
     - { regexp: '^#?\s*PermitRootLogin\s+', line: 'PermitRootLogin no' }

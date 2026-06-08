@@ -5,7 +5,7 @@
     name: openssh-server
     state: installed
 
-- name: "Install | Install OpenSSH server (Debian flavours)"
+- name: "Install | install OpenSSH server (Debian flavours)"
   when: ansible_os_family == "Debian"
   ansible.builtin.apt:
     name: openssh-server
