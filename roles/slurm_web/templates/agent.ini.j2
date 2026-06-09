@@ -25,11 +25,17 @@ password={{ slurm_web_cache_password }}
 {% if slurm_web_metrics_enabled %}
 [metrics]
 enabled=yes
+{% if slurm_web_metrics_host is defined %}
+host={{ slurm_web_metrics_host}}
+{% if slurm_web_metrics_job is defined %}
+job={{ slurm_web_metrics_job }}
 {% if slurm_web_metrics_restrict is defined %}
 restrict=
 {% for network in slurm_web_metrics_restrict %}
   {{ network }}
 {% endfor %}
+{% endif %}
+{% endif %}
 {% endif %}
 {% endif %}
 

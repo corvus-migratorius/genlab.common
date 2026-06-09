@@ -1,3 +1,6 @@
+[agents]
+url={{ slurm_web_gateway_agents_url }}
+
 [service]
 {% if slurm_web_gateway_interface is defined %}
 interface={{ slurm_web_gateway_interface }}
@@ -6,15 +9,12 @@ interface={{ slurm_web_gateway_interface }}
 port={{ slurm_web_gateway_port }}
 {% endif %}
 
-[agents]
-url={{ slurm_web_gateway_agents_url }}
-
 [ui]
 host={{ slurm_web_gateway_ui_host }}
 
 {% if slurm_web_gateway_auth_enabled %}
 [authentication]
-enabled=yes
+enabled=no
 
 [ldap]
 uri={{ slurm_web_ldap_uri }}

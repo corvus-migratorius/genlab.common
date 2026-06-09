@@ -22,7 +22,7 @@ slurm_web_metrics_enabled: false
 #   - ::1/128
 
 # racksdb — set to false if not using RacksDB
-slurm_web_racksdb_enabled: true
+slurm_web_racksdb_enabled: false
 
 # gateway service
 slurm_web_gateway_interface: localhost
