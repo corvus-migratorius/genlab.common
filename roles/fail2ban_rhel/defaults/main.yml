@@ -1,13 +1,12 @@
 ---
-fail2ban_rhel_jail_sshd:
-  enabled: true
-  port: ssh
-  findtime: 600
-  maxretry: 5
-  bantime: 3600
-  logpath: "%(sshd_log)s"
-  backend: "%(sshd_backend)s"
-  banaction: firewallcmd-multiport
-  ignoreips:
-    - 127.0.0.1/8
-    - ::1
+fail2ban_rhel_jail_sshd_enabled: true
+fail2ban_rhel_jail_sshd_port: ssh
+fail2ban_rhel_jail_sshd_findtime: 600
+fail2ban_rhel_jail_sshd_maxretry: 5
+fail2ban_rhel_jail_sshd_bantime: 3600
+fail2ban_rhel_jail_sshd_logpath: "%(sshd_log)s"
+fail2ban_rhel_jail_sshd_backend: "%(sshd_backend)s"
+fail2ban_rhel_jail_sshd_banaction: firewallcmd-multiport
+fail2ban_rhel_jail_sshd_ignoreips:
+  - 127.0.0.1/8
+  - ::1
