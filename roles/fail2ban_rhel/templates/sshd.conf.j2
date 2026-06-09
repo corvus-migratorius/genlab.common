@@ -11,4 +11,4 @@ findtime = {{ fail2ban_rhel_jail_sshd.findtime }}
 maxretry = {{ fail2ban_rhel_jail_sshd.maxretry }}
 bantime = {{ fail2ban_rhel_jail_sshd.bantime }}
 
-ignoreip = {{ fail2ban_rhel.ignoreips | default([]) | join(' ') }}
+ignoreip = {{ fail2ban_rhel_jail_sshd.ignoreips | default([]) | join(' ') }}
