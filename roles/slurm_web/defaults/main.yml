@@ -58,3 +58,4 @@ slurm_web_policy_roles:
       - view-reservations
 
 slurm_web_major_ver: 6
+slurm_web_install_method: native

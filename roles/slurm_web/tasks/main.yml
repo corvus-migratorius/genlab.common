@@ -3,8 +3,13 @@
   ansible.builtin.include_tasks: user.yml
   when: slurm_web_create_user | default(true) | bool
 
-- name: Include slurm-web installation tasks
-  ansible.builtin.include_tasks: install.yml
+- name: Include slurm-web package installation via bucket
+  ansible.builtin.include_tasks: install_bucket.yml
+  when: slurm_web_install_method == 'bucket'
+
+- name: Include via slurm-web installation via package managers
+  ansible.builtin.include_tasks: native_install.yml
+  when: slurm_web_install_method == 'native'
 
 - name: Include agent setup tasks
   ansible.builtin.include_tasks: agent.yml
@@ -21,6 +26,9 @@
     - slurm-web-agent
     - slurm-web-gateway
 
-
 - name: Include JWT key setup tasks
   ansible.builtin.include_tasks: key.yml
+
+- name: Wait for 20 seconds
+  ansible.builtin.pause:
+    seconds: 20
