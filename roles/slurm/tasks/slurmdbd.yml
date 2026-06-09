@@ -1,5 +1,4 @@
 ---
-
 - name: Create slurm log directory
   ansible.builtin.file:
     path: "{{ __slurmdbd_config_merged.LogFile | dirname }}"
@@ -33,4 +32,4 @@
     dest: /etc/systemd/system/slurmdbd.service
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"

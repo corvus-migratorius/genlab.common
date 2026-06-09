@@ -1,5 +1,4 @@
 ---
-
 - name: Get accounts list
   ansible.builtin.command: sacctmgr show account --parsable2 --noheader
   register: account_check

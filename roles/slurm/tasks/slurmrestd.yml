@@ -1,5 +1,4 @@
 ---
-
 - name: Create slurmrestd group
   ansible.builtin.group:
     name: slurmrestd

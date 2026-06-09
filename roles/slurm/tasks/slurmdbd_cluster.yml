@@ -1,5 +1,4 @@
 ---
-
 - name: Restart slurmdbd
   ansible.builtin.service:
     name: slurmdbd
@@ -16,7 +15,7 @@
   register: cluster_check
   changed_when: false
 
-- debug:
+- ansible.builtin.debug:
     var: cluster_check.stdout_lines
 
 - name: Set cluster existence

@@ -1,5 +1,4 @@
 ---
-
 - name: Create slurm group
   ansible.builtin.group:
     name: "{{ slurm_group_name }}"

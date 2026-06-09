@@ -6,10 +6,9 @@ slurm_upgrade: false
 slurm_roles: []
 slurm_partitions: []
 slurm_nodes: []
-
 slurm_config_dir: "/etc/slurm"
 
-slurm_enable_jwt: false  # or false
+slurm_enable_jwt: false # or false
 slurm_jwt_key_source: "secrets/jwt.key"
 
 slurm_create_user: true
@@ -27,7 +26,6 @@ __cluster_not_setup: true
 slurm_start_services: true
 
 slurm_accounts: {}
-
 slurm_user_name: slurm
 slurm_group_name: slurm
 slurm_user_gid: 888

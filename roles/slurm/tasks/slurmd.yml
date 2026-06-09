@@ -1,5 +1,4 @@
 ---
-
 - name: Create slurm spool directory
   notify: Reload slurmd
   ansible.builtin.file:
