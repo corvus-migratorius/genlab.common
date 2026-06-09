@@ -1,5 +1,4 @@
 ---
-
 - name: Enable EPEL repository
   ansible.builtin.dnf:
     name: epel-release
@@ -26,7 +25,7 @@
     - name: rackslab
       description: Rackslab
       baseurl: "https://pkgs.rackslab.io/rpm/el{{ ansible_distribution_major_version }}/main/$basearch/"
-    - name: "rackslab-slurmweb-{{slurm_web_major_ver}}"
+    - name: "rackslab-slurmweb-{{ slurm_web_major_ver }}"
       description: Rackslab slurmweb-6
       baseurl: "https://pkgs.rackslab.io/rpm/el{{ ansible_distribution_major_version }}/slurmweb-{{ slurm_web_major_ver }}/$basearch/"
   when: ansible_os_family == "RedHat"

@@ -1,5 +1,4 @@
 ---
-
 - name: Generate slurm-web JWT key
   ansible.builtin.command:
     cmd: slurm-web gen-jwt-key

@@ -23,7 +23,10 @@
     slurm_web_packages: >-
       {{
         s3_listing.content
-        | regex_findall('<Key>(slurm-web/' + ('debian' if ansible_os_family == 'Debian' else 'redhat') + '/[^<]+\.' + ('deb' if ansible_os_family == 'Debian' else 'rpm') + ')</Key>')
+        | regex_findall('<Key>(slurm-web/' +
+         ('debian' if ansible_os_family == 'Debian' else 'redhat') +
+          '/[^<]+\.' + ('deb' if ansible_os_family == 'Debian' else
+      'rpm') + ')</Key>')
       }}
 
 - name: Download packages
@@ -50,5 +53,5 @@
     name: "{{ rpm_list.files | map(attribute='path') | list }}"
     disable_gpg_check: true
     state: present
-  when: 
+  when:
     - ansible_os_family == 'RedHat'

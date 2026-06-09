@@ -1,3 +1,4 @@
+---
 galaxy_info:
   role_name: slurm_web
   namespace: genlab
@@ -13,5 +14,4 @@ galaxy_info:
     - name: "Rocky"
 
   galaxy_tags: []
-
 dependencies: []

@@ -1,3 +1,4 @@
+---
 # agent
 slurm_web_agent_cluster: "{{ inventory_hostname }}"
 slurm_web_agent_interface: localhost

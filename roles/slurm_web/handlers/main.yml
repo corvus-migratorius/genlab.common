@@ -1,5 +1,4 @@
 ---
-
 - name: Restart slurm-web-agent
   ansible.builtin.systemd_service:
     name: slurm-web-agent
