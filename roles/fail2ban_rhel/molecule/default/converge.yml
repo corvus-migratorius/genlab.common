@@ -1,0 +1,5 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: genlab.common.fail2ban_rhel
