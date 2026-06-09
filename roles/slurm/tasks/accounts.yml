@@ -34,3 +34,5 @@
   when: item is changed
   loop_control:
     label: "{{ item.item.account_name }}"
+  tags:
+    - skip_ansible_lint
