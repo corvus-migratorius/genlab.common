@@ -15,9 +15,6 @@
   register: cluster_check
   changed_when: false
 
-- ansible.builtin.debug:
-    var: cluster_check.stdout_lines
-
 - name: Set cluster existence
   ansible.builtin.set_fact:
     __cluster_exists: "{{ slurmdbd_cluster_name in (cluster_check.stdout_lines | map('trim') | list) }}"
