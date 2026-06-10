@@ -44,7 +44,3 @@
   notify:
     - Reload systemd daemon
     - Restart slurmrestd
-
-- name: Install JWT key
-  ansible.builtin.include_tasks: jwt.yml
-  when: slurm_enable_jwt | bool

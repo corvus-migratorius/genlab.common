@@ -10,6 +10,10 @@
 - name: Include slurm installation from source
   ansible.builtin.include_tasks: install.yml
 
+- name: Include jwt copy task
+  ansible.builtin.include_tasks: jwt.yml
+  when: slurm_enable_jwt | bool
+
 - name: Include controller installation tasks
   ansible.builtin.include_tasks: slurmctld.yml
   when: "'slurmservers' in group_names or 'controller' in slurm_roles"

@@ -7,4 +7,3 @@
     group: "{{ slurm_group_name }}"
     mode: "0600"
   when: slurm_enable_jwt | bool
-  notify: Restart slurmrestd
