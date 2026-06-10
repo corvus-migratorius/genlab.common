@@ -36,10 +36,13 @@
     mode: "0644"
   loop: "{{ slurm_web_packages }}"
 
-- name: Install all deb packages at once
-  ansible.builtin.shell:
-    cmd: "apt-get install -y /tmp/slurm-web-packages/*.deb"
+- name: Install all packages in one transaction via shell
+  ansible.builtin.shell: "apt-get install -y /tmp/slurm-web-packages/*.deb"
   when: ansible_os_family == 'Debian'
+  register: pkg_result
+  changed_when: "'0 upgraded, 0 newly installed' not in pkg_result.stdout"
+  tags:
+    - skip_ansible_lint
 
 - name: Get list of RPM files to install
   ansible.builtin.find:
