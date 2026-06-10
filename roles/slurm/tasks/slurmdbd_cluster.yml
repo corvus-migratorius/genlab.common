@@ -22,3 +22,4 @@
 - name: Create slurm cluster
   ansible.builtin.command: sacctmgr add -i cluster {{ slurmdbd_cluster_name }}
   when: not __cluster_exists
+  changed_when: true
