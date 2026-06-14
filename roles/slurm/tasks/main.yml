@@ -38,36 +38,36 @@
     name: slurmdbd
     enabled: true
     state: started
-  when: "slurm_start_services and ('slurmdbdservers' in group_names or 'dbd' in slurm_roles)"
+  when: "slurm_start_services and  'dbd' in slurm_roles"
 
 - name: Ensure slurmctld is enabled and running
   ansible.builtin.service:
     name: slurmctld
     enabled: true
     state: started
-  when: "slurm_start_services and ('slurmservers' in group_names or 'controller' in slurm_roles)"
+  when: "slurm_start_services and 'controller' in slurm_roles"
 
 - name: Ensure slurmd is enabled and running
   ansible.builtin.service:
     name: slurmd
     enabled: true
     state: started
-  when: "slurm_start_services and ('slurmexechosts' in group_names or 'exec' in slurm_roles)"
+  when: "slurm_start_services and 'exec' in slurm_roles"
 
 - name: Ensure slurmrestd is enabled and running
   ansible.builtin.service:
     name: slurmrestd
     enabled: true
     state: started
-  when: "slurm_start_services and ('slurmrestdhosts' in group_names or 'restd' in slurm_roles)"
+  when: "slurm_start_services and 'restd' in slurm_roles"
 
 - name: Setup cluster on slurmdb
   ansible.builtin.include_tasks: slurmdbd_cluster.yml
-  when: "slurm_start_services and ('slurmdbdservers' in group_names or 'dbd' in slurm_roles)"
+  when: "slurm_start_services and 'dbd' in slurm_roles"
 
 - name: Setup accounts on slurm controller
   ansible.builtin.include_tasks: accounts.yml
   when:
     - slurm_accounts is defined
     - slurm_accounts | length > 0
-    - "'slurmdbdservers' in group_names or 'dbd' in slurm_roles"
+    - "'dbd' in slurm_roles"
