@@ -120,7 +120,7 @@
         --with-slurmctld-port={{ __slurm_config_default.SlurmctldPort }} \
         --with-slurmd-port={{ __slurm_config_default.SlurmdPort }} \
         --with-slurmdbd-port={{ __slurmdbd_config_default.DbdPort }} \
-        {{ '--with-mysql_config=/usr/bin' if 'slurmdbdservers' in group_names or 'dbd' in slurm_roles }}
+        {{ '--with-mysql_config=/usr/bin' if 'dbd' in slurm_roles }}
       args:
         chdir: "/tmp/slurm-{{ slurm_version }}"
         creates: "/tmp/slurm-{{ slurm_version }}/config.status"
