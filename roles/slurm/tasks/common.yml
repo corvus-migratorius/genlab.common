@@ -21,3 +21,4 @@
     - Reconfigure slurmctld
     - Restart slurmd
     - Restart slurmctld
+    - Restart slurmdbd
