@@ -28,6 +28,7 @@
   ansible.builtin.include_tasks: _inc_extra_configs.yml
 
 - name: Create systemd service file
+  notify: Reload systemd
   ansible.builtin.template:
     src: slurmd.service.j2
     dest: /etc/systemd/system/slurmd.service
