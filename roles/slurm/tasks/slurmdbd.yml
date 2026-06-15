@@ -27,7 +27,9 @@
   notify: Reload slurmdbd
 
 - name: Create systemd service file
-  notify: Reload slurmdbd
+  notify:
+    - Reload slurmdbd
+    - Reload systemd daemon
   ansible.builtin.template:
     src: slurmdbd.service.j2
     dest: /etc/systemd/system/slurmdbd.service
