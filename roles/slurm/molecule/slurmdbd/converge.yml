@@ -14,7 +14,7 @@
         password: "test_molecule"
         priv: "slurm_acct_db.*:ALL"
     mysql_bind_address: "0.0.0.0"
-    slurm_roles: ['dbd', "controller"]
+    slurm_roles: ["dbd", "controller"]
     slurmdbd_cluster_name: test-cluster
     __slurmdbd_config_default:
       AuthType: auth/munge

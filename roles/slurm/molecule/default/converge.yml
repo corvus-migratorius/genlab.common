@@ -2,7 +2,7 @@
 - name: Converge for controller and compute node daemons
   hosts: all
   vars:
-    slurm_roles: ["controller", "exec", "restd"]
+    slurm_roles: ["controller"]
     slurm_create_user: true
     slurm_config:
       MetricsType: metrics/openmetrics

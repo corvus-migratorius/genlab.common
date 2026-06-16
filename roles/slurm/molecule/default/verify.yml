@@ -19,8 +19,6 @@
       loop:
         - munge.service
         - slurmctld.service
-        - slurmd.service
-        - slurmrestd.service
 
     - name: Check slurmctld is responsive
       ansible.builtin.command: scontrol ping
