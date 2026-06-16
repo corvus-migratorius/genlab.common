@@ -10,3 +10,4 @@ collections:
   - name: maxhoesel.borgbackup
   - name: ansible.windows
   - name: community.windows
+  - name: geerlingguy.mysql
