@@ -5,7 +5,7 @@
     dest: /etc/slurm-web/agent.ini
     owner: slurm-web
     group: slurm-web
-    mode: "0640"
+    mode: "0644"
   notify: Restart slurm-web-agent
 
 - name: Install policy configuration
@@ -14,5 +14,5 @@
     dest: /etc/slurm-web/policy.ini
     owner: slurm-web
     group: slurm-web
-    mode: "0640"
+    mode: "0644"
   notify: Restart slurm-web-agent

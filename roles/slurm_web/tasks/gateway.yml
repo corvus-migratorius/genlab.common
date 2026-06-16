@@ -5,5 +5,5 @@
     dest: /etc/slurm-web/gateway.ini
     owner: slurm-web
     group: slurm-web
-    mode: "0640"
+    mode: "0644"
   notify: Restart slurm-web-gateway
