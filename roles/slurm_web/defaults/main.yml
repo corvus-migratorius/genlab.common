@@ -5,7 +5,6 @@ slurm_web_agent_interface: localhost
 slurm_web_agent_port: 5012
 
 # slurmrestd connection
-slurm_web_slurmrestd_uri: "unix:/run/slurmrestd/slurmrestd.socket"
 slurm_web_slurmrestd_auth: jwt
 slurm_web_slurmrestd_jwt_key: /var/lib/slurm-web/slurmrestd.key
 
