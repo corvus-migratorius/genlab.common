@@ -54,7 +54,7 @@ Minimal setup, all services on one node:
 - name: Slurm all in One
   hosts: all
   vars:
-    slurm_roles: ['controller', 'exec', 'dbd']
+    slurm_roles: ['controller', 'exec', 'dbd', `restd`]
   roles:
     - role: genlab.common.slurm
       become: True
@@ -66,22 +66,13 @@ More extensive example:
 - name: Slurm execution hosts
   hosts: all
   roles:
-    - role: galaxyproject.slurm
+    - role: genlab.common.slurm
       become: True
   vars:
     slurm_cgroup_config:
-      CgroupMountpoint: "/sys/fs/cgroup"
-      CgroupAutomount: yes
-      ConstrainCores: yes
-      TaskAffinity: no
+      CgroupPlugin: autodetect
+      ConstrainCores: true
       ConstrainRAMSpace: yes
-      ConstrainSwapSpace: no
-      ConstrainDevices: no
-      AllowedRamSpace: 100
-      AllowedSwapSpace: 0
-      MaxRAMPercent: 100
-      MaxSwapPercent: 100
-      MinRAMSpace: 30
     slurm_config:
       AccountingStorageType: "accounting_storage/none"
       ClusterName: cluster
@@ -100,10 +91,8 @@ More extensive example:
       SlurmdPidFile: "/var/run/slurmd.pid"
       SlurmdSpoolDir: "/var/spool/slurmd"
       StateSaveLocation: "/var/spool/slurmctld"
-      SwitchType: "switch/none"
       TaskPlugin: "task/affinity,task/cgroup"
-      TaskPluginParam: Sched
-    slurm_create_user: yes
+    slurm_create_user: true
     slurm_gres_config:
       - File: /dev/nvidia[0-3]
         Name: gpu
