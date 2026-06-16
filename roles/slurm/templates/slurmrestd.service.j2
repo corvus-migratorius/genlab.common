@@ -20,12 +20,11 @@ ExecStart=/usr/sbin/slurmrestd $SLURMRESTD_OPTIONS \
     unix:/run/slurmrestd/slurmrestd.socket
 
 RuntimeDirectory=slurmrestd
-RuntimeDirectoryMode=0750
+RuntimeDirectoryMode=0755
 
 # Restart behavior
 Restart=on-failure
 RestartSec=10
-StartLimitIntervalSec=120
 StartLimitBurst=5
 
 # Resource limits
