@@ -25,12 +25,12 @@
     - name: Check slurmctld is responsive
       ansible.builtin.command: scontrol ping
       changed_when: false
-      register: scontrol_ping
+      register: slurm_scontrol_ping
 
     - name: Assert slurmctld responded
       ansible.builtin.assert:
         that: "'UP' in scontrol_ping.stdout"
-        fail_msg: "{{ scontrol_ping.stdout }}"
+        fail_msg: "{{ slurm_scontrol_ping.stdout }}"
 
     - name: Check openmetrics endpoint
       ansible.builtin.uri:
@@ -38,11 +38,11 @@
         method: GET
         status_code: 200
         return_content: true
-      register: metrics
+      register: slurm_metrics
 
     - name: Assert cluster metrics are present
       ansible.builtin.assert:
         that:
-          - "'slurm_node_cpus' in metrics.content"
-          - "'slurm_nodes_idle' in metrics.content"
+          - "'slurm_node_cpus' in slurm_metrics.content"
+          - "'slurm_nodes_idle' in slurm_metrics.content"
         fail_msg: "openmetrics endpoint did not return expected metrics"
