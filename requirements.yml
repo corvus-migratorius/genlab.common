@@ -1,4 +1,8 @@
 ---
+roles:
+  - name: geerlingguy.mysql
+    version: 6.4.0
+
 collections:
   - name: ansible.posix
   - name: community.crypto
@@ -10,4 +14,3 @@ collections:
   - name: maxhoesel.borgbackup
   - name: ansible.windows
   - name: community.windows
-  - name: geerlingguy.mysql
