@@ -1,20 +1,20 @@
 ---
 - name: Get accounts list
   ansible.builtin.command: sacctmgr show account --parsable2 --noheader
-  register: account_check
+  register: slurm_account_check
   changed_when: false
 
 - name: Parse existing accounts
   ansible.builtin.set_fact:
-    existing_accounts: >-
-      {{ account_check.stdout_lines |
+    slurm_existing_accounts: >-
+      {{ slurm_account_check.stdout_lines |
           default([]) |
           map('regex_replace', '^([^|]*)\|.*$', '\1') |
           list }}
 
 - name: Show current accounts
   ansible.builtin.debug:
-    msg: "Existing accounts: {{ existing_accounts }}"
+    msg: "Existing accounts: {{ slurm_existing_accounts }}"
 
 - name: Add accounts
   ansible.builtin.shell: |
@@ -23,14 +23,14 @@
       Organization="{{ item.account_organization | default('') }}" \
       {% if item.parent is defined and item.parent %}parent="{{ item.parent }}"{% endif %}
   loop: "{{ slurm_accounts }}"
-  when: item.account_name not in existing_accounts
-  register: account_creation
+  when: item.account_name not in slurm_existing_accounts
+  register: slurm_account_creation
   changed_when: account_creation.rc == 0
 
 - name: Report created accounts
   ansible.builtin.debug:
     msg: "Created account: {{ item.item.account_name }}"
-  loop: "{{ account_creation.results | default([]) }}"
+  loop: "{{ slurm_account_creation.results | default([]) }}"
   when: item is changed
   loop_control:
     label: "{{ item.item.account_name }}"
