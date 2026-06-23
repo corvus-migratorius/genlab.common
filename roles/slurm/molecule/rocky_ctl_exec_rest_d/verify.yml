@@ -34,7 +34,7 @@
 
     - name: Check openmetrics endpoint
       ansible.builtin.uri:
-        url: "http://localhost:{{ __slurm_config_default.SlurmctldPort }}/metrics/nodes"
+        url: "http://localhost:{{ __slurm_config_default.SlurmctldPort }}/metrics/nodes" # kics-scan ignore-line
         method: GET
         status_code: 200
         return_content: true
