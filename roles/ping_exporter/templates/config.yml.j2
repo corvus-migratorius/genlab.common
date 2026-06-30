@@ -1,0 +1,19 @@
+# List of target hosts (IP addresses or host names) to ping.
+targets:
+{% for target in ping_exporter_targets %}
+  - {{ target }}
+{% endfor %}
+
+dns:
+  # enforce a specific DNS server for host name lookups (optional,
+  # defaults to system rsesolver)
+  #nameserver: 1.1.1.1
+
+  # refresh interval for host name (optional)
+  #refresh: 2m45s
+
+ping:
+  interval:     {{ ping_exporter_interval }}      # how often to ping a target?
+  timeout:      {{ ping_exporter_timeout }}       # timeout for a single ICMP Echo Request
+  history-size: {{ ping_exporter_history_size }}  # number of results to keep per target
+  payload-size: {{ ping_exporter_payload_size }}  # message size for ICMP Echo Requests
