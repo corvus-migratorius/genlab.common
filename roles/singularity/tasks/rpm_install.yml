@@ -1,0 +1,38 @@
+---
+- name: "Install | install Singularity"
+  block:
+    - name: "Install | get the installed Singularity version"
+      register: singularity_installed_version
+      changed_when: false
+      ansible.builtin.command:
+        cmd: singularity --version
+
+    - name: "Install | assert installed version correctness"
+      vars:
+        installed: "{{ singularity_installed_version.stdout }}"
+        expected: "singularity-ce version {{ singularity_version }}-1"
+      ansible.builtin.assert:
+        that: installed == expected
+        success_msg: "Expected version already present: '{{ installed }}'"
+        fail_msg: "Found unexpected Singularity version: '{{ installed }}'"
+
+  rescue:
+    - name: "Install | download GitHub release .rpm"
+      vars:
+        baseurl: "github.com/sylabs/singularity/releases/download"
+        singver: "{{ singularity_version }}"
+        osname: "{{ singularity_rpm_os_name }}"
+      ansible.builtin.dnf:
+        name: "https://{{ baseurl }}/v{{ singver }}/singularity-ce-{{ singver }}-1.{{ osname }}.x86_64.rpm"
+        state: present
+        disable_gpg_check: true
+        #mode: "0644"
+
+    # - name: "Install | install downloaded rpm package"
+    #   ansible.builtin.dnf:
+    #     deb: "/tmp/singularity.rpm"
+
+    # - name: "Install | clean up the .rpm artifact"
+    #   ansible.builtin.file:
+    #     path: "/tmp/singularity.rpm"
+    #     state: absent
