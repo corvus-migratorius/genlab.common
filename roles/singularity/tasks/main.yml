@@ -1,0 +1,8 @@
+---
+- name: Install singularity on Debian os
+  ansible.builtin.include_tasks: deb_install.yml
+  when: ansible_os_family == "Debian"
+
+- name: Install singularity on RedHat os
+  ansible.builtin.include_tasks: rpm_install.yml
+  when: ansible_os_family == "RedHat"

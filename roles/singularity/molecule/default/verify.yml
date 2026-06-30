@@ -21,7 +21,7 @@
       tags: singularity
       vars:
         installed: "{{ singularity_deb_installed_version.stdout }}"
-        expected: "singularity-ce version {{ singularity_deb_version }}-{{ singularity_deb_os_name }}"
+        expected: "singularity-ce version {{ singularity_version }}-{{ singularity_deb_os_name }}"
       ansible.builtin.assert:
         that: installed == expected
         success_msg: "OK, expected version present: '{{ installed }}'"

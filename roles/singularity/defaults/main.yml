@@ -1,0 +1,4 @@
+---
+singularity_deb_os_name: "jammy"
+singularity_rpm_os_name: "el9"
+singularity_version: "4.5.0"
