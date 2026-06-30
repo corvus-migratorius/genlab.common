@@ -7,9 +7,8 @@
   notify: "Restart-ping-exporter"
   vars:
     version: "{{ ping_exporter_version }}"
-    version_without_v: "{{ version | regex_replace('^v', '') }}"
     base_url: "https://github.com/czerwonk/ping_exporter/releases/download"
-    full_url: "{{ base_url }}/{{ version }}/ping_exporter_{{ version_without_v }}_linux_amd64.deb"
+    full_url: "{{ base_url }}/v{{ version }}/ping_exporter_{{ version }}_linux_amd64.deb"
   ansible.builtin.apt:
     deb: "{{ full_url }}"
     state: present
@@ -20,9 +19,8 @@
   notify: "Restart-ping-exporter"
   vars:
     version: "{{ ping_exporter_version }}"
-    version_without_v: "{{ version | regex_replace('^v', '') }}"
     base_url: "https://github.com/czerwonk/ping_exporter/releases/download"
-    full_url: "{{ base_url }}/{{ version }}/ping_exporter_{{ version_without_v }}_linux_amd64.rpm"
+    full_url: "{{ base_url }}/v{{ version }}/ping_exporter_{{ version }}_linux_amd64.rpm"
   ansible.builtin.dnf:
     name: "{{ full_url }}"
     state: present
