@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: "genlab.common.ping_exporter"
+      ping_exporter_targets:
+        - "127.0.0.1"

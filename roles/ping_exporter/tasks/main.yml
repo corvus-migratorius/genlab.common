@@ -1,0 +1,38 @@
+---
+# kics-scan disable=2e8d4922-8362-4606-8c14-aa10466a1ce3
+
+- name: "Install the 'ping_exporter' package from Github (Debian)"
+  tags: ping_exporter
+  when: ansible_os_family == "Debian"
+  notify: "Restart-ping-exporter"
+  vars:
+    version: "{{ ping_exporter_version }}"
+    version_without_v: "{{ version | regex_replace('^v', '') }}"
+    base_url: "https://github.com/czerwonk/ping_exporter/releases/download"
+    full_url: "{{ base_url }}/{{ version }}/ping_exporter_{{ version_without_v }}_linux_amd64.deb"
+  ansible.builtin.apt:
+    deb: "{{ full_url }}"
+    state: present
+
+- name: "Install the 'ping_exporter' package from Github (RHEL)"
+  tags: ping_exporter
+  when: ansible_os_family == "RHEL"
+  notify: "Restart-ping-exporter"
+  vars:
+    version: "{{ ping_exporter_version }}"
+    version_without_v: "{{ version | regex_replace('^v', '') }}"
+    base_url: "https://github.com/czerwonk/ping_exporter/releases/download"
+    full_url: "{{ base_url }}/{{ version }}/ping_exporter_{{ version_without_v }}_linux_amd64.rpm"
+  ansible.builtin.dnf:
+    name: "{{ full_url }}"
+    state: present
+
+- name: "Push the configuration file"
+  tags: ping_exporter
+  notify: "Restart-ping-exporter"
+  ansible.builtin.template:
+    src: "config.yml.j2"
+    dest: "/etc/ping_exporter/config.yml"
+    owner: ping_exporter
+    group: root
+    mode: "0644"
