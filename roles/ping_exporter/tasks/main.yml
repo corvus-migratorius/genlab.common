@@ -13,9 +13,9 @@
     deb: "{{ full_url }}"
     state: present
 
-- name: "Install the 'ping_exporter' package from Github (RHEL)"
+- name: "Install the 'ping_exporter' package from Github (RedHat)"
   tags: ping_exporter
-  when: ansible_os_family == "RHEL"
+  when: ansible_os_family == "RedHat"
   notify: "Restart-ping-exporter"
   vars:
     version: "{{ ping_exporter_version }}"
@@ -24,6 +24,22 @@
   ansible.builtin.dnf:
     name: "{{ full_url }}"
     state: present
+    disable_gpg_check: true
+
+- name: "Create a ping_exporter user"
+  tags: ping_exporter
+  ansible.builtin.user:
+    name: ping_exporter
+    system: true
+
+- name: "Ensure that the configuration folder exitsts"
+  tags: ping_exporter
+  ansible.builtin.file:
+    state: directory
+    path: /etc/ping_exporter.
+    owner: ping_exporter
+    group: root
+    mode: "0755"
 
 - name: "Push the configuration file"
   tags: ping_exporter
