@@ -26,13 +26,3 @@
         name: "https://{{ baseurl }}/v{{ singver }}/singularity-ce-{{ singver }}-1.{{ osname }}.x86_64.rpm"
         state: present
         disable_gpg_check: true
-        #mode: "0644"
-
-    # - name: "Install | install downloaded rpm package"
-    #   ansible.builtin.dnf:
-    #     deb: "/tmp/singularity.rpm"
-
-    # - name: "Install | clean up the .rpm artifact"
-    #   ansible.builtin.file:
-    #     path: "/tmp/singularity.rpm"
-    #     state: absent
