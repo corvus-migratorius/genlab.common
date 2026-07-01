@@ -32,10 +32,14 @@ jobs:
               per_page: 100
             });
 
-            const roles = Array.from(new Set(files.map(f => {
-              const m = f.filename.match(/^roles\/([^/]+)/);
-              return m ? `roles/${m[1]}` : null;
-            }).filter(Boolean)));
+            const roles = Array.from(new Set(files
+              .filter(f => f.status !== 'removed')
+              .map(f => {
+                const m = f.filename.match(/^roles\/([^/]+)/);
+                return m ? `roles/${m[1]}` : null;
+              })
+              .filter(Boolean)
+            ));
 
             // If nothing changed, use a sentinel so the matrix is never empty (empty matrices fail the runner)
             if (roles.length === 0) {
