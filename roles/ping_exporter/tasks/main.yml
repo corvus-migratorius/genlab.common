@@ -51,9 +51,10 @@
     group: root
     mode: "0644"
 
-# a workaround for an issue reported here: https://github.com/czerwonk/ping_exporter/issues/152
-- name: "Change `ping_t` SELinux domain to persmissive"
-  when: ansible_os_family == "RedHat"
-  community.general.selinux_permissive:
-    name: ping_t
-    permissive: true
+- name: "Apply SELinux workarounds"
+  when:
+    - ansible_facts.os_family == "RedHat"
+    - ansible_selinux.status is defined
+    - ansible_selinux.status != "disabled"
+  ansible.builtin.include_tasks:
+    file: selinux.yml
