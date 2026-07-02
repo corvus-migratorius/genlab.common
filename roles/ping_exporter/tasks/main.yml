@@ -50,3 +50,11 @@
     owner: ping_exporter
     group: root
     mode: "0644"
+
+- name: "Apply SELinux workarounds"
+  when:
+    - ansible_facts.os_family == "RedHat"
+    - ansible_selinux.status is defined
+    - ansible_selinux.status != "disabled"
+  ansible.builtin.include_tasks:
+    file: selinux.yml

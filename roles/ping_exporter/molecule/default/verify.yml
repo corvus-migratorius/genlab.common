@@ -4,6 +4,10 @@
   gather_facts: false
   any_errors_fatal: true
 
+  #
+  # NOTE: SELinux workarounds are not tested due to container limitations
+  #
+
   tasks:
     - name: "Include default vars"
       ansible.builtin.include_vars:
