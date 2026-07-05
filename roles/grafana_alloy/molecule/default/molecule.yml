@@ -17,13 +17,6 @@ platforms:
 
 provisioner:
   name: ansible
-  env:
-    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}/.."
-  inventory:
-    host_vars:
-      rocky:
-        ansible_user: root
-        ansible_become: false
 
 verifier:
   name: ansible
