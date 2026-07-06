@@ -4,8 +4,7 @@
     name: "alloy"
     system: true
     shell: "/sbin/nologin"
-    groups: "adm,systemd-journal"
-    append: true
+    groups: "adm"
     create_home: false
     state: present
 
