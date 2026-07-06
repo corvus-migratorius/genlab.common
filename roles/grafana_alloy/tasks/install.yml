@@ -1,0 +1,71 @@
+---
+- name: "Install | Create Alloy system user"
+  ansible.builtin.user:
+    name: "alloy"
+    system: true
+    shell: "/sbin/nologin"
+    groups: "adm,systemd-journal"
+    append: true
+    create_home: false
+    state: present
+
+- name: "Install | Create configuration and data directories"
+  loop:
+    - "{{ grafana_alloy_config_dir }}"
+    - "{{ grafana_alloy_data_dir }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "alloy"
+    group: "alloy"
+    mode: "0755"
+
+- name: "Install | Install the binary"
+  block:
+    - name: "Install | Check Alloy version"
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "alloy --version"
+      register: grafana_alloy_ver
+
+    - name: "Install | Assert version correctness"
+      ansible.builtin.assert:
+        that: "grafana_alloy_version in grafana_alloy_ver.stdout"
+        success_msg: "alloy version {{ grafana_alloy_version }} is installed and working"
+        fail_msg: "alloy version {{ grafana_alloy_version }} is not installed or not working correctly"
+
+  rescue:
+    - name: "Install | Ensure unzip is present"
+      ansible.builtin.package:
+        name: "unzip"
+        state: present
+
+    - name: "Install | Fetch and unpack the distribution"
+      ansible.builtin.unarchive:
+        src: "https://github.com/grafana/alloy/releases/download/v{{ grafana_alloy_version }}/alloy-linux-amd64.zip"
+        dest: "/tmp"
+        remote_src: true
+
+    - name: "Install | Put the binary under the PATH"
+      notify: "(Re)start Alloy service"
+      ansible.builtin.copy:
+        remote_src: true
+        src: "/tmp/alloy-linux-amd64"
+        dest: "/usr/bin/alloy"
+        owner: "alloy"
+        group: "alloy"
+        mode: "0755"
+
+    - name: "Install | Clean up the downloads"
+      ansible.builtin.file:
+        path: "/tmp/alloy-linux-amd64"
+        state: absent
+
+- name: "Install | Create a systemd service unit"
+  notify: "(Re)start Alloy service"
+  ansible.builtin.template:
+    src: alloy.service.j2
+    dest: /etc/systemd/system/alloy.service
+    owner: "alloy"
+    group: "alloy"
+    mode: "0660"
