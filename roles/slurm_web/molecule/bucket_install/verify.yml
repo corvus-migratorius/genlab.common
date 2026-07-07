@@ -26,12 +26,12 @@
         method: GET
         status_code: 200
         return_content: true
-      register: agent_version
+      register: slurm_web_agent_version
 
     - name: Assert agent is responding
       ansible.builtin.assert:
-        that: "'Slurm-web agent' in agent_version.content"
-        fail_msg: "Agent did not respond correctly: {{ agent_version.content }}"
+        that: "'Slurm-web agent' in slurm_web_agent_version.content"
+        fail_msg: "Agent did not respond correctly: {{ slurm_web_agent_version.content }}"
 
     - name: Check slurm-web gateway version endpoint
       ansible.builtin.uri:
@@ -39,9 +39,9 @@
         method: GET
         status_code: 200
         return_content: true
-      register: gateway_version
+      register: slurm_web_gateway_version
 
     - name: Assert gateway is responding
       ansible.builtin.assert:
-        that: "'Slurm-web gateway' in gateway_version.content"
-        fail_msg: "Gateway did not respond correctly: {{ gateway_version.content }}"
+        that: "'Slurm-web gateway' in slurm_web_gateway_version.content"
+        fail_msg: "Gateway did not respond correctly: {{ slurm_web_gateway_version.content }}"

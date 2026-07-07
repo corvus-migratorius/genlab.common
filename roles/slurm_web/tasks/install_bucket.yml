@@ -16,13 +16,13 @@
   ansible.builtin.uri:
     url: "https://storage.yandexcloud.net/role-packages?prefix={{ 'slurm-web/debian' if ansible_os_family == 'Debian' else 'slurm-web/redhat' }}&list-type=2"
     return_content: true
-  register: s3_listing
+  register: slurm_web_s3_listing
 
 - name: Extract package keys from S3 XML
   ansible.builtin.set_fact:
     slurm_web_packages: >-
       {{
-        s3_listing.content
+        slurm_web_s3_listing.content
         | regex_findall('<Key>(slurm-web/' +
          ('debian' if ansible_os_family == 'Debian' else 'redhat') +
           '/[^<]+\.' + ('deb' if ansible_os_family == 'Debian' else
@@ -48,12 +48,12 @@
   ansible.builtin.find:
     paths: "/tmp/slurm-web-packages/"
     patterns: "*.rpm"
-  register: rpm_list
+  register: slurm_web_rpm_list
   when: ansible_os_family == 'RedHat'
 
 - name: Install all RPM packages at once
   ansible.builtin.dnf:
-    name: "{{ rpm_list.files | map(attribute='path') | list }}"
+    name: "{{ slurm_web_rpm_list.files | map(attribute='path') | list }}"
     disable_gpg_check: true
     state: present
   when:
