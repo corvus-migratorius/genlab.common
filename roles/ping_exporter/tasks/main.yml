@@ -32,7 +32,7 @@
     name: ping_exporter
     system: true
 
-- name: "Ensure that the configuration folder exitsts"
+- name: "Ensure that the configuration folder exists"
   tags: ping_exporter
   ansible.builtin.file:
     state: directory

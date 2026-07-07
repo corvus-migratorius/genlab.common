@@ -5,4 +5,5 @@ ping_exporter_timeout: "4s"
 ping_exporter_history_size: 42
 ping_exporter_payload_size: 56
 ping_exporter_targets:
-  - "1.1.1.1"
+  - host: "1.1.1.1"
+    alias: cloudflare-dns
