@@ -7,11 +7,11 @@ Install Grafana Alloy from the release binary and configures it to scrape log fi
 ## Variables
 
 ```yaml
-alloy_version: "1.17.1"
-alloy_config_dir: "/etc/alloy"
-alloy_data_dir: "/var/lib/alloy"
-alloy_loki_url: "http://localhost:3100/loki/api/v1/push"
-alloy_log_paths:
+grafana_alloy_version: "1.17.1"
+grafana_alloy_config_dir: "/etc/alloy"
+grafana_alloy_data_dir: "/var/lib/alloy"
+grafana_alloy_loki_url: "http://localhost:3100/loki/api/v1/push"
+grafana_alloy_log_paths:
   - "/var/log/*.log"
 ```
 
@@ -23,8 +23,8 @@ alloy_log_paths:
   roles:
     - role: grafana_alloy
       vars:
-        alloy_loki_url: "http://loki.example.com:3100/loki/api/v1/push"
-        alloy_log_paths:
+        grafana_alloy_loki_url: "http://loki.example.com:3100/loki/api/v1/push"
+        grafana_alloy_log_paths:
           - "/var/log/*.log"
           - "/var/log/myapp/*.log"
 ```

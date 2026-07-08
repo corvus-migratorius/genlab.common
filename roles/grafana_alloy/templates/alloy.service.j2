@@ -16,7 +16,7 @@ ExecStart=/usr/bin/alloy run {{ grafana_alloy_config_dir }}/config.alloy \
 ExecReload=/bin/kill -HUP $MAINPID
 
 # Security hardening
-ReadWritePaths={{ grafana_alloy_data_dir }}
+ReadWritePaths={{ grafana_alloy_data_dir }} {{ grafana_alloy_config_dir }} 
 ProtectSystem=strict
 NoNewPrivileges=true
 PrivateTmp=true
