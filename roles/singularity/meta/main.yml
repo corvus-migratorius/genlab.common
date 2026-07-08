@@ -11,7 +11,8 @@ galaxy_info:
   platforms:
     - name: "Ubuntu"
       versions: ["jammy", "noble"]
+    - name: "Rocky"
+      varsions: ["el8", "el9", "el10"]
 
   galaxy_tags: []
-
 dependencies: []

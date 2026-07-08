@@ -9,4 +9,4 @@
         cache_valid_time: 3600
 
   roles:
-    - role: "genlab.common.singularity_deb"
+    - role: "genlab.common.singularity"

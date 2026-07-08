@@ -12,7 +12,7 @@
 
   tasks:
     - name: "Verify | check the installed Singularity version"
-      register: singularity_deb_installed_version
+      register: singularity_installed_version
       changed_when: false
       ansible.builtin.command:
         cmd: singularity --version
@@ -20,8 +20,8 @@
     - name: "Verify | assert installed version correctness"
       tags: singularity
       vars:
-        installed: "{{ singularity_deb_installed_version.stdout }}"
-        expected: "singularity-ce version {{ singularity_deb_version }}-{{ singularity_deb_os_name }}"
+        installed: "{{ singularity_installed_version.stdout }}"
+        expected: "singularity-ce version {{ singularity_version }}-1"
       ansible.builtin.assert:
         that: installed == expected
         success_msg: "OK, expected version present: '{{ installed }}'"
