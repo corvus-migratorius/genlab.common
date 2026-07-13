@@ -1,0 +1,34 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: "Include default vars"
+      ansible.builtin.include_vars:
+        dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
+        extensions: ['yml']
+
+    - name: "Check if ipmi_exporter is installed"
+      changed_when: false
+      ansible.builtin.command: "cgrpuser-exporter --version"
+      register: cgrpuser_exporter_installed_version
+
+    - name: "Check cgrpuser-exporter version"
+      ansible.builtin.assert:
+        that: "cgrpuser_exporter_installed_version.stdout is regex('{{ cgrpuser_exporter_ver }}')"
+        success_msg: "cgrpuser-exporter version {{ cgrpuser_exporter_ver }} is installed and working"
+        fail_msg: "cgrpuser-exporter version {{ cgrpuser_exporter_ver }} is not installed or not working correctly"
+
+    - name: "Check that service is up and giving sane responses"
+      changed_when: false
+      register: this
+      until: this is ansible.builtin.success
+      retries: 5
+      failed_when: "this is ansible.builtin.failed or 'cgrpuser_exporter_memory_current' not in this.content"
+      ansible.builtin.uri:
+        # kics-scan ignore-line
+        url: "http://localhost:{{ cgrpuser_exporter_port }}/metrics"
+        status_code: 200
+        return_content: true
