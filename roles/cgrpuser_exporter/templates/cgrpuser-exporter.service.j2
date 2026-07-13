@@ -1,0 +1,12 @@
+[Unit]
+Description=User Slice Exporter
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ cgrpuser_exporter_bin_path }}/cgrpuser-exporter \
+    --port {{ cgrpuser_exporter_port }} \
+    --timeout {{ cgrpuser_exporter_timeout }}
+
+[Install]
+WantedBy=multi-user.target
