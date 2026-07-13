@@ -44,6 +44,8 @@
 
   rescue:
     - name: "Install Loki if it is not present ({{ loki_version }})"
+      retries: 3
+      delay: 1
       ansible.builtin.unarchive:
         src: "https://github.com/grafana/loki/releases/download/v\
              {{ loki_version }}/loki-linux-amd64.zip"
@@ -60,6 +62,8 @@
         remote_src: true
 
     - name: "Install logcli"
+      retries: 3
+      delay: 1
       ansible.builtin.unarchive:
         src: "https://github.com/grafana/loki/releases/download/v\
                 {{ loki_version }}/logcli-linux-amd64.zip"
