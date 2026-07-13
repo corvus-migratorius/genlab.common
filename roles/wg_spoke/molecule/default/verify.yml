@@ -9,7 +9,7 @@
 
   tasks:
     - name: "Read Wireguard systemd state"
-      register: wg_info
+      register: wg_spoke_info
       community.general.systemd_info:
         unitname:
           - "{{ service_name }}"
@@ -17,10 +17,10 @@
     - name: "Verify the state of the service"
       ansible.builtin.assert:
         that:
-          - wg_info.units['{{ service_name }}'].loadstate == 'loaded'
-          - wg_info.units['{{ service_name }}'].activestate == 'active'
-          - wg_info.units['{{ service_name }}'].unitfilepreset == 'enabled'
-          - wg_info.units['{{ service_name }}'].unitfilestate == 'enabled'
+          - wg_spoke_info.units['{{ service_name }}'].loadstate == 'loaded'
+          - wg_spoke_info.units['{{ service_name }}'].activestate == 'active'
+          - wg_spoke_info.units['{{ service_name }}'].unitfilepreset == 'enabled'
+          - wg_spoke_info.units['{{ service_name }}'].unitfilestate == 'enabled'
         success_msg: "Wireguard service '{{ service_name }}' is running and enabled"
         fail_msg: "Wireguard service '{{ service_name }}' is failed or misconfigured"
 
