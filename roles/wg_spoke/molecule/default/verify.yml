@@ -4,10 +4,10 @@
   gather_facts: false
   any_errors_fatal: true
   vars:
-    iface_name: adm
+    wg_spoke_iface_name: adm
 
   tasks:
     - name: "Check that the Wireguard service is running"
       ansible.builtin.service:
-        name: wg-quick@{{ iface_name }}
+        name: wg-quick@{{ wg_spoke_iface_name }}
         state: started
