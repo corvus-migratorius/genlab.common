@@ -59,11 +59,6 @@
         mode: "0755"
         remote_src: true
 
-    - name: "Cleanup downloaded file"
-      ansible.builtin.file:
-        path: /opt/loki/loki-linux-amd64
-        state: absent
-
     - name: "Install logcli"
       ansible.builtin.unarchive:
         src: "https://github.com/grafana/loki/releases/download/v\
@@ -80,10 +75,14 @@
         mode: "0755"
         remote_src: true
 
-    - name: "Cleanup downloaded file"
+    - name: "Cleanup downloaded files"
+      loop:
+        - /opt/loki/loki-linux-amd64.zip
+        - /usr/local/bin/logcli-linux-amd64.zip
       ansible.builtin.file:
-        path: /usr/local/bin/logcli-linux-amd64
+        path: "{{ item }}"
         state: absent
+
 
 - name: "Template the systemd unit file"
   notify: "Reload the Loki daemon configuration"
