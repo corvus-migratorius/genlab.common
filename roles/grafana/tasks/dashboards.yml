@@ -20,8 +20,8 @@
 - name: "Import Grafana dashboards to Grafana"
   community.grafana.grafana_dashboard:
     grafana_url: "http://127.0.0.1:{{ grafana_port }}"
-    url_username: "{{ admin_api_username }}"
-    url_password: "{{ admin_api_password }}"
+    url_username: "{{ grafana_admin_api_username }}"
+    url_password: "{{ grafana_admin_api_password }}"
     state: present
     commit_message: Updated by ansible
     overwrite: false
@@ -35,6 +35,6 @@
     url: "http://127.0.0.1:{{ grafana_port }}/api/admin/provisioning/dashboards/reload"
     method: POST
     force_basic_auth: true
-    user: "{{ admin_api_username }}"
-    password: "{{ admin_api_password }}"
+    user: "{{ grafana_admin_api_username }}"
+    password: "{{ grafana_admin_api_password }}"
     status_code: 200
