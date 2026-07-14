@@ -10,7 +10,7 @@
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
         extensions: ["yml"]
 
-    - name: "Check if ipmi_exporter is installed"
+    - name: "Check if cgrpuser-exporter is installed"
       changed_when: false
       ansible.builtin.command: "cgrpuser-exporter --version"
       register: cgrpuser_exporter_installed_version
