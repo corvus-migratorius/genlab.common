@@ -8,14 +8,14 @@
     mode: "0755"
 
 - name: "Configure | provision datasources for Grafana"
+  with_fileglob:
+    "{{ grafana_datasource_source_path }}/*.y*ml"
   ansible.builtin.copy:
     src: "{{ grafana_datasource_source_path }}/{{ item | basename }}"
     dest: "{{ grafana_datasource_dir }}/{{ item | basename }}"
     owner: "{{ grafana_user }}"
     group: "{{ grafana_group }}"
     mode: "0660"
-  with_fileglob:
-    "{{ grafana_datasource_source_path }}/*.y*ml"
 
 - name: "Run | reload Grafana datasource provisioned configurations"
   ansible.builtin.uri:
