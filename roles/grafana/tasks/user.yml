@@ -6,6 +6,7 @@
     grafana-cli admin reset-admin-password "{{ grafana_admin_api_password }}"
 
 - name: "Create | update a Grafana user"
+  no_log: "{{ grafana_no_log }}"
   community.grafana.grafana_user:
     url: "http://127.0.0.1:{{ grafana_port }}"
     url_username: "{{ grafana_admin_api_username }}"

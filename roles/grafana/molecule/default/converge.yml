@@ -42,3 +42,4 @@
       grafana_datasource_source_path: "molecule/default/datasources"
       grafana_log_dir: "/opt/grafana/data"
       grafana_data_dir: "/opt/grafana/lib"
+      grafana_no_log: false
