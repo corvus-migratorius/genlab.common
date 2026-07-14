@@ -28,7 +28,7 @@
 
     - name: "DEBUG: print procs"
       ansible.builtin.debug:
-        var: procs.stdout_lines
+        var: procs
 
     - name: Check that service is up
       ansible.builtin.uri:
