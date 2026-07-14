@@ -21,6 +21,15 @@
         success_msg: "cgrpuser-exporter version {{ cgrpuser_exporter_ver }} is installed and working"
         fail_msg: "cgrpuser-exporter version {{ cgrpuser_exporter_ver }} is not installed or not working correctly"
 
+    - name: Check that service is up and giving sane responses
+      ansible.builtin.uri:
+        url: http://localhost:9201/metrics
+        status_code: 200
+      register: metrics
+      retries: 5
+      delay: 3
+      until: metrics.status == 200
+
     - name: "Check that service is up and giving sane responses"
       changed_when: false
       register: cgrpuser_exporter_this
