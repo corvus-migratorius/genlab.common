@@ -21,6 +21,24 @@
         success_msg: "cgrpuser-exporter version {{ cgrpuser_exporter_ver }} is installed and working"
         fail_msg: "cgrpuser-exporter version {{ cgrpuser_exporter_ver }} is not installed or not working correctly"
 
+    - name: "DEBUG: status"
+      ansible.builtin.command: systemctl status cgrpuser-exporter
+      changed_when: false
+      failed_when: false
+      register: st
+
+    - ansible.builtin.debug:
+        var: st
+
+    - name: "DEBUG: journal (whole boot, not just the unit)"
+      ansible.builtin.shell: "journalctl -u cgrpuser-exporter -n 80; echo ----; journalctl --no-pager -p err -n 30"
+      changed_when: false
+      failed_when: false
+      register: jr
+
+    - ansible.builtin.debug:
+        var: jr.stdout_lines
+
     - name: "DEBUG: process and listeners"
       ansible.builtin.shell: "ps aux | grep -i [c]grpuser; ss -tlnp"
       changed_when: false
@@ -28,7 +46,7 @@
 
     - name: "DEBUG: print procs"
       ansible.builtin.debug:
-        var: procs
+        var: procs.stdout_lines
 
     - name: Check that service is up
       ansible.builtin.uri:
