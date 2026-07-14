@@ -21,9 +21,30 @@
         success_msg: "cgrpuser-exporter version {{ cgrpuser_exporter_ver }} is installed and working"
         fail_msg: "cgrpuser-exporter version {{ cgrpuser_exporter_ver }} is not installed or not working correctly"
 
-    - name: Wait for 10 seconds
+    - name: Wait for 15 seconds
       ansible.builtin.pause:
         seconds: 15
+
+    - name: "DEBUG: service status"
+      ansible.builtin.command: systemctl status cgrpuser-exporter --no-pager -l
+      changed_when: false
+      failed_when: false
+      register: svc_status
+
+    - name: "DEBUG: journal"
+      ansible.builtin.command: journalctl -u cgrpuser-exporter --no-pager -n 60
+      changed_when: false
+      failed_when: false
+      register: svc_journal
+
+    - name: "DEBUG: user.slice contents"
+      ansible.builtin.shell: "ls -la /sys/fs/cgroup/user.slice/ 2>&1; true"
+      changed_when: false
+      register: user_slice
+
+    - name: "DEBUG: print"
+      ansible.builtin.debug:
+        msg: "{{ svc_status.stdout_lines + svc_status.stderr_lines + svc_journal.stdout_lines + user_slice.stdout_lines }}"
 
     - name: Check that service is up
       ansible.builtin.uri:
