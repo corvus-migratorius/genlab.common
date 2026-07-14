@@ -23,10 +23,10 @@
 
     - name: "Check that service is up and giving sane responses"
       changed_when: false
-      register: this
-      until: this is ansible.builtin.success
+      register: cgrpuser_exporter_this
+      until: cgrpuser_exporter_this is ansible.builtin.success
       retries: 5
-      failed_when: "this is ansible.builtin.failed or 'cgrpuser_exporter_memory_current' not in this.content"
+      failed_when: "cgrpuser_exporter_this is ansible.builtin.failed or 'cgrpuser_exporter_memory_current' not in cgrpuser_exporter_this.content"
       ansible.builtin.uri:
         # kics-scan ignore-line
         url: "http://localhost:{{ cgrpuser_exporter_port }}/metrics"
