@@ -22,7 +22,7 @@
         fail_msg: "cgrpuser-exporter version {{ cgrpuser_exporter_ver }} is not installed or not working correctly"
 
     - name: "DEBUG: process and listeners"
-      ansible.builtin.shell: "ps aux | grep -i [c]grpuser; ss -tlnp; true"
+      ansible.builtin.shell: "ps aux | grep -i [c]grpuser; ss -tlnp"
       changed_when: false
       register: procs
 
