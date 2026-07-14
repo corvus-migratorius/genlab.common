@@ -8,5 +8,8 @@ ExecStart={{ cgrpuser_exporter_bin_path }}/cgrpuser-exporter \
     --port {{ cgrpuser_exporter_port }} \
     --timeout {{ cgrpuser_exporter_timeout }}
 
+Restart=on-failure
+RestartSec=5
+
 [Install]
 WantedBy=multi-user.target

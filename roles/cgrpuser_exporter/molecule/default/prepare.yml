@@ -1,0 +1,11 @@
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Create user matching host runner UID (GitHub Actions workaround)
+      ansible.builtin.user:
+        name: runner
+        uid: 1001
+        create_home: false
+        shell: /usr/sbin/nologin
+        state: present
