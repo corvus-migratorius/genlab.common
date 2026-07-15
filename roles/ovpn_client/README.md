@@ -1,38 +1,45 @@
-Role Name
-=========
+ovpn_client
+===========
 
-A brief description of the role goes here.
+This role installs the OpenVPN client packages and deploys a systemd-managed OpenVPN client profile for a specific user. It renders a client configuration from a provided template, writes credentials to an auth file, and restarts/enables the corresponding OpenVPN service unit.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- Ansible 2.1 or newer
+- A supported target system, such as Ubuntu Jammy/Noble
+- A client configuration template supplied through the `ovpn_client_config_src` variable
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+The role uses the following variables:
+
+- `ovpn_client_config_dir`: directory where the client config and auth files are stored (default: `/etc/openvpn/client`)
+- `ovpn_client_config_path`: full path to the rendered client configuration file (default: `/etc/openvpn/client/{{ ovpn_client_username }}.conf`)
+- `ovpn_client_auth_path`: full path to the credentials file (default: `/etc/openvpn/client/{{ ovpn_client_username }}.auth`)
+- `ovpn_client_service`: systemd service name to manage (default: `openvpn-client@{{ ovpn_client_username }}.service`)
+- `ovpn_client_no_log`: disables logging for the credentials task when set to `true` (default: `true`)
+- `ovpn_client_config_src`: source template for the client config file (required)
+- `ovpn_client_username`: username written to the auth file (required)
+- `ovpn_client_password`: password written to the auth file (required)
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+See: [converge.yml](molecule/default/converge.yml)
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Alexander Gorelyshev, Genlab, LLC
