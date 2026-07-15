@@ -23,9 +23,9 @@
   block:
     - name: "Install | Check Alloy version"
       changed_when: false
+      register: grafana_alloy_ver
       ansible.builtin.command:
         cmd: "alloy --version"
-      register: grafana_alloy_ver
 
     - name: "Install | Assert version correctness"
       ansible.builtin.assert:
@@ -40,6 +40,8 @@
         state: present
 
     - name: "Install | Fetch and unpack the distribution"
+      retries: 3
+      delay: 3
       ansible.builtin.unarchive:
         src: "https://github.com/grafana/alloy/releases/download/v{{ grafana_alloy_version }}/alloy-linux-amd64.zip"
         dest: "/tmp"
