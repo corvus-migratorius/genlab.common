@@ -18,9 +18,9 @@
   block:
     - name: "Check Grafana version"
       changed_when: false
+      register: grafana_ver
       ansible.builtin.command:
         cmd: "grafana-server --version"
-      register: grafana_ver
 
     - name: "Assert version correctness"
       ansible.builtin.assert:
@@ -30,16 +30,16 @@
 
   rescue:
     - name: "Ensure that directories exist"
+      with_items:
+        - "{{ grafana_log_dir }}"
+        - "{{ grafana_data_dir }}"
+        - "{{ grafana_plugins_dir }}"
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
         owner: "{{ grafana_user }}"
         group: "{{ grafana_group }}"
         mode: '0775'
-      with_items:
-        - "{{ grafana_log_dir }}"
-        - "{{ grafana_data_dir }}"
-        - "{{ grafana_plugins_dir }}"
 
     - name: "Download Grafana DEB package"
       ansible.builtin.get_url:
@@ -64,15 +64,15 @@
 
     - name: "Create env file for systemd service unit"
       notify: "(Re)start and enable Grafana"
+      with_items:
+        - "/etc/default/grafana-server"
+        - "/etc/default/grafana"
       ansible.builtin.template:
         src: grafana-server.env.j2
         dest: "{{ item }}"
         owner: "{{ grafana_user }}"
         group: "{{ grafana_group }}"
         mode: "0660"
-      with_items:
-        - "/etc/default/grafana-server"
-        - "/etc/default/grafana"
 
 - name: "Flush handlers"
   ansible.builtin.meta: "flush_handlers"

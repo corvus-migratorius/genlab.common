@@ -8,9 +8,9 @@
     mode: "0755"
 
 - name: "Install Grafana plugins"
+  notify: "(Re)start and enable Grafana"
   community.grafana.grafana_plugin:
     name: "{{ plugin.name }}"
     version: "{{ plugin.version }}"
     grafana_plugins_dir: "{{ grafana_plugins_dir }}"
     state: "{{ plugin.state | default('present') }}"
-  notify: "(Re)start and enable Grafana"
