@@ -1,0 +1,24 @@
+// {{ ansible_managed }}
+
+local.file_match "logs" {
+  path_targets = [
+{% for path in grafana_alloy_log_paths %}
+    {__path__ = "{{ path }}", job = "varlogs", host = constants.hostname},
+{% endfor %}
+  ]
+}
+
+loki.source.file "logs" {
+  targets    = local.file_match.logs.targets
+  forward_to = [loki.process.default.receiver]
+}
+
+loki.process "default" {
+  forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+  endpoint {
+    url = "{{ grafana_alloy_loki_url }}"
+  }
+}
