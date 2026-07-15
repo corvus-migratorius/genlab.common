@@ -1,17 +1,9 @@
 ---
-- name: "Install OpenVPN and the DNS handling helper tools (Debian)"
-  when: ansible_os_family == "Debian"
+- name: "Install OpenVPN and the DNS handling helper tools"
   ansible.builtin.apt:
     name:
       - openvpn
       - openvpn-systemd-resolved
-    state: present
-    update_cache: true
-
-- name: "Install OpenVPN (RHEL)"
-  when: ansible_os_family == "RedHat"
-  ansible.builtin.dnf:
-    name: openvpn
     state: present
     update_cache: true
 
