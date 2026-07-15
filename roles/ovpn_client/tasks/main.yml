@@ -1,0 +1,46 @@
+---
+- name: "Install OpenVPN and the DNS handling helper tools (Debian)"
+  when: ansible_os_family == "Debian"
+  ansible.builtin.apt:
+    name:
+      - openvpn
+      - openvpn-systemd-resolved
+    state: present
+    update_cache: true
+
+- name: "Install OpenVPN (RHEL)"
+  when: ansible_os_family == "RedHat"
+  ansible.builtin.dnf:
+    name: openvpn
+    state: present
+    update_cache: true
+
+- name: "Create OpenVPN client directory"
+  ansible.builtin.file:
+    path: "{{ ovpn_client_config_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: "Install OpenVPN client profile"
+  notify: "Restart-enable OpenVPN client"
+  ansible.builtin.template:
+    src: "{{ ovpn_client_config_src }}"
+    dest: "{{ ovpn_client_config_path }}"
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: "Install OpenVPN credentials"
+  no_log: "{{ ovpn_client_no_log }}"
+  diff: false
+  notify: "Restart-enable OpenVPN client"
+  ansible.builtin.copy:
+    content: |
+      {{ ovpn_client_username }}
+      {{ ovpn_client_password }}
+    dest: "{{ ovpn_client_auth_path }}"
+    owner: root
+    group: root
+    mode: "0600"

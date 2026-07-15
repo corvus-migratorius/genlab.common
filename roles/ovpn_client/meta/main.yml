@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  role_name: ovpn_client
+  namespace: genlab
+  author: "Alexander Gorelyshev"
+  company: "Genlab, LLC"
+  description: "Deploy openvpn-client as a systemd service"
+  license: "MIT"
+  min_ansible_version: "2.1"
+
+  platforms:
+    - name: "Ubuntu"
+      versions: ["jammy", "noble"]
+    - name: "Rocky"
+
+  galaxy_tags: []
+
+dependencies: []
