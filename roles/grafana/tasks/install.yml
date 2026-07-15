@@ -42,13 +42,15 @@
         mode: '0775'
 
     - name: "Download Grafana DEB package"
+      register: grafana_package_tmp
+      retries: 3
+      delay: 3
       ansible.builtin.get_url:
         url: "https://dl.grafana.com/oss/release/grafana_{{ grafana_version }}_amd64.deb"
         dest: "/tmp/grafana-{{ grafana_version }}_amd64.deb"
         owner: "{{ grafana_user }}"
         group: "{{ grafana_group }}"
         mode: "0644"
-      register: grafana_package_tmp
 
     - name: "Install DEB package"
       notify: "(Re)start and enable Grafana"

@@ -33,6 +33,8 @@
 
     - name: "Download caddy"
       notify: "Enable and restart the caddy daemon"
+      retries: 3
+      delay: 3
       vars:
         base_url: "github.com/caddyserver/caddy/releases/download"
       ansible.builtin.unarchive:

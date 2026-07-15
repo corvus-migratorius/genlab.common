@@ -35,6 +35,8 @@
   rescue:
     - name: "Install | Fetch and unpack the distribution"
       notify: "(Re)start and enable Alertmanager"
+      retries: 3
+      delay: 3
       ansible.builtin.unarchive:
         src: "https://github.com/prometheus/alertmanager/releases/download/v{{ alertmanager_version }}/\
               alertmanager-{{ alertmanager_version }}.linux-amd64.tar.gz"

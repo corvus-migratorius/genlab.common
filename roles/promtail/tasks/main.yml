@@ -54,6 +54,8 @@
   rescue:
     - name: "Install Promtail if its not present"
       notify: "Enable and restart the Promtail daemon"
+      retries: 3
+      delay: 3
       ansible.builtin.unarchive:
         src: "https://github.com/grafana/loki/releases/download/v\
              {{ promtail_version }}/promtail-linux-amd64.zip"

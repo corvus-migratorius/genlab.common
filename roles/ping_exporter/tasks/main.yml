@@ -5,6 +5,8 @@
   tags: ping_exporter
   when: ansible_os_family == "Debian"
   notify: "Restart-ping-exporter"
+  retries: 3
+  delay: 3
   vars:
     version: "{{ ping_exporter_version }}"
     base_url: "https://github.com/czerwonk/ping_exporter/releases/download"
@@ -17,6 +19,8 @@
   tags: ping_exporter
   when: ansible_os_family == "RedHat"
   notify: "Restart-ping-exporter"
+  retries: 3
+  delay: 3
   vars:
     version: "{{ ping_exporter_version }}"
     base_url: "https://github.com/czerwonk/ping_exporter/releases/download"
