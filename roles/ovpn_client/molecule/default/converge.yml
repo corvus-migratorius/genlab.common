@@ -11,4 +11,4 @@
       ovpn_client_username: alice
       ovpn_client_password: secret
       ovpn_client_ca_crt: '{{ lookup("file", "files/ca.crt" ) }}'
-      ovpn_client_tls_auth: '{{ lookup("file", "tls-auth.key" ) }}'
+      ovpn_client_tls_auth: '{{ lookup("file", "files/tls-auth.key" ) }}'
