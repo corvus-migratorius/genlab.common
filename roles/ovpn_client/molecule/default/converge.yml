@@ -8,6 +8,7 @@
         port: 1194
         dns: 1.2.3.5
         domain: test.internal
+      ovpn_client_conname: test
       ovpn_client_username: alice
       ovpn_client_password: secret
       ovpn_client_ca_crt: '{{ lookup("file", "files/ca.crt" ) }}'
