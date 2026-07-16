@@ -1,0 +1,24 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  any_errors_fatal: true
+  vars:
+    ovpn_client_conname: test
+  tasks:
+    # https://github.com/ansible/molecule/issues/3587#issuecomment-1158650179
+    - name: "Include default vars"
+      ansible.builtin.include_vars:
+        dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
+        extensions: ['yml']
+
+    - name: "Read service state"
+      community.general.systemd_info:
+        unitname: "{{ ovpn_client_service }}"
+      register: ovpn_client_service_info
+
+    - name: "Verify the service is enabled"
+      ansible.builtin.assert:
+        that:
+          - ovpn_client_service_info.units[ovpn_client_service].unitfilepreset == 'enabled'
+          - ovpn_client_service_info.units[ovpn_client_service].unitfilestate == 'enabled'
