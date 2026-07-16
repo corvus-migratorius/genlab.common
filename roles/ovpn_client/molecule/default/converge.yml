@@ -4,10 +4,11 @@
   roles:
     - role: genlab.common.ovpn_client
       ovpn_client_remote:
-        ip: 1.2.3.4
+        address: 1.2.3.4
         port: 1194
-        ip_dns: 1.2.3.5
+        dns: 1.2.3.5
         domain: test.internal
-      ovpn_client_config_src: templates/client.conf
       ovpn_client_username: alice
       ovpn_client_password: secret
+      ovpn_client_ca_crt: '{{ lookup("file", "files/ca.crt" ) }}'
+      ovpn_client_tls_auth: '{{ lookup("file", "tls-auth.key" ) }}'
