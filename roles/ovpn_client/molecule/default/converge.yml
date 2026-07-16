@@ -1,4 +1,3 @@
-# kics-scan disable=a88baa34-e2ad-44ea-ad6f-8cac87bc7c71
 ---
 - name: Converge
   hosts: all
@@ -11,6 +10,7 @@
         domain: test.internal
       ovpn_client_conname: test
       ovpn_client_username: alice
+      # kics-scan ignore-line
       ovpn_client_password: secret
       ovpn_client_ca_crt: '{{ lookup("file", "files/ca.crt" ) }}'
       ovpn_client_tls_auth: '{{ lookup("file", "files/tls-auth.key" ) }}'
