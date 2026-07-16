@@ -4,7 +4,7 @@
   gather_facts: true
   any_errors_fatal: true
   vars:
-    ovpn_client_username: alice
+    ovpn_client_conname: test
   tasks:
     # https://github.com/ansible/molecule/issues/3587#issuecomment-1158650179
     - name: "Include default vars"

@@ -4,5 +4,5 @@ ovpn_client_config_path: >-
   {{ ovpn_client_config_dir }}/{{ ovpn_client_conname }}.conf
 ovpn_client_auth_path: >-
   {{ ovpn_client_config_dir }}/{{ ovpn_client_username }}.auth
-ovpn_client_service: "openvpn-client@{{ ovpn_client_username }}.service"
+ovpn_client_service: "openvpn-client@{{ ovpn_client_conname }}.service"
 ovpn_client_no_log: true
