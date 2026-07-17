@@ -7,15 +7,15 @@
 - name: "Set up uptime-kuma credentials"
   lucasheld.uptime_kuma.setup:
     api_url: http://127.0.0.1:{{ uptime_kuma_port }}
-    api_username: "{{ kuma_api_username }}"
-    api_password: "{{ kuma_api_password }}"
+    api_username: "{{ uptime_kuma_api_username }}"
+    api_password: "{{ uptime_kuma_api_password }}"
 
 - name: "Login with credentials once and register the result"
   register: uptime_kuma_result
   lucasheld.uptime_kuma.login:
     api_url: http://127.0.0.1:{{ uptime_kuma_port }}
-    api_username: "{{ kuma_api_username }}"
-    api_password: "{{ kuma_api_password }}"
+    api_username: "{{ uptime_kuma_api_username }}"
+    api_password: "{{ uptime_kuma_api_password }}"
 
 - name: "Extract the token from the result and set it as fact"
   ansible.builtin.set_fact:
@@ -23,22 +23,22 @@
 
 - name: "Configure Telegram notification method"
   when:
-    - kuma_tg_bot_token is defined
-    - kuma_tg_chat_id is defined
+    - uptime_kuma_tg_bot_token is defined
+    - uptime_kuma_tg_chat_id is defined
   lucasheld.uptime_kuma.notification:
     api_url: http://127.0.0.1:{{ uptime_kuma_port }}
     api_token: "{{ uptime_kuma_api_token }}"
     type: telegram
-    name: "{{ kuma_tg_notif_name | default('Telegram alerts') }}"
-    isDefault: "{{ kuma_tg_notif_is_default | default(true) }}"
-    applyExisting: "{{ kuma_tg_notif_apply_existing | default(true) }}"
-    telegramBotToken: "{{ kuma_tg_bot_token }}"
-    telegramChatID: "{{ kuma_tg_chat_id }}"
+    name: "{{ uptime_kuma_tg_notif_name | default('Telegram alerts') }}"
+    isDefault: "{{ uptime_kuma_tg_notif_is_default | default(true) }}"
+    applyExisting: "{{ uptime_kuma_tg_notif_apply_existing | default(true) }}"
+    telegramBotToken: "{{ uptime_kuma_tg_bot_token }}"
+    telegramChatID: "{{ uptime_kuma_tg_chat_id }}"
     state: "present"
 
 - name: "Create monitor groups"
-  when: kuma_monitor_groups is defined
-  loop: "{{ kuma_monitor_groups }}"
+  when: uptime_kuma_monitor_groups is defined
+  loop: "{{ uptime_kuma_monitor_groups }}"
   lucasheld.uptime_kuma.monitor:
     api_url: http://127.0.0.1:{{ uptime_kuma_port }}
     api_token: "{{ uptime_kuma_api_token }}"
@@ -46,7 +46,7 @@
     name: "{{ item }}"
 
 - name: "Create monitors"
-  loop: "{{ kuma_monitors }}"
+  loop: "{{ uptime_kuma_monitors }}"
   lucasheld.uptime_kuma.monitor:
     api_url: http://127.0.0.1:{{ uptime_kuma_port }}
     api_token: "{{ uptime_kuma_api_token }}"
@@ -60,7 +60,7 @@
     description: "{{ item.description | default(omit) }}"
     parent_name: "{{ item.parent_name | default(omit) }}"
     notification_names: "{{ item.notification_names | default(uptime_kuma_default_notification_names) }}"
-    state: "{{ kuma_tg_notif_state | default('present') }}"
+    state: "{{ uptime_kuma_tg_notif_state | default('present') }}"
     ignoreTls: "{{ item.ignore_tls | default(false) }}"
     jsonPath: "{{ item.query | default(omit) }}"
     expectedValue: "{{ item.expected_value | default(omit) }}"

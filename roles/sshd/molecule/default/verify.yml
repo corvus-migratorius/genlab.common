@@ -5,20 +5,36 @@
   gather_facts: false
   any_errors_fatal: true
 
-  tasks:
+  pre_tasks:
     - name: Gather service facts
       ansible.builtin.service_facts:
 
+    - name: Set up users and keys for testing
+      loop:
+        - testusr
+        - testusr_notallowed
+      loop_control:
+        loop_var: username
+      ansible.builtin.include_tasks: mkuser.yml
+
+  tasks:
     - name: Ensure sshd is running
+      vars:
+        sshd_state: "{{ ansible_facts.services['ssh.service'].state | default('unknown') }}"
       ansible.builtin.assert:
-        that:
-          - ansible_facts.services['ssh.service'].state == 'running'
+        that: sshd_state == 'running'
+        success_msg: "OK, sshd state: '{{ sshd_state }}'"
+        fail_msg: "FAIL, sshd state: '{{ sshd_state }}'"
 
     - name: Ensure sshd_config syntax is OK
-      ansible.builtin.command: sshd -t -f /etc/ssh/sshd_config
       changed_when: false
+      ansible.builtin.command:
+        cmd: sshd -t -f /etc/ssh/sshd_config
 
     - name: Ensure main parameteres are applied
+      args:
+        executable: /bin/bash
+      changed_when: false
       ansible.builtin.shell: |
         set -o pipefail ;
         sshd -T | egrep -i '
@@ -27,50 +43,45 @@
           ^passwordauthentication no|
           ^pubkeyauthentication yes
         '
-      args:
-        executable: /bin/bash
-      changed_when: false
 
     - name: Get sshd_config stats
+      register: sshd_conf
       ansible.builtin.stat:
         path: /etc/ssh/sshd_config
-      register: sshd_conf
 
     - name: Ensure sshd_config file is secure
+      vars:
+        uid: "{{ sshd_conf.stat.uid }}"
+        gid: "{{ sshd_conf.stat.gid }}"
+        mode: "{{ sshd_conf.stat.mode }}"
       ansible.builtin.assert:
         that:
-          - sshd_conf.stat.uid == 0
-          - sshd_conf.stat.gid == 0
-          - sshd_conf.stat.mode == '0600'
+          - uid == '0'
+          - gid == '0'
+          - mode == '0600'
+        success_msg: "OK, sshd_config file uid: '{{ uid }}', gid: '{{ gid }}', mode: '{{ mode }}'"
+        fail_msg: "FAIL, sshd_config file uid: '{{ uid }}', gid: '{{ gid }}', mode: '{{ mode }}'"
 
-    - name: Create test user
-      ansible.builtin.user:
-        name: test
-        create_home: true
-        shell: /bin/bash
-
-    - name: Create .ssh directory
-      ansible.builtin.file:
-        path: /home/test/.ssh/
-        state: directory
-        mode: '0700'
-        owner: test
-        group: test
-
-    - name: Generate ssh keys
-      community.crypto.openssh_keypair:
-        path: /home/test/.ssh/id_rsa
-        owner: test
-        group: test
-        mode: '0600'
-      register: sshd_key_result
-
-    - name: Put public key to test user
-      ansible.posix.authorized_key:
-        user: test
-        key: "{{ sshd_key_result.public_key }}"
-        state: present
-
-    - name: Test ssh connection
-      ansible.builtin.command: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /home/test/.ssh/id_rsa test@localhost hostname
+    - name: Test ssh connection with an allowed user
       changed_when: false
+      ansible.builtin.command:
+        cmd: >-
+          ssh
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          -i /home/testusr/.ssh/id_rsa
+          testusr@localhost
+          hostname
+
+    - name: Test ssh connection with a disallowed user
+      register: sshd_verify_conn_result
+      changed_when: false
+      failed_when: sshd_verify_conn_result.rc == 0
+      ansible.builtin.command:
+        cmd: >-
+          ssh
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          -i /home/testusrnotallowed/.ssh/id_rsa
+          testusrnotallowed@localhost
+          hostname

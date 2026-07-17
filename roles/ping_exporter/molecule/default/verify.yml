@@ -1,0 +1,33 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  #
+  # NOTE: SELinux workarounds are not tested due to container limitations
+  #
+
+  tasks:
+    - name: "Include default vars"
+      ansible.builtin.include_vars:
+        dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
+        extensions: ['yml']
+
+    # kics-scan ignore-block
+    - name: "Check if /metrics endpoint is reachable"
+      retries: 10
+      delay: 2
+      register: ping_exporter_metrics_check
+      until: ping_exporter_metrics_check.status == 200
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:9427/metrics"
+        return_content: true
+        status_code: 200
+        timeout: 5
+
+    - name: "Fail if /metrics doesn't contain ping_exporter metrics"
+      ansible.builtin.assert:
+        that: "'ping_up' in ping_exporter_metrics_check.content"
+        fail_msg: "ping_exporter /metrics endpoint doesn't contain ping_up metrics!"
+        success_msg: "ping_up metrics availble from /metrics"

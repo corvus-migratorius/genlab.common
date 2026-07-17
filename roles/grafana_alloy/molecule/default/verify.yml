@@ -1,0 +1,43 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  tasks:
+    - name: "Include default vars"
+      ansible.builtin.include_vars:
+        dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
+        extensions: ['yml']
+
+    - name: "Check if Alloy is installed"
+      changed_when: false
+      ansible.builtin.command: "alloy --version"
+      register: grafana_alloy_installed_version
+
+    - name: "Check Alloy version"
+      ansible.builtin.assert:
+        that: "grafana_alloy_version in grafana_alloy_installed_version.stdout"
+        success_msg: "Alloy version {{ grafana_alloy_version }} is available and executable"
+        fail_msg: "Alloy version {{ grafana_alloy_version }} not found or not executable"
+
+    - name: "Check if Alloy service is active"
+      ansible.builtin.systemd:
+        name: alloy
+      register: grafana_alloy_service
+      failed_when: "grafana_alloy_service.status.ActiveState != 'active'"
+
+    # kics-scan ignore-block
+    - name: "Check if Alloy is ready"
+      ansible.builtin.uri:
+        url: "http://localhost:12345/-/ready"
+        return_content: true
+        status_code: 200
+        method: GET
+      register: grafana_alloy_ready
+
+    - name: "Assert Alloy readiness"
+      ansible.builtin.assert:
+        that: "grafana_alloy_ready.content | trim == 'Alloy is ready.'"
+        success_msg: "Alloy is ready"
+        fail_msg: "Alloy is not ready"

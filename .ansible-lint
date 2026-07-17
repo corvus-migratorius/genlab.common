@@ -12,3 +12,4 @@ exclude_paths:
   # ansible-lint thinks they're playbooks so gives errors, but they're not
   - roles/rustdesk/molecule/default/client-binary-existance.yml
   - roles/borg_server/molecule/default/secrets.yaml
+  - roles/sshd/molecule/default/mkuser.yml

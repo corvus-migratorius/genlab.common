@@ -43,12 +43,12 @@ grafana_plugins: []                # array of plugins to install
 grafana_public_dashboards: []      # array of public dashboards to import  
 
 # Admin credentials  
-admin_api_username: "secret"       # Grafana admin username  
-admin_api_password: "secret"       # Grafana admin password  
+grafana_admin_api_username: "secret"       # Grafana admin username  
+grafana_admin_api_password: "secret"       # Grafana admin password  
 
 # Source paths  
-dashboard_source_path: "mydir/dashboards"         # path to dashboards on source server  
-datasource_source_path: "mydir/datasources"       # path to data sources on source server  
+grafana_dashboard_source_path: "mydir/dashboards"         # path to dashboards on source server  
+grafana_datasource_source_path: "mydir/datasources"       # path to data sources on source server  
 ```
 
 Dependencies

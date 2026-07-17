@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<point xmlns="http://v8.1c.ru/8.2/virtual-resource-system"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                base="/{{ item.name }}"
+                ib="Srvr=localhost;ref={{ item.name }}"
+                pubdstlin32="/opt/1cv8/x86_64/{{ platform1c_version }}/distr/linux32tc.zip"
+                pubdstlin64="/opt/1cv8/x86_64/{{ platform1c_version }}/distr/linux64tc.zip"
+                pubdstmac64="/opt/1cv8/x86_64/{{ platform1c_version }}/distr/macOS64tc.zip"
+                pubdstwin32="/opt/1cv8/x86_64/{{ platform1c_version }}/distr/windows32tc.zip"
+                pubdstwin64="/opt/1cv8/x86_64/{{ platform1c_version }}/distr/windows64tc.zip">
+{% if item.ws_enabled %}
+        <ws pointEnableCommon="true"/>
+{% else %}
+        <ws pointEnableCommon="false"/>
+{% endif %}
+{% if item.odata_enabled %}
+        <standardOdata enable="true"
+                        reuseSessions="autouse"
+                        sessionMaxAge="20"
+                        poolSize="10"
+                        poolTimeout="5"/>
+{% else %}
+        <standardOdata enable="false"
+                        reuseSessions="autouse"
+                        sessionMaxAge="20"
+                        poolSize="10"
+                        poolTimeout="5"/>
+{% endif %}
+        <analytics enable="false"/>
+</point>

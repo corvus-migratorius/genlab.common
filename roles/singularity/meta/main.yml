@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  role_name: singularity
+  namespace: genlab
+  author: Alexander Gorelyshev
+  company: "Genlab, LLC"
+  description: ""
+  license: "MIT"
+  min_ansible_version: "2.1"
+
+  platforms:
+    - name: "Ubuntu"
+      versions: ["jammy", "noble"]
+    - name: "Rocky"
+      varsions: ["el8", "el9", "el10"]
+
+  galaxy_tags: []
+dependencies: []

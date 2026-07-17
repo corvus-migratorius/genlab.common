@@ -14,10 +14,13 @@
 - name: "Configure additional restrictions"
   ansible.builtin.include_tasks: "restrictions.yml"
 
+- name: "Configure whitelists"
+  ansible.builtin.include_tasks: "whitelists.yml"
+
 - name: "Log at VERBOSE level"
-  notify: Restart sshd
+  notify: "Restart ssh"
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^#?LogLevel'
     line: 'LogLevel VERBOSE'
-    validate: sshd -f %s -t
+    validate: /usr/sbin/sshd -t -f %s

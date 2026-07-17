@@ -1,48 +1,49 @@
 ---
-- name: "Install ipmi_exporter from binary"
+- name: "Install | Install ipmi_exporter binary"
   block:
-    - name: "Check ipmi_exporter version"
+    - name: "Install | Check ipmi_exporter availability"
       changed_when: false
+      register: ipmi_exporter_ver
       ansible.builtin.command:
         cmd: "ipmi_exporter --version"
-      register: ipmi_exporter_ver
 
-    - name: "Assert version correctness"
+    - name: "Install | Assert version correctness"
       ansible.builtin.assert:
         that: "ipmi_exporter_ver.stdout is regex('{{ ipmi_exporter_version }}')"
         success_msg: "ipmi_exporter version {{ ipmi_exporter_version }} is installed and working"
         fail_msg: "ipmi_exporter version {{ ipmi_exporter_version }} is not installed or not working correctly"
 
   rescue:
-    - name: "Create ipmi_exporter directories"
+    - name: "Install | Create directories"
+      loop:
+        - "{{ ipmi_exporter_config_dir }}"
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
         owner: root
         group: root
         mode: "0755"
-      with_items:
-        - "{{ ipmi_exporter_dir }}"
-        - "{{ ipmi_exporter_config_dir }}"
 
-    - name: "Unarchive ipmi_exporter tar file"
+    - name: "Install | Fetch and unarchive the release tarball"
       notify: "(Re)start and enable ipmi_exporter"
+      delay: 3
+      retries: 3
       ansible.builtin.unarchive:
         src: "https://github.com/prometheus-community/ipmi_exporter/releases/\
             download/v{{ ipmi_exporter_version }}/ipmi_exporter-{{ ipmi_exporter_version }}.linux-amd64.tar.gz"
-        dest: "{{ ipmi_exporter_dir }}"
+        dest: "/tmp/"
         remote_src: true
 
-    - name: "Move ipmi_exporter binary"
+    - name: "Install | Rename and move the binary under PATH"
       ansible.builtin.copy:
-        src: "{{ ipmi_exporter_dir }}/ipmi_exporter-{{ ipmi_exporter_version }}.linux-amd64/ipmi_exporter"
-        dest: "/usr/local/bin/ipmi_exporter"
+        src: "/tmp/ipmi_exporter-{{ ipmi_exporter_version }}.linux-amd64/ipmi_exporter"
+        dest: "/usr/sbin/ipmi_exporter"
         mode: "0755"
         owner: root
         group: root
         remote_src: true
 
-- name: Create systemd service file
+- name: "Install | Create a systemd service file"
   ansible.builtin.template:
     src: ipmi_exporter.service.j2
     dest: /etc/systemd/system/ipmi_exporter.service

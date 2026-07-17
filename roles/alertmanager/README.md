@@ -13,14 +13,10 @@ None
 Role Variables
 --------------
 
-```
-alertmanager_version: 0.28.1          # version of Alertmanager (AM)
+- `alertmanager_version`: desired Alertmanager version
 alertmanager_config_dir: "/etc/alertmanager/conf"  # where to place AM configs
 alertmanager_storage_dir: "/var/lib/alertmanager"  # path to AM storage
-alertmanager_dir: "/etc/alertmanager" # where to install AM on target
-alertmanager_user: "alertmanager"     # system user name
-alertmanager_group: "alertmanager"    # system group name
-config_source_dir: "./alertmanager"   # path to config files on source
+alertmanager_config_source_dir: "./alertmanager"   # path to config files on source
 
 # Optional
 template_source_dir: "./templates"    # path to template files on source

@@ -18,7 +18,7 @@
 
   roles:
     - role: genlab.common.mount_device
-      devices:
+      mount_device_devices:
         - what: "/tmp/test_file"
           where: "/test_mount"
           fstype: ext3

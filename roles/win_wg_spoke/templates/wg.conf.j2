@@ -1,0 +1,18 @@
+[Interface]  # Local settings for this node
+Address = {{ win_wg_spoke_ipv4_vpn }}/32
+ListenPort = {{ win_wg_spoke_port }}
+PrivateKey = {{ win_wg_spoke_pkey }}
+
+{% if win_wg_spoke_dns_server is defined and win_wg_spoke_domain is defined %}
+PostUp = powershell.exe -Command "& { Add-DnsClientNrptRule -Comment '{{ win_wg_spoke_iface_name }}-wg' -Namespace '.{{ win_wg_spoke_domain }}' -NameServers {{ win_wg_spoke_dns_server }} }"
+PostDown = powershell.exe -Command "& { Get-DnsClientNrptRule | where Comment -eq '{{ win_wg_spoke_iface_name }}-wg' | foreach { Remove-DnsClientNrptRule -Name $_.Name -Force } }"
+{% endif %}
+
+[Peer]  # Settings for the Hub peer
+PublicKey = {{ win_wg_spoke_hub_pubkey }}
+{% if win_wg_spoke_psk is defined %}
+PresharedKey = {{ win_wg_spoke_psk }}
+{% endif %}
+AllowedIPs = {{ win_wg_spoke_subnet }}/{{ win_wg_spoke_netmask }}
+Endpoint = {{ win_wg_spoke_hub_ipv4_wan }}:{{ win_wg_spoke_hub_port }}
+PersistentKeepalive = 20

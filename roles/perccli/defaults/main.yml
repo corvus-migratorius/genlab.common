@@ -1,0 +1,4 @@
+---
+perccli_deb_name: perccli_007.2616.0000.0000_all.deb
+perccli_version: "7.2616.0"
+perccli_url: https://dl.dell.com/FOLDER11213122M/1/PERCCLI_{{ perccli_version }}_Linux.tar.gz

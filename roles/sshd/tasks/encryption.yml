@@ -5,7 +5,7 @@
     - /etc/ssh/ssh_host_ecdsa_key.pub
     - /etc/ssh/ssh_host_dsa_key
     - /etc/ssh/ssh_host_dsa_key.pub
-  notify: Restart sshd
+  notify: "Restart ssh"
   ansible.builtin.file:
     path: "{{ item }}"
     state: absent

@@ -1,0 +1,30 @@
+[Unit]
+Description=Grafana Alloy
+Wants=network-online.target
+After=network-online.target
+Documentation="https://grafana.com/docs/alloy/"
+
+[Service]
+User=alloy
+Group=alloy
+Type=simple
+Environment=HOSTNAME=%H
+ExecStart=/usr/bin/alloy run {{ grafana_alloy_config_dir }}/config.alloy \
+    --storage.path={{ grafana_alloy_data_dir }} \
+    --server.http.listen-addr=127.0.0.1:12345 \
+    --disable-reporting
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Security hardening
+ReadWritePaths={{ grafana_alloy_data_dir }} {{ grafana_alloy_config_dir }} 
+ProtectSystem=strict
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectKernelTunables=true
+ProtectClock=yes
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

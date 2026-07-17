@@ -1,0 +1,7 @@
+---
+- name: "Restart-ping-exporter"
+  ansible.builtin.systemd:
+    name: ping_exporter
+    state: restarted
+    enabled: true
+    daemon_reload: true

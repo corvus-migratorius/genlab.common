@@ -1,0 +1,28 @@
+---
+- name: "Create user account: {{ username }}"
+  ansible.builtin.user:
+    name: "{{ username }}"
+    create_home: true
+    shell: /bin/bash
+
+- name: "Create .ssh directory: {{ username }}"
+  ansible.builtin.file:
+    path: "/home/{{ username }}/.ssh/"
+    state: directory
+    mode: '0700'
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: "Generate ssh keys: {{ username }}"
+  community.crypto.openssh_keypair:
+    path: "/home/{{ username }}/.ssh/id_rsa"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0600'
+  register: sshd_key_result
+
+- name: "Put public key to into the authorized_keys: {{ username }}"
+  ansible.posix.authorized_key:
+    user: "{{ username }}"
+    key: "{{ sshd_key_result.public_key }}"
+    state: present

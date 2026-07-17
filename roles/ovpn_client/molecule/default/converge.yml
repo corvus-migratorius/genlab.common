@@ -1,0 +1,16 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: genlab.common.ovpn_client
+      ovpn_client_remote:
+        address: 1.2.3.4
+        port: 1194
+        dns: 1.2.3.5
+        domain: test.internal
+      ovpn_client_conname: test
+      ovpn_client_username: alice
+      # kics-scan ignore-line
+      ovpn_client_password: secret
+      ovpn_client_ca_crt: '{{ lookup("file", "files/ca.crt" ) }}'
+      ovpn_client_tls_auth: '{{ lookup("file", "files/tls-auth.key" ) }}'

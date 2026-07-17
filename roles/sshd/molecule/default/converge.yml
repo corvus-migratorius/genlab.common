@@ -3,3 +3,9 @@
   hosts: all
   roles:
     - role: "genlab.common.sshd"
+      sshd_password_auth: false
+      sshd_allow_agent_forwarding: false
+      sshd_allow_tcp_forwarding: false
+      sshd_gateway_ports: false
+      sshd_permit_tunnel: false
+      sshd_allow_users: "testusr"

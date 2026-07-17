@@ -1,0 +1,10 @@
+---
+- name: "Configure | Deploy Alloy configuration"
+  notify: "(Re)start Alloy service"
+  ansible.builtin.template:
+    src: config.alloy.j2
+    dest: "{{ grafana_alloy_config_dir }}/config.alloy"
+    owner: "alloy"
+    group: "alloy"
+    mode: "0660"
+    validate: "alloy fmt %s"

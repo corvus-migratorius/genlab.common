@@ -1,0 +1,16 @@
+- id: 100
+  path: /mnt/test0
+  name: test0
+  bsoft: "100M"
+  bhard: "100M"
+  owner: root
+  group: root
+  mode: "0700"
+- id: 101
+  path: /mnt/test1
+  name: test1
+  bsoft: "100M"
+  bhard: "100M"
+  owner: root
+  group: root
+  mode: "0700"

@@ -1,0 +1,8 @@
+---
+grafana_alloy_version: "1.17.1"
+grafana_alloy_config_dir: "/etc/alloy"
+grafana_alloy_data_dir: "/var/lib/alloy"
+grafana_alloy_loki_port: 3100
+grafana_alloy_loki_url: "http://localhost:{{ grafana_alloy_loki_port }}/loki/api/v1/push"
+grafana_alloy_log_paths:
+  - "/var/log/*.log"

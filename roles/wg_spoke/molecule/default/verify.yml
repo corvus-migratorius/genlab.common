@@ -1,13 +1,32 @@
 ---
 - name: Verify
   hosts: all
-  gather_facts: false
+  gather_facts: true
   any_errors_fatal: true
   vars:
-    iface_name: adm
+    wg_spoke_iface_name: adm
+    service_name: "wg-quick@{{ wg_spoke_iface_name }}.service"
 
   tasks:
-    - name: "Check that the Wireguard service is running"
-      ansible.builtin.service:
-        name: wg-quick@{{ iface_name }}
-        state: started
+    - name: "Read Wireguard systemd state"
+      register: wg_spoke_info
+      community.general.systemd_info:
+        unitname:
+          - "{{ service_name }}"
+
+    - name: "Verify the state of the service"
+      ansible.builtin.assert:
+        that:
+          - wg_spoke_info.units['{{ service_name }}'].loadstate == 'loaded'
+          - wg_spoke_info.units['{{ service_name }}'].activestate == 'active'
+          - wg_spoke_info.units['{{ service_name }}'].unitfilepreset == 'enabled'
+          - wg_spoke_info.units['{{ service_name }}'].unitfilestate == 'enabled'
+        success_msg: "Wireguard service '{{ service_name }}' is running and enabled"
+        fail_msg: "Wireguard service '{{ service_name }}' is failed or misconfigured"
+
+    - name: "Check that the expected Wireguard interface is present"
+      ansible.builtin.assert:
+        that:
+          - "wg_spoke_iface_name in ansible_facts.interfaces"
+        fail_msg: "Wireguard interface is present"
+        success_msg: "Wireguard interface is NOT present"

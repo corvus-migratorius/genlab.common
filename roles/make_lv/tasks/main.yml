@@ -1,0 +1,102 @@
+---
+- name: Install LVM tools
+  ansible.builtin.apt:
+    name: lvm2
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+- name: Check lvm storage exists
+  block:
+    - name: Get volume group list
+      ansible.builtin.shell:
+        cmd: "set -o pipefail ; pvs | grep {{ lvm_dev }}"
+        executable: /bin/bash
+      changed_when: false
+      failed_when: false
+      register: make_lv_vg_list
+
+    - name: Assert that volume group exists
+      ansible.builtin.assert:
+        that: virtual_group in make_lv_vg_list.stdout
+        success_msg: "{{ lvm_dev }} has {{ virtual_group }} group"
+        fail_msg: "{{ lvm_dev }} DOES NOT have {{ virtual_group }} group"
+
+    - name: Get logical volume list
+      ansible.builtin.shell:
+        cmd: "set -o pipefail ; lvs | grep {{ virtual_group }} | grep {{ logical_volume }}"
+        executable: /bin/bash
+      changed_when: false
+      failed_when: false
+      register: make_lv_lv_list
+
+    - name: Assert that logical volume exists
+      ansible.builtin.assert:
+        that: logical_volume in make_lv_lv_list.stdout
+        success_msg: "{{ virtual_group }} has {{ logical_volume }} volume"
+        fail_msg: "{{ virtual_group }} DOES NOT have {{ logical_volume }} volume"
+
+    - name: Get filesystem type
+      ansible.builtin.command: "blkid /dev/mapper/{{ virtual_group }}-{{ logical_volume }} -o value -s TYPE"
+      changed_when: false
+      failed_when: false
+      register: make_lv_current_fs
+
+    - name: Assert that current filesystem is the required one
+      ansible.builtin.assert:
+        that: make_lv_current_fs.stdout == make_lv_fs_type
+        success_msg: "{{ virtual_group }} - {{ logical_volume }} has {{ make_lv_fs_type }} filesystem"
+        fail_msg: "{{ virtual_group }} - {{ logical_volume }} DOES NOT have {{ make_lv_fs_type }} filesystem"
+
+  rescue:
+    - name: Unmount the main storage
+      ansible.posix.mount:
+        src: "/dev/{{ virtual_group }}/{{ logical_volume }}"
+        path: "{{ make_lv_storage_mountpoint }}"
+        state: absent
+
+    - name: Wipe disk signatures
+      ansible.builtin.command: "wipefs -af {{ lvm_dev }}"
+      register: make_lv_wipefs_result
+      changed_when: make_lv_wipefs_result.rc == 0
+
+    - name: Create a volume group for the storage
+      community.general.lvg:
+        pvs: "{{ lvm_dev }}"
+        vg: "{{ virtual_group }}"
+        force: true
+
+    - name: Create a logical volume for the storage
+      when: make_lv_is_container
+      community.general.lvol:
+        vg: "{{ virtual_group }}"
+        lv: "{{ logical_volume }}"
+        size: "{{ make_lv_size }}"
+        opts: "--config 'activation/udev_rules=0'"
+
+    - name: Create a logical volume for the storage
+      when: not make_lv_is_container
+      community.general.lvol:
+        vg: "{{ virtual_group }}"
+        lv: "{{ logical_volume }}"
+        size: "{{ make_lv_size }}"
+        opts: "--config 'activation/udev_rules=1'"
+
+    - name: Create a filesystem for the storage
+      community.general.filesystem:
+        dev: "/dev/{{ virtual_group }}/{{ logical_volume }}"
+        fstype: "{{ make_lv_fs_type }}"
+
+- name: Create a mountpoint for the storage
+  ansible.builtin.file:
+    path: "{{ make_lv_storage_mountpoint }}"
+    state: directory
+    owner: "{{ make_lv_mountpoint_owner }}"
+    group: "{{ make_lv_mountpoint_group }}"
+    mode: "{{ make_lv_storage_mountpoint_mode }}"
+
+- name: Mount the main storage
+  ansible.posix.mount:
+    src: "/dev/{{ virtual_group }}/{{ logical_volume }}"
+    path: "{{ make_lv_storage_mountpoint }}"
+    fstype: "{{ make_lv_fs_type }}"
+    state: mounted

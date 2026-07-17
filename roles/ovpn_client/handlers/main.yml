@@ -1,0 +1,7 @@
+---
+- name: "Restart-enable OpenVPN client"
+  ansible.builtin.systemd_service:
+    name: "{{ ovpn_client_service }}"
+    state: restarted
+    enabled: true
+    daemon_reload: true

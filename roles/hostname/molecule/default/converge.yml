@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  pre_tasks:
+    # Blank task for ignoring CI testing, because you can't change hostname in container
+    # This role was tested manually
+    - name: Blank
+      ansible.builtin.command: echo
+      changed_when: false

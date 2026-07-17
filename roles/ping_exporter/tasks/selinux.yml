@@ -1,0 +1,18 @@
+# a workaround for an issue reported here: https://github.com/czerwonk/ping_exporter/issues/152
+- name: "Ensure SELinux management tools are installed"
+  ansible.builtin.package:
+    name: policycoreutils-python-utils
+    state: present
+
+- name: "Override SELinux fcontext for ping_exporter binary"
+  community.general.sefcontext:
+    target: /usr/bin/ping_exporter
+    setype: bin_t
+    state: present
+
+- name: "Apply SELinux context to ping_exporter binary"
+  register: ping_exporter_restorecon
+  changed_when: ping_exporter_restorecon.stdout | length > 0
+  notify: "Restart-ping-exporter"
+  ansible.builtin.command:
+    cmd: restorecon -v /usr/bin/ping_exporter

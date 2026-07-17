@@ -44,6 +44,8 @@
 
   rescue:
     - name: "Install Loki if it is not present ({{ loki_version }})"
+      retries: 3
+      delay: 1
       ansible.builtin.unarchive:
         src: "https://github.com/grafana/loki/releases/download/v\
              {{ loki_version }}/loki-linux-amd64.zip"
@@ -59,12 +61,9 @@
         mode: "0755"
         remote_src: true
 
-    - name: "Cleanup downloaded file"
-      ansible.builtin.file:
-        path: /opt/loki/loki-linux-amd64
-        state: absent
-
     - name: "Install logcli"
+      retries: 3
+      delay: 1
       ansible.builtin.unarchive:
         src: "https://github.com/grafana/loki/releases/download/v\
                 {{ loki_version }}/logcli-linux-amd64.zip"
@@ -80,10 +79,14 @@
         mode: "0755"
         remote_src: true
 
-    - name: "Cleanup downloaded file"
+    - name: "Cleanup downloaded files"
+      loop:
+        - /opt/loki/loki-linux-amd64.zip
+        - /usr/local/bin/logcli-linux-amd64.zip
       ansible.builtin.file:
-        path: /usr/local/bin/logcli-linux-amd64
+        path: "{{ item }}"
         state: absent
+
 
 - name: "Template the systemd unit file"
   notify: "Reload the Loki daemon configuration"
