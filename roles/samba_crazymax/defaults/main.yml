@@ -1,0 +1,4 @@
+---
+# defaults file for playbooks/roles/samba_crazymax
+samba_crazymax_compose_path: "/root/samba_server"
+samba_crazymax_server_string: "Samba Server"
