@@ -23,6 +23,7 @@
 - [nginx](roles/nginx/README.md)
 - [nginx_docker](roles/nginx_docker/README.md)
 - [node_exporter](roles/node_exporter/README.md)
+- [ovpn_client](roles/ovpn_client/README.md)
 - [perccli](roles/perccli/README.md)
 - [platform1c](roles/platform1c/README.md)
 - [postgres1c](roles/postgres1c/README.md)
