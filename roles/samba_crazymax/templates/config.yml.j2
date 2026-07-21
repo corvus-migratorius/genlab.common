@@ -29,7 +29,9 @@ share:
     browsable: {{ share.browsable }}
     readonly: {{ share.readonly }}
     guestok: {{ share.guestok }}
+{% if share.writelist is defined and share.writelist %}
     writelist: {{ share.writelist | join(' ') }}
+{% endif %}
     veto: no
     validusers: {{ share.validusers | join(' ') }}
 {% endfor %}
