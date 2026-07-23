@@ -27,7 +27,6 @@ ovpn_server_data_ciphers:
   - AES-256-GCM
   - AES-128-GCM
 ovpn_server_tls_crypt_enabled: true
-ovpn_server_crl_enabled: true
 
 # Authentication.
 # "require" gives certificate + PAM password authentication.

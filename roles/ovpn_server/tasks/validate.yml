@@ -18,7 +18,6 @@
       - ovpn_server_cert_path is match('^/')
       - ovpn_server_key_path is match('^/')
       - ovpn_server_tls_crypt_key_path is match('^/')
-      - ovpn_server_crl_path is match('^/')
       - ovpn_server_keepalive_ping > 0
       - ovpn_server_keepalive_timeout > ovpn_server_keepalive_ping
       - ovpn_server_verb >= 0
@@ -41,7 +40,6 @@
       - ovpn_server_cert_content | length > 0
       - ovpn_server_key_content | length > 0
       - (not ovpn_server_tls_crypt_enabled) or (ovpn_server_tls_crypt_key_content | length > 0)
-      - (not ovpn_server_crl_enabled) or (ovpn_server_crl_content | length > 0)
     fail_msg: >-
       Managed PKI is enabled, but one or more required certificate/key
       variables are empty. Supply them from Ansible Vault or set
