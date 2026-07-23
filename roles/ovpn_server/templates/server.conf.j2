@@ -5,7 +5,6 @@
 port {{ ovpn_server_port }}
 proto {{ ovpn_server_proto }}
 dev {{ ovpn_server_dev }}
-tmp-dir "{{ ovpn_server_tmp_dir }}"
 topology subnet
 server {{ ovpn_server_network }} {{ ovpn_server_netmask }}
 
@@ -15,7 +14,6 @@ key "{{ ovpn_server_key_path }}"
 dh none
 tls-version-min {{ ovpn_server_tls_version_min }}
 data-ciphers {{ ovpn_server_data_ciphers | join(':') }}
-allow-compression no
 
 {% if ovpn_server_tls_crypt_enabled %}
 tls-crypt "{{ ovpn_server_tls_crypt_key_path }}"
@@ -30,6 +28,10 @@ remote-cert-tls client
 username-as-common-name
 {% endif %}
 
+allow-compression no
+
+tmp-dir "{{ ovpn_server_tmp_dir }}"
+
 plugin /usr/lib64/openvpn/plugins/openvpn-plugin-auth-pam.so {{ ovpn_server_pam_service }}
 
 {% if ovpn_server_deferred_auth_pam %}
@@ -39,6 +41,7 @@ setenv deferred_auth_pam 1
 keepalive {{ ovpn_server_keepalive_ping }} {{ ovpn_server_keepalive_timeout }}
 persist-key
 persist-tun
+
 user {{ ovpn_server_user }}
 group {{ ovpn_server_group }}
 
