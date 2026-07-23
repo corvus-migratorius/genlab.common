@@ -1,0 +1,122 @@
+---
+- name: "Validate OpenVPN server inputs"
+  ansible.builtin.import_tasks: validate.yml
+
+- name: "Install EPEL repository"
+  when: ovpn_server_manage_epel
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+    update_cache: true
+
+- name: "Install OpenVPN server packages"
+  ansible.builtin.dnf:
+    name: "{{ ovpn_server_packages + (['firewalld'] if ovpn_server_manage_firewalld else []) }}"
+    state: present
+
+- name: "Create OpenVPN service group"
+  ansible.builtin.group:
+    name: "{{ ovpn_server_group }}"
+    system: true
+    state: present
+
+- name: "Create OpenVPN service user"
+  ansible.builtin.user:
+    name: "{{ ovpn_server_user }}"
+    group: "{{ ovpn_server_group }}"
+    home: /var/lib/openvpn
+    shell: /sbin/nologin
+    system: true
+    create_home: false
+    state: present
+
+- name: "Create OpenVPN runtime data directory"
+  ansible.builtin.file:
+    path: "{{ ovpn_server_tmp_dir }}"
+    state: directory
+    owner: "{{ ovpn_server_user }}"
+    group: "{{ ovpn_server_group }}"
+    mode: "0700"
+
+- name: "Inspect OpenVPN PAM plugin"
+  register: __ovpn_server_auth_pam
+  ansible.builtin.stat:
+    path: /usr/lib64/openvpn/plugins/openvpn-plugin-auth-pam.so
+
+- name: "Assert OpenVPN PAM plugin is installed"
+  ansible.builtin.assert:
+    that:
+      - __ovpn_server_auth_pam.stat.isreg | default(false)
+    fail_msg: >-
+      The EL9 OpenVPN PAM plugin was not found at
+      /usr/lib64/openvpn/plugins/openvpn-plugin-auth-pam.so.
+
+- name: "Create OpenVPN PKI directory"
+  when: ovpn_server_manage_pki
+  ansible.builtin.file:
+    path: "{{ ovpn_server_pki_dir }}"
+    state: directory
+    owner: root
+    group: "{{ ovpn_server_group }}"
+    mode: "0750"
+
+- name: "Install OpenVPN PKI material"
+  when: ovpn_server_manage_pki
+  ansible.builtin.import_tasks: pki.yml
+
+- name: "Install OpenVPN PAM service"
+  notify: "Restart-enable OpenVPN server"
+  ansible.builtin.template:
+    src: openvpn.pam.j2
+    dest: "/etc/pam.d/{{ ovpn_server_pam_service }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: "Install OpenVPN server configuration"
+  notify: "Restart-enable OpenVPN server"
+  ansible.builtin.template:
+    src: server.conf.j2
+    dest: "{{ ovpn_server_config_path }}"
+    owner: root
+    group: "{{ ovpn_server_group }}"
+    mode: "0640"
+
+- name: "Configure IPv4 forwarding"
+  when: ovpn_server_manage_ip_forwarding
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    sysctl_file: /etc/sysctl.d/90-openvpn-server.conf
+    state: present
+    reload: true
+
+- name: "Configure OpenVPN listener in firewalld"
+  when: ovpn_server_manage_firewalld
+  block:
+    - name: "Start-enable firewalld"
+      ansible.builtin.systemd_service:
+        name: firewalld.service
+        state: started
+        enabled: true
+
+    - name: "Enable openvpn firewalld service"
+      ansible.posix.firewalld:
+        zone: "public"
+        service: openvpn
+        state: enabled
+        permanent: true
+        immediate: true
+
+    # - name: "Open OpenVPN listener port"
+    #   vars:
+    #     proto: "{{ 'tcp' if 'tcp' in ovpn_server_proto else 'udp' }}"
+    #   ansible.posix.firewalld:
+    #     zone: "{{ ovpn_server_firewalld_zone }}"
+    #     port: "{{ ovpn_server_port }}/{{ proto }}"
+    #     state: enabled
+    #     permanent: true
+    #     immediate: true
+
+- name: "Apply OpenVPN handlers before service start"
+  ansible.builtin.meta: flush_handlers

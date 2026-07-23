@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  role_name: ovpn_server
+  author: local
+  description: OpenVPN server with PAM authentication through SSSD on EL9
+  license: MIT
+  min_ansible_version: "2.18.11"
+  platforms:
+    - name: EL
+      versions:
+        - "9"
+dependencies: []

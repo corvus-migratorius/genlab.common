@@ -1,0 +1,54 @@
+---
+- name: "Install OpenVPN CA certificate"
+  diff: false
+  notify: "Restart-enable OpenVPN server"
+  ansible.builtin.copy:
+    content: "{{ ovpn_server_ca_content }}"
+    dest: "{{ ovpn_server_ca_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: "Install OpenVPN server certificate"
+  diff: false
+  notify: "Restart-enable OpenVPN server"
+  ansible.builtin.copy:
+    content: "{{ ovpn_server_cert_content }}"
+    dest: "{{ ovpn_server_cert_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: "Install OpenVPN server private key"
+  no_log: true
+  diff: false
+  notify: "Restart-enable OpenVPN server"
+  ansible.builtin.copy:
+    content: "{{ ovpn_server_key_content }}"
+    dest: "{{ ovpn_server_key_path }}"
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: "Install OpenVPN tls-crypt key"
+  when: ovpn_server_tls_crypt_enabled
+  no_log: true
+  diff: false
+  notify: "Restart-enable OpenVPN server"
+  ansible.builtin.copy:
+    content: "{{ ovpn_server_tls_crypt_key_content }}"
+    dest: "{{ ovpn_server_tls_crypt_key_path }}"
+    owner: root
+    group: root
+    mode: "0600"
+
+# - name: "Install OpenVPN certificate revocation list"
+#   when: ovpn_server_crl_enabled
+#   diff: false
+#   notify: "Restart-enable OpenVPN server"
+#   ansible.builtin.copy:
+#     content: "{{ ovpn_server_crl_content }}"
+#     dest: "{{ ovpn_server_crl_path }}"
+#     owner: root
+#     group: "{{ ovpn_server_group }}"
+#     mode: "0640"

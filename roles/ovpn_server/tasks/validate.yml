@@ -1,0 +1,48 @@
+---
+- name: "Assert supported platform and OpenVPN inputs"
+  ansible.builtin.assert:
+    that:
+      - ansible_os_family == 'RedHat'
+      - ansible_distribution_major_version | int == 9
+      - ovpn_server_instance is match('^[A-Za-z0-9_.-]+$')
+      - ovpn_server_service_name | length > 0
+      - ovpn_server_config_path is match('^/')
+      - ovpn_server_port >= 1
+      - ovpn_server_port <= 65535
+      - ovpn_server_dev is match('^[A-Za-z0-9_.-]+$')
+      - ovpn_server_user is match('^[a-z_][a-z0-9_-]*[$]?$')
+      - ovpn_server_group is match('^[a-z_][a-z0-9_-]*[$]?$')
+      - ovpn_server_tmp_dir is match('^/')
+      - ovpn_server_pki_dir is match('^/')
+      - ovpn_server_ca_path is match('^/')
+      - ovpn_server_cert_path is match('^/')
+      - ovpn_server_key_path is match('^/')
+      - ovpn_server_tls_crypt_key_path is match('^/')
+      - ovpn_server_crl_path is match('^/')
+      - ovpn_server_keepalive_ping > 0
+      - ovpn_server_keepalive_timeout > ovpn_server_keepalive_ping
+      - ovpn_server_verb >= 0
+      - ovpn_server_verb <= 11
+      - ovpn_server_data_ciphers | length > 0
+      - ovpn_server_data_ciphers | select('search', '[:\s]') | list | length == 0
+      - ovpn_server_pam_service is match('^[A-Za-z0-9_.-]+$')
+      - ovpn_server_pam_stack | length > 0
+      - ovpn_server_pam_stack | select('search', '[\r\n]') | list | length == 0
+      - ovpn_server_push_options | select('search', '["\r\n]') | list | length == 0
+      - ovpn_server_extra_config | select('search', '[\r\n]') | list | length == 0
+    fail_msg: "Some configuration values are incorrect; see verbose output for details"
+
+- name: "Assert managed PKI content is present"
+  when: ovpn_server_manage_pki
+  no_log: true
+  ansible.builtin.assert:
+    that:
+      - ovpn_server_ca_content | length > 0
+      - ovpn_server_cert_content | length > 0
+      - ovpn_server_key_content | length > 0
+      - (not ovpn_server_tls_crypt_enabled) or (ovpn_server_tls_crypt_key_content | length > 0)
+      - (not ovpn_server_crl_enabled) or (ovpn_server_crl_content | length > 0)
+    fail_msg: >-
+      Managed PKI is enabled, but one or more required certificate/key
+      variables are empty. Supply them from Ansible Vault or set
+      ovpn_server_manage_pki=false and provision the configured paths separately.

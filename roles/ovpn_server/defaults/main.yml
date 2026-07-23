@@ -1,0 +1,68 @@
+---
+# Package/repository handling
+ovpn_server_manage_epel: true
+ovpn_server_packages:
+  - openvpn
+  - sssd-client
+
+# OpenVPN instance
+ovpn_server_instance: server
+ovpn_server_service_name: "openvpn-server@{{ ovpn_server_instance }}.service"
+ovpn_server_config_path: "/etc/openvpn/server/{{ ovpn_server_instance }}.conf"
+ovpn_server_port: 1194
+ovpn_server_proto: udp
+ovpn_server_dev: tun0
+ovpn_server_network: ""
+ovpn_server_netmask: 255.255.255.0
+ovpn_server_keepalive_ping: 10
+ovpn_server_keepalive_timeout: 120
+ovpn_server_verb: 3
+ovpn_server_user: openvpn
+ovpn_server_group: openvpn
+ovpn_server_tmp_dir: /var/lib/openvpn/tmp
+
+# Encryption
+ovpn_server_tls_version_min: "1.2"
+ovpn_server_data_ciphers:
+  - AES-256-GCM
+  - AES-128-GCM
+ovpn_server_tls_crypt_enabled: true
+ovpn_server_crl_enabled: true
+
+# Authentication.
+# "require" gives certificate + PAM password authentication.
+# "none" leaves password-only authentication.
+ovpn_server_verify_client_cert: require
+ovpn_server_username_as_common_name: true
+ovpn_server_pam_service: openvpn
+ovpn_server_pam_stack:
+  - "auth       required     pam_sss.so"
+  - "account    required     pam_sss.so"
+ovpn_server_deferred_auth_pam: true
+
+# PKI material
+ovpn_server_manage_pki: true
+ovpn_server_pki_dir: /etc/openvpn/server/pki
+ovpn_server_ca_path: "{{ ovpn_server_pki_dir }}/ca.crt"
+ovpn_server_cert_path: "{{ ovpn_server_pki_dir }}/server.crt"
+ovpn_server_key_path: "{{ ovpn_server_pki_dir }}/server.key"
+ovpn_server_tls_crypt_key_path: "{{ ovpn_server_pki_dir }}/tls-crypt.key"
+# ovpn_server_crl_path: "{{ ovpn_server_pki_dir }}/crl.pem"
+ovpn_server_ca_content: ""
+ovpn_server_cert_content: ""
+ovpn_server_key_content: ""
+ovpn_server_tls_crypt_key_content: ""
+# ovpn_server_crl_content: ""
+
+# Client options, for example:
+#   - "route 10.99.11.0 255.255.255.0"
+#   - "dhcp-option DNS 10.99.15.10"
+ovpn_server_push_options: []
+ovpn_server_client_to_client: false
+ovpn_server_extra_config: []
+
+# Host networking. This role enables kernel forwarding, but deliberately does
+# not invent inter-zone forwarding/NAT policy for the surrounding network.
+ovpn_server_manage_ip_forwarding: true
+ovpn_server_manage_firewalld: true
+ovpn_server_firewalld_zone: public
