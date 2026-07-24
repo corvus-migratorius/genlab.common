@@ -1,0 +1,49 @@
+---
+- name: "Provision openvpn firewalld zone"
+  ansible.builtin.copy:
+    content: "{{ ovpn_server_firewalld_zone_content }}"
+    dest: "/etc/firewalld/zones/{{ ovpn_server_firewalld_zone_name }}"
+    owner: root
+    group: root
+    mode: "0600"
+
+# - name: "Provision openvpn firewalld policy"
+#   ansible.builtin.copy:
+#     content: "{{ ovpn_server_firewalld_policy_content }}"
+#     dest: "/etc/firewalld/policies/{{ ovpn_server_firewalld_policy_name }}"
+#     owner: root
+#     group: root
+#     mode: "0600"
+
+- name: "Create a firewalld zone for OpenVPN tun0 traffic"
+  ansible.posix.firewalld:
+    zone: "{{ ovpn_server_firewalld_zone_name }}"
+    state: present
+    permanent: true
+
+- name: "Enable services for the OpenVPN zone"
+  loop: "{{ ovpn_server_firewalld_zone_services }}"
+  ansible.posix.firewalld:
+    zone: "{{ ovpn_server_firewalld_zone_name }}"
+    service: "{{ item }}"
+    permanent: true
+    state: enabled
+
+- name: "Ensure default SELinux contexts across /etc/firewalld"  # noqa: var-naming[no-role-prefix]
+  register: restorecon_result
+  changed_when: restorecon_result.stdout != ""
+  ansible.builtin.command:
+    cmd: "restorecon -Rv /etc/firewalld"
+
+- name: "Enable openvpn firewalld service"
+  ansible.posix.firewalld:
+    zone: "public"
+    service: openvpn
+    state: enabled
+    permanent: true
+
+- name: "Start-enable firewalld"
+  ansible.builtin.systemd_service:
+    name: firewalld.service
+    state: started
+    enabled: true

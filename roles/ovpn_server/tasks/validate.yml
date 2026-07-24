@@ -52,4 +52,6 @@
       - ovpn_server_firewalld_policy_name | length > 0
       - ovpn_server_firewalld_policy_name | length < 18
       - ovpn_server_firewalld_policy_content | length > 0
-    fail_msg: "Firewalld management is enabled, but the firewalld policy is misconfigured"
+      - ovpn_server_firewalld_zone_name | length > 0
+      - ovpn_server_firewalld_zone_name | length < 18
+    fail_msg: "Firewalld management is enabled, but the firewalld configuration is incorrect"
