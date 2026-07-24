@@ -44,3 +44,12 @@
       Managed PKI is enabled, but one or more required certificate/key
       variables are empty. Supply them from Ansible Vault or set
       ovpn_server_manage_pki=false and provision the configured paths separately.
+
+- name: "Assert firewalld policy is defined"
+  when: ovpn_server_manage_firewalld
+  ansible.builtin.assert:
+    that:
+      - ovpn_server_firewalld_policy_name | length > 0
+      - ovpn_server_firewalld_policy_name | length < 18
+      - ovpn_server_firewalld_policy_content | length > 0
+    fail_msg: "Firewalld management is enabled, but the firewalld policy is misconfigured"

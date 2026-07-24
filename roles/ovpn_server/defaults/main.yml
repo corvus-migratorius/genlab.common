@@ -65,3 +65,4 @@ ovpn_server_extra_config: []
 ovpn_server_manage_ip_forwarding: true
 ovpn_server_manage_firewalld: true
 ovpn_server_firewalld_zone: public
+ovpn_server_firewalld_policy: ""

@@ -94,6 +94,14 @@
 - name: "Configure OpenVPN listener in firewalld"
   when: ovpn_server_manage_firewalld
   block:
+    - name: "Provision openvpn firewalld policy"
+      ansible.builtin.copy:
+        content: "{{ ovpn_server_firewalld_policy_content }}"
+        dest: "/etc/firewalld/policies/{{ ovpn_server_firewalld_policy_name }}"
+        owner: root
+        group: root
+        mode: "0600"
+
     - name: "Start-enable firewalld"
       ansible.builtin.systemd_service:
         name: firewalld.service
@@ -107,16 +115,6 @@
         state: enabled
         permanent: true
         immediate: true
-
-    # - name: "Open OpenVPN listener port"
-    #   vars:
-    #     proto: "{{ 'tcp' if 'tcp' in ovpn_server_proto else 'udp' }}"
-    #   ansible.posix.firewalld:
-    #     zone: "{{ ovpn_server_firewalld_zone }}"
-    #     port: "{{ ovpn_server_port }}/{{ proto }}"
-    #     state: enabled
-    #     permanent: true
-    #     immediate: true
 
 - name: "Apply OpenVPN handlers before service start"
   ansible.builtin.meta: flush_handlers
