@@ -1,30 +1,30 @@
 ---
-- name: "Provision openvpn firewalld zone"
-  ansible.builtin.copy:
-    content: "{{ ovpn_server_firewalld_zone_content }}"
-    dest: "/etc/firewalld/zones/{{ ovpn_server_firewalld_zone_name }}"
-    owner: root
-    group: root
-    mode: "0600"
-
-# - name: "Provision openvpn firewalld policy"
+# - name: "Provision openvpn firewalld zone"
 #   ansible.builtin.copy:
-#     content: "{{ ovpn_server_firewalld_policy_content }}"
-#     dest: "/etc/firewalld/policies/{{ ovpn_server_firewalld_policy_name }}"
+#     content: "{{ ovpn_server_firewalld_zone_content }}"
+#     dest: "/etc/firewalld/zones/{{ ovpn_server_firewalld_zone_name }}"
 #     owner: root
 #     group: root
 #     mode: "0600"
 
+- name: "Provision openvpn firewalld policy"
+  ansible.builtin.copy:
+    content: "{{ ovpn_server_firewalld_policy_content }}"
+    dest: "/etc/firewalld/policies/{{ ovpn_server_firewalld_policy_name }}"
+    owner: root
+    group: root
+    mode: "0600"
+
 - name: "Create a firewalld zone for OpenVPN tun0 traffic"
   ansible.posix.firewalld:
-    zone: "{{ ovpn_server_firewalld_zone_name }}"
+    zone: "{{ ovpn_server_firewalld_tunnel_zone }}"
     state: present
     permanent: true
 
-- name: "Enable services for the OpenVPN zone"
-  loop: "{{ ovpn_server_firewalld_zone_services }}"
+- name: "Enable services for the OpenVPN tunnel zone"
+  loop: "{{ ovpn_server_firewalld_tunnel_zone_services }}"
   ansible.posix.firewalld:
-    zone: "{{ ovpn_server_firewalld_zone_name }}"
+    zone: "{{ ovpn_server_firewalld_tunnel_zone }}"
     service: "{{ item }}"
     permanent: true
     state: enabled
@@ -35,9 +35,9 @@
   ansible.builtin.command:
     cmd: "restorecon -Rv /etc/firewalld"
 
-- name: "Enable openvpn firewalld service"
+- name: "Enable openvpn firewalld service in the default zone"
   ansible.posix.firewalld:
-    zone: "public"
+    zone: "{{ ovpn_server_firewalld_default_zone }}"
     service: openvpn
     state: enabled
     permanent: true
