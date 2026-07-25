@@ -64,7 +64,7 @@ ovpn_server_extra_config: []
 # not invent inter-zone forwarding/NAT policy for the surrounding network.
 ovpn_server_manage_ip_forwarding: true
 ovpn_server_manage_firewalld: true
-ovpn_server_firewalld_zone: public
+ovpn_server_firewalld_default_zone: public
 ovpn_server_firewalld_policy_name: ""
 ovpn_server_firewalld_policy_content: ""
 ovpn_server_firewalld_tunnel_zone: ovpn
