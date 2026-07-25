@@ -1,12 +1,4 @@
 ---
-# - name: "Provision openvpn firewalld zone"
-#   ansible.builtin.copy:
-#     content: "{{ ovpn_server_firewalld_zone_content }}"
-#     dest: "/etc/firewalld/zones/{{ ovpn_server_firewalld_zone_name }}"
-#     owner: root
-#     group: root
-#     mode: "0600"
-
 - name: "Provision openvpn firewalld policy"
   ansible.builtin.copy:
     content: "{{ ovpn_server_firewalld_policy_content }}"
