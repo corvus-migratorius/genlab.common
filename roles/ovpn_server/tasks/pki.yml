@@ -41,14 +41,3 @@
     owner: root
     group: root
     mode: "0600"
-
-# - name: "Install OpenVPN certificate revocation list"
-#   when: ovpn_server_crl_enabled
-#   diff: false
-#   notify: "Restart-enable OpenVPN server"
-#   ansible.builtin.copy:
-#     content: "{{ ovpn_server_crl_content }}"
-#     dest: "{{ ovpn_server_crl_path }}"
-#     owner: root
-#     group: "{{ ovpn_server_group }}"
-#     mode: "0640"
