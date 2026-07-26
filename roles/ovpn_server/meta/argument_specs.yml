@@ -37,6 +37,8 @@ argument_specs:
         type: str
       ovpn_server_tmp_dir:
         type: str
+      ovpn_server_start_service:
+        type: bool
       ovpn_server_tls_version_min:
         type: str
       ovpn_server_data_ciphers:
@@ -111,3 +113,5 @@ argument_specs:
       ovpn_server_firewalld_tunnel_zone_services:
         type: list
         elements: str
+      ovpn_server_manage_selinux:
+        type: str

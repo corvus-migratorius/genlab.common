@@ -138,6 +138,13 @@ automatic masquerading; those network policies are site-specific and should be
 handled outside the role (or via an explicit playbook that configures the host
 networking to match your topology).
 
+## Molecule tests
+
+The provided scenario does not test actual OpenVPN server functionality in
+a container environment.
+The verifications tests formally check installed packages and availability
+of deployed files, and nothing more.
+
 ## Documentation & references
 
 - OpenVPN auth-pam plugin README

@@ -20,6 +20,7 @@ ovpn_server_verb: 3
 ovpn_server_user: openvpn
 ovpn_server_group: openvpn
 ovpn_server_tmp_dir: /var/lib/openvpn/tmp
+ovpn_server_start_service: true  # a workaround for Molecule
 
 # Encryption
 ovpn_server_tls_version_min: "1.2"
@@ -66,3 +67,7 @@ ovpn_server_firewalld_policy_name: ""
 ovpn_server_firewalld_policy_content: ""
 ovpn_server_firewalld_tunnel_zone: ovpn
 ovpn_server_firewalld_tunnel_zone_services: []
+
+# SELinux
+# Primarily useful to disable in Molecule/CI
+ovpn_server_manage_selinux: true

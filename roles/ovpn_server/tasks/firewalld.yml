@@ -22,8 +22,9 @@
     state: enabled
 
 - name: "Ensure default SELinux contexts across /etc/firewalld"  # noqa: var-naming[no-role-prefix]
-  register: restorecon_result
+  when: ovpn_server_manage_selinux
   changed_when: restorecon_result.stdout != ""
+  register: restorecon_result
   ansible.builtin.command:
     cmd: "restorecon -Rv /etc/firewalld"
 

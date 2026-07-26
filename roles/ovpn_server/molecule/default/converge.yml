@@ -1,0 +1,55 @@
+---
+- name: Converge
+  hosts: all
+  # vars_files:
+  #   - pki/ca-crt.yml
+  #   - pki/server-key.yml
+  #   - pki/server-crt.yml
+  #   - pki/tls-crypt-key.yml
+  # vars:
+    # ovpn_server_ca_content: |
+    #   -----BEGIN CERTIFICATE-----
+    #   MIIBDTCBmgAwDQYJKoZIhvcNAQELBQAwEjEQMA4GA1UEAwwHVGVzdCBDQTAeFw0y
+    #   NTA3MjUwMDAwMDBaFw0zNTA3MjMwMDAwMDBaMBIxEDAOBgNVBAMMB1Rlc3QgQ0Ew
+    #   ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDK4sY9wA4pV+zJvWJ6+Qp9
+    #   6a0pj8fhvAq9OhpTL7ohGXqd9jwjttAqXGcWpifpMhQ3D6rJVD1fZ0V7mPn7DRLO
+    #   5A3A0bEW0J8HY0Pu4nXsWw+9xbvCvTMBeJ+zvxI4kJdu1i5hPIh7QeJ7dZSrL7jg
+    #   -----END CERTIFICATE-----
+    # ovpn_server_cert_content: |
+    #   -----BEGIN CERTIFICATE-----
+    #   MIIDazCCAlOgAwIBAgIUBI9Dhlctw67CT9HWZJx1k+0cLzANBgkqhkiG9w0BAQsF
+    #   ADAxEjAQBgNVBAMMCVRlc3QgQ2VydGlmaWNhdGUwHhcNMjUwNzI1MDAwMDAwWhcN
+    #   MzUwNzIzMDAwMDAwWjAOMRIwEAYDVQQDDAlsb2NhbGhvc3QwggEiMA0GCSqGSIb3
+    #   DQEBAQUAA4IBDwAwggEKAoIBAQC0EGtZIcN0P2yv6ArHJfV2xviHG9vxdD4tXw4
+    #   0cywcSc7Jd15vQbHfP0+HzWtuflQ5dNt0tS6enf6uSZB6tKq2c9juWFC2uVq8kH
+    #   -----END CERTIFICATE-----
+    # ovpn_server_key_content: |
+    #   -----BEGIN PRIVATE KEY-----
+    #   MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCe3Jx42CLj0y8M
+    #   0R8mV9WQZpCqdsO8u6WD0ct3dgM7NTKm2UMg/iLpIaQ0G5MV6sjA27gWlWQxGJ+S
+    #   Eh8zQ6p0H2Y7YTdJ8dR9mS6W6N2G7Y84X0m8SlnhL9z0+J2trwge1BRWYTmXjJX
+    #   5Kj9b2SXKJwU1tjXEwNpxrZ1oX9X9R5vAgMBAAECggEAA28aGmLlftdI8I0pQ7k2
+    #   -----END PRIVATE KEY-----
+    # ovpn_server_tls_crypt_key_content: |
+    #   test-tls-crypt-key
+
+  roles:
+    - role: "genlab.common.ovpn_server"
+      ovpn_server_manage_ip_forwarding: false
+      ovpn_server_manage_selinux: false
+      ovpn_server_start_service: false
+      ovpn_server_firewalld_policy_name: test-policy
+      ovpn_server_firewalld_policy_content: |
+        <?xml version="1.0" encoding="utf-8"?>
+        <policy>
+          <short>OpenVPN tunnel</short>
+          <description>Testing policy for Molecule</description>
+        </policy>
+      ovpn_server_firewalld_tunnel_zone_services:
+        - openvpn
+      ovpn_server_push_options:
+        - "route 192.0.2.0 255.255.255.0"
+      ovpn_server_ca_content: "test"
+      ovpn_server_cert_content: "test"
+      ovpn_server_key_content: "test"
+      ovpn_server_tls_crypt_key_content: "test"

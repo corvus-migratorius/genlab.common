@@ -1,5 +1,6 @@
 ---
 - name: "Restart-enable OpenVPN server"
+  when: ovpn_server_start_service
   ansible.builtin.systemd_service:
     name: "{{ ovpn_server_service_name }}"
     state: restarted
