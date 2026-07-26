@@ -1,0 +1,64 @@
+# Managed by Ansible: ovpn_server
+# The packaged openvpn-server@.service keeps OpenVPN in the foreground and
+# sends logs to the journal. Do not add daemon, log, or writepid here.
+
+port {{ ovpn_server_port }}
+proto {{ ovpn_server_proto }}
+dev {{ ovpn_server_dev }}
+topology subnet
+server {{ ovpn_server_network }} {{ ovpn_server_netmask }}
+
+ca "{{ ovpn_server_ca_path }}"
+cert "{{ ovpn_server_cert_path }}"
+key "{{ ovpn_server_key_path }}"
+dh none
+tls-version-min {{ ovpn_server_tls_version_min }}
+data-ciphers {{ ovpn_server_data_ciphers | join(':') }}
+
+{% if ovpn_server_tls_crypt_enabled %}
+tls-crypt "{{ ovpn_server_tls_crypt_key_path }}"
+{% endif %}
+
+verify-client-cert {{ ovpn_server_verify_client_cert }}
+{% if ovpn_server_verify_client_cert == 'require' %}
+remote-cert-tls client
+{% endif %}
+
+{% if ovpn_server_username_as_common_name %}
+username-as-common-name
+{% endif %}
+
+allow-compression no
+
+tmp-dir "{{ ovpn_server_tmp_dir }}"
+
+plugin /usr/lib64/openvpn/plugins/openvpn-plugin-auth-pam.so {{ ovpn_server_pam_service }}
+
+{% if ovpn_server_deferred_auth_pam %}
+setenv deferred_auth_pam 1
+{% endif %}
+
+keepalive {{ ovpn_server_keepalive_ping }} {{ ovpn_server_keepalive_timeout }}
+persist-key
+persist-tun
+
+user {{ ovpn_server_user }}
+group {{ ovpn_server_group }}
+
+{% if ovpn_server_proto.startswith('udp') %}
+explicit-exit-notify 1
+{% endif %}
+
+{% if ovpn_server_client_to_client %}
+client-to-client
+{% endif %}
+
+{% for option in ovpn_server_push_options %}
+push "{{ option }}"
+{% endfor %}
+
+{% for line in ovpn_server_extra_config %}
+{{ line }}
+{% endfor %}
+
+verb {{ ovpn_server_verb }}

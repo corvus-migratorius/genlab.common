@@ -1,0 +1,70 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  any_errors_fatal: true
+  vars:
+    ovpn_server_pki_dir: /etc/openvpn/server/pki
+    ovpn_server_ca_path: "{{ ovpn_server_pki_dir }}/ca.crt"
+    ovpn_server_cert_path: "{{ ovpn_server_pki_dir }}/server.crt"
+    ovpn_server_key_path: "{{ ovpn_server_pki_dir }}/server.key"
+    ovpn_server_tls_crypt_key_path: "{{ ovpn_server_pki_dir }}/tls-crypt.key"
+    ovpn_server_firewalld_policy_name: test-policy
+  tasks:
+    - name: "Verify that the OpenVPN package tooling is installed"  # noqa: command-instead-of-module
+      changed_when: false
+      ansible.builtin.command:
+        cmd: rpm -q openvpn sssd-client
+
+    - name: "Stat the OpenVPN binary"  # noqa: var-naming[no-role-prefix]
+      register: openvpn_bin
+      ansible.builtin.stat:
+        path: /usr/sbin/openvpn
+
+    - name: "Stat the PAM plugin at the expected path"  # noqa: var-naming[no-role-prefix]
+      register: openvpn_pam_plugin
+      ansible.builtin.stat:
+        path: /usr/lib64/openvpn/plugins/openvpn-plugin-auth-pam.so
+
+    - name: "Assert the expected files are present"
+      ansible.builtin.assert:
+        that:
+          - openvpn_bin.stat.exists | default(false)
+          - openvpn_bin.stat.isreg | default(false)
+          - openvpn_pam_plugin.stat.exists | default(false)
+          - openvpn_pam_plugin.stat.isreg | default(false)
+
+    - name: "Stat the PKI material files"  # noqa: var-naming[no-role-prefix]
+      loop:
+        - "{{ ovpn_server_ca_path }}"
+        - "{{ ovpn_server_cert_path }}"
+        - "{{ ovpn_server_key_path }}"
+        - "{{ ovpn_server_tls_crypt_key_path }}"
+      register: pki_files
+      ansible.builtin.stat:
+        path: "{{ item }}"
+
+    - name: "Assert each PKI material path is a regular file"
+      loop: "{{ pki_files.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists | default(false)
+          - item.stat.isreg | default(false)
+
+    - name: "Stat the firewalld policy file"  # noqa: var-naming[no-role-prefix]
+      register: firewalld_policy
+      ansible.builtin.stat:
+        path: "/etc/firewalld/policies/{{ ovpn_server_firewalld_policy_name }}"
+
+    - name: "Assert the firewalld policy file is a regular file"
+      ansible.builtin.assert:
+        that:
+          - firewalld_policy.stat.exists | default(false)
+          - firewalld_policy.stat.isreg | default(false)
+
+    - name: "Check the firewalld policy XML syntax"
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "xmllint --noout /etc/firewalld/policies/{{ ovpn_server_firewalld_policy_name }}"

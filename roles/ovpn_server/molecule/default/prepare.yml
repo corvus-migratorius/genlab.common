@@ -1,0 +1,9 @@
+---
+- name: Prepare
+  hosts: all
+
+  tasks:
+    - name: "Install libxml2 for xmllint"
+      ansible.builtin.dnf:
+        name: libxml2
+        state: present

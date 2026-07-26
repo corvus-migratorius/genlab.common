@@ -1,0 +1,117 @@
+---
+argument_specs:
+  main:
+    short_description: Deploy OpenVPN with SSSD-backed PAM authentication on EL9
+    options:
+      ovpn_server_manage_epel:
+        type: bool
+      ovpn_server_packages:
+        type: list
+        elements: str
+      ovpn_server_instance:
+        type: str
+      ovpn_server_service_name:
+        type: str
+      ovpn_server_config_path:
+        type: str
+      ovpn_server_port:
+        type: int
+      ovpn_server_proto:
+        type: str
+        choices: [udp, udp4, udp6, tcp-server, tcp4-server, tcp6-server]
+      ovpn_server_dev:
+        type: str
+      ovpn_server_network:
+        type: str
+      ovpn_server_netmask:
+        type: str
+      ovpn_server_keepalive_ping:
+        type: int
+      ovpn_server_keepalive_timeout:
+        type: int
+      ovpn_server_verb:
+        type: int
+      ovpn_server_user:
+        type: str
+      ovpn_server_group:
+        type: str
+      ovpn_server_tmp_dir:
+        type: str
+      ovpn_server_start_service:
+        type: bool
+      ovpn_server_tls_version_min:
+        type: str
+      ovpn_server_data_ciphers:
+        type: list
+        elements: str
+      ovpn_server_tls_crypt_enabled:
+        type: bool
+      ovpn_server_crl_enabled:
+        type: bool
+      ovpn_server_verify_client_cert:
+        type: str
+        choices: [require, none]
+      ovpn_server_username_as_common_name:
+        type: bool
+      ovpn_server_pam_service:
+        type: str
+      ovpn_server_pam_stack:
+        type: list
+        elements: str
+      ovpn_server_deferred_auth_pam:
+        type: bool
+      ovpn_server_validate_sssd:
+        type: bool
+      ovpn_server_manage_sssd_service:
+        type: bool
+      ovpn_server_manage_pki:
+        type: bool
+      ovpn_server_pki_dir:
+        type: str
+      ovpn_server_ca_path:
+        type: str
+      ovpn_server_cert_path:
+        type: str
+      ovpn_server_key_path:
+        type: str
+      ovpn_server_tls_crypt_key_path:
+        type: str
+      ovpn_server_crl_path:
+        type: str
+      ovpn_server_ca_content:
+        type: str
+      ovpn_server_cert_content:
+        type: str
+      ovpn_server_key_content:
+        type: str
+        no_log: true
+      ovpn_server_tls_crypt_key_content:
+        type: str
+        no_log: true
+      ovpn_server_crl_content:
+        type: str
+      ovpn_server_push_options:
+        type: list
+        elements: str
+      ovpn_server_client_to_client:
+        type: bool
+      ovpn_server_extra_config:
+        type: list
+        elements: str
+      ovpn_server_manage_ip_forwarding:
+        type: bool
+      ovpn_server_manage_firewalld:
+        type: bool
+      ovpn_server_firewalld_default_zone:
+        type: str
+      ovpn_server_firewalld_policy_name:
+        type: str
+      ovpn_server_firewalld_policy_content:
+        type: str
+      ovpn_server_firewalld_tunnel_zone:
+        type: str
+      ovpn_server_firewalld_tunnel_zone_services:
+        type: list
+        elements: str
+      ovpn_server_manage_selinux:
+        type: str
