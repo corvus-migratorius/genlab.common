@@ -33,7 +33,7 @@
     group: "{{ item.name }}"
     comment: "{{ item.comment }}"
     state: "{{ item.state }}"
-    shell: /sbin/nologin
+    shell: "{{ item.shell }}"
     create_home: false
 
 - name: "Install | Create Samba project root path"
