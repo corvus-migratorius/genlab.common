@@ -7,11 +7,17 @@
     group: root
     mode: "0600"
 
-- name: "Create a firewalld zone for OpenVPN tun0 traffic"
+- name: "Create a firewalld zone for OpenVPN traffic"
+  ansible.posix.firewalld:
+    zone: "{{ ovpn_server_firewalld_tunnel_zone }}"
+    state: present
+    permanent: true
+
+- name: "Attach tun0 interface to the firewalld zone for OpenVPN"
   ansible.posix.firewalld:
     zone: "{{ ovpn_server_firewalld_tunnel_zone }}"
     interface: tun0
-    state: present
+    state: enabled
     permanent: true
 
 - name: "Enable services for the OpenVPN tunnel zone"
