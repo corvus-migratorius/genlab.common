@@ -1,5 +1,5 @@
 ---
-- name: "Restart-enable firewalld server"
+- name: "Restart-enable firewalld"
   when: ovpn_server_manage_firewalld
   ansible.builtin.systemd_service:
     name: firewalld
