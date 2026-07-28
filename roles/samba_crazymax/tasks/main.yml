@@ -19,6 +19,7 @@
 - name: "Install | groups for Samba accounts"
   tags: [samba-srv, samba-srv-install]
   with_items: "{{ samba.users }}"
+  when: item.create_linux_user
   ansible.builtin.group:
     name: "{{ item.name }}"
     gid: "{{ item.id }}"
@@ -27,13 +28,13 @@
 - name: "Install | accounts for working with Samba"
   tags: [samba-srv, samba-srv-install]
   with_items: "{{ samba.users }}"
+  when: item.create_linux_user
   ansible.builtin.user:
     name: "{{ item.name }}"
     uid: "{{ item.id }}"
     group: "{{ item.name }}"
     comment: "{{ item.comment }}"
     state: "{{ item.state }}"
-    shell: "{{ item.shell }}"
     create_home: false
 
 - name: "Install | Create Samba project root path"
