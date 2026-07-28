@@ -3,7 +3,7 @@
   notify: "Restart-enable firewalld"
   ansible.builtin.copy:
     content: "{{ ovpn_server_firewalld_policy_content }}"
-    dest: "/etc/firewalld/policies/{{ ovpn_server_firewalld_policy_name }}"
+    dest: "/etc/firewalld/policies/{{ ovpn_server_firewalld_policy_name }}.xml"
     owner: root
     group: root
     mode: "0600"
