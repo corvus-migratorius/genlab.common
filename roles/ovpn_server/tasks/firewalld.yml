@@ -20,7 +20,7 @@
   ansible.posix.firewalld:
     zone: "{{ ovpn_server_firewalld_tunnel_zone }}"
     interface: tun0
-    state: present
+    state: enabled
     permanent: true
 
 - name: "Enable services for the OpenVPN tunnel zone"
