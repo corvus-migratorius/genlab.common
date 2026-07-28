@@ -41,9 +41,13 @@
       ovpn_server_firewalld_policy_name: test-policy
       ovpn_server_firewalld_policy_content: |
         <?xml version="1.0" encoding="utf-8"?>
-        <policy>
-          <short>OpenVPN tunnel</short>
-          <description>Testing policy for Molecule</description>
+        <policy target="REJECT">
+          <rule family="ipv4">
+            <destination address="1.2.3.4/24"/>
+            <accept/>
+          </rule>
+          <ingress-zone name="ovpn"/>
+          <egress-zone name="public"/>
         </policy>
       ovpn_server_firewalld_tunnel_zone_services:
         - openvpn
