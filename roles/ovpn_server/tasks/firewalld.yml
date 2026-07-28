@@ -10,6 +10,7 @@
 - name: "Create a firewalld zone for OpenVPN tun0 traffic"
   ansible.posix.firewalld:
     zone: "{{ ovpn_server_firewalld_tunnel_zone }}"
+    interface: tun0
     state: present
     permanent: true
 
