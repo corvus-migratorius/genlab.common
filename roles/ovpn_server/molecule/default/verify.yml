@@ -56,7 +56,7 @@
     - name: "Stat the firewalld policy file"  # noqa: var-naming[no-role-prefix]
       register: firewalld_policy
       ansible.builtin.stat:
-        path: "/etc/firewalld/policies/{{ ovpn_server_firewalld_policy_name }}"
+        path: "/etc/firewalld/policies/{{ ovpn_server_firewalld_policy_name }}.xml"
 
     - name: "Assert the firewalld policy file is a regular file"
       ansible.builtin.assert:
@@ -67,4 +67,4 @@
     - name: "Check the firewalld policy XML syntax"
       changed_when: false
       ansible.builtin.command:
-        cmd: "xmllint --noout /etc/firewalld/policies/{{ ovpn_server_firewalld_policy_name }}"
+        cmd: "xmllint --noout /etc/firewalld/policies/{{ ovpn_server_firewalld_policy_name }}.xml"
