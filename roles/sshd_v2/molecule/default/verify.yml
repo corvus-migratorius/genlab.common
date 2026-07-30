@@ -1,0 +1,64 @@
+---
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  any_errors_fatal: true
+
+  pre_tasks:
+    - name: "Gather service facts"
+      ansible.builtin.service_facts:
+
+  tasks:
+    - name: "Ensure sshd is running"
+      vars:
+        sshd_state: "{{ ansible_facts.services['ssh.service'].state | default('unknown') }}"
+      ansible.builtin.assert:
+        that: sshd_state == 'running'
+        success_msg: "OK, sshd state: '{{ sshd_state }}'"
+        fail_msg: "FAIL, sshd state: '{{ sshd_state }}'"
+
+    - name: "Ensure syntax is OK"
+      changed_when: false
+      loop:
+        - /etc/ssh/sshd_config
+        - /etc/ssh/sshd_config.d/90-ansible.conf
+      ansible.builtin.command:
+        cmd: "sshd -t -f {{ item }}"
+
+    - name: "Ensure main parameteres are applied"
+      args:
+        executable: /bin/bash
+      changed_when: false
+      ansible.builtin.shell: |
+        set -o pipefail ;
+        sshd -T | egrep -i '
+          ^protocol 2|
+          ^permitrootlogin no|
+          ^passwordauthentication no|
+          ^pubkeyauthentication yes
+        '
+
+    - name: "Test ssh connection with an allowed user"
+      changed_when: false
+      ansible.builtin.command:
+        cmd: >-
+          ssh
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          -i /home/testusr/.ssh/id_rsa
+          testusr@localhost
+          hostname
+
+    - name: "Test ssh connection with a disallowed user"
+      register: sshd_v2_verify_conn_result
+      changed_when: false
+      failed_when: sshd_v2_verify_conn_result.rc == 0
+      ansible.builtin.command:
+        cmd: >-
+          ssh
+          -o StrictHostKeyChecking=no
+          -o UserKnownHostsFile=/dev/null
+          -i /home/testusrnotallowed/.ssh/id_rsa
+          testusrnotallowed@localhost
+          hostname

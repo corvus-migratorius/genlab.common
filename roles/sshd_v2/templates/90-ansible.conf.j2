@@ -1,0 +1,33 @@
+Protocol 2
+PermitRootLogin no
+PermitUserEnvironment no
+X11Forwarding no
+StrictModes yes
+IgnoreUserKnownHosts yes
+DebianBanner no
+
+AllowAgentForwarding {{ sshd_v2_allow_agent_forwarding | ternary("yes", "no") }}
+AllowTcpForwarding {{ sshd_v2_allow_tcp_forwarding | ternary("yes", "no") }}
+GatewayPorts {{ sshd_v2_gateway_ports | ternary("yes", "no") }}
+PermitTunnel {{ sshd_v2_permit_tunnel | ternary("yes", "no") }}
+
+UsePAM {{ sshd_v2_use_pam | ternary("yes", "no") }}
+
+PubkeyAuthentication yes
+PasswordAuthentication {{ sshd_v2_password_auth | ternary("yes", "no") }}
+PermitEmptyPasswords no
+ChallengeResponseAuthentication {{ sshd_v2_challenge_response_auth | ternary("yes", "no") }}
+GSSAPIAuthentication {{ sshd_v2_gss_api_auth | ternary("yes", "no") }}
+KbdInteractiveAuthentication {{ sshd_v2_kbd_interactive_auth | ternary("yes", "no") }}
+IgnoreRhosts yes
+HostbasedAuthentication no
+
+{% if sshd_v2_allow_users is defined %}
+AllowUsers {{ sshd_v2_allow_users }}
+{% endif %}
+
+{% if sshd_v2_allow_groups is defined %}
+AllowGroups {{ sshd_v2_allow_groups }}
+{% endif %}
+
+LogLevel {{ sshd_v2_log_level }}

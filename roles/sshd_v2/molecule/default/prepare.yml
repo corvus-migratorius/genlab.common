@@ -1,0 +1,12 @@
+---
+- name: Prepare
+  hosts: all
+
+  tasks:
+    - name: "Set up users and keys for testing"
+      loop:
+        - testusr
+        - testusr_notallowed
+      loop_control:
+        loop_var: username
+      ansible.builtin.include_tasks: tasks/mkuser.yml

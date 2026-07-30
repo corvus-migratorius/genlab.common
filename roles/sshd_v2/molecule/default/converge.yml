@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: "genlab.common.sshd_v2"
+      sshd_v2_password_auth: false
+      sshd_v2_allow_agent_forwarding: false
+      sshd_v2_allow_tcp_forwarding: false
+      sshd_v2_gateway_ports: false
+      sshd_v2_permit_tunnel: false
+      sshd_v2_allow_users: "testusr"
