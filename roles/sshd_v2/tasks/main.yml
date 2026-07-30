@@ -1,0 +1,78 @@
+---
+- name: "Install OpenSSH server (RHEL flavours)"
+  notify: "Restart ssh"
+  when: ansible_os_family == "RHEL"
+  ansible.builtin.dnf:
+    name: openssh-server
+    state: installed
+
+- name: "Install OpenSSH server (Debian flavours)"
+  notify: "Restart ssh"
+  when: ansible_os_family == "Debian"
+  ansible.builtin.apt:
+    name: openssh-server
+    state: present
+    update_cache: true
+
+# next task requires this directory to exist for sshd -t flag
+- name: "Ensure /run/sshd exists"
+  ansible.builtin.file:
+    path: /run/sshd
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+# NOTE: order of preference for openssh-server ed25519 -> rsa
+- name: "Enable ed25519 authentication algorithm"
+  notify: "Restart ssh"
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^HostKey /etc/ssh/ssh_host_ed25519_key'
+    line: 'HostKey /etc/ssh/ssh_host_ed25519_key'
+    validate: /usr/sbin/sshd -t -f %s
+
+- name: "Enable the RSA authentication algorithm"
+  notify: "Restart ssh"
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^HostKey /etc/ssh/ssh_host_rsa_key'
+    line: 'HostKey /etc/ssh/ssh_host_rsa_key'
+    validate: /usr/sbin/sshd -t -f %s
+
+- name: "Disable the ECDSA algorithm (deemed to be less safe)"
+  notify: "Restart ssh"
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^HostKey /etc/ssh/ssh_host_ecdsa_key'
+    state: absent
+    validate: /usr/sbin/sshd -t -f %s
+
+- name: "Disable the DSA algorithm (considered to be defunct)"
+  notify: "Restart ssh"
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^HostKey /etc/ssh/ssh_host_dsa_key'
+    state: absent
+    validate: /usr/sbin/sshd -t -f %s
+
+- name: "Remove unsafe host keys"
+  notify: "Restart ssh"
+  loop:
+    - /etc/ssh/ssh_host_ecdsa_key
+    - /etc/ssh/ssh_host_ecdsa_key.pub
+    - /etc/ssh/ssh_host_dsa_key
+    - /etc/ssh/ssh_host_dsa_key.pub
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+
+- name: "Template a drop-in configuration file"
+  notify: "Restart ssh"
+  ansible.builtin.template:
+    src: 90-ansible.conf.j2
+    dest: /etc/ssh/sshd_config.d/90-ansible.conf
+    owner: root
+    group: root
+    mode: "0644"
+    validate: /usr/sbin/sshd -t -f %s
