@@ -13,7 +13,6 @@
     name: [acl, unzip]
     state: present
     update_cache: true
-    cache_valid_time: 3600
 
 - name: "Create the 'promtail' user"
   ansible.builtin.user:
