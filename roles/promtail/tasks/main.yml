@@ -1,11 +1,18 @@
 ---
-- name: "Install packages"
+- name: "Install role dependencies on Debian/Ubuntu"
+  when: ansible_os_family == "Debian"
   ansible.builtin.apt:
     name: [acl, unzip]
     state: present
     update_cache: true
     cache_valid_time: 3600
 
+- name: "Install role dependencies on RedHat/CentOS"
+  when: ansible_os_family == "RedHat"
+  ansible.builtin.dnf:
+    name: [acl, unzip]
+    state: present
+    update_cache: true
 
 - name: "Create the 'promtail' user"
   ansible.builtin.user:
@@ -18,7 +25,6 @@
     state: present
     system: true
 
-
 - name: "Set facl to allow promtail user to read '/var/log' contents"
   ansible.posix.acl:
     path: /var/log
@@ -26,7 +32,6 @@
     etype: user
     permissions: rX
     state: present
-
 
 - name: "Make promtail user owner of '{{ promtail_positions_path }}'"
   changed_when: false
@@ -36,7 +41,6 @@
     group: promtail
     state: touch
     mode: "0750"
-
 
 - name: "Install the requested Promtail version"
   block:
@@ -75,7 +79,6 @@
       ansible.builtin.file:
         path: "/usr/bin/promtail-linux-amd64"
         state: absent
-
 
 - name: "Template the systemd unit file"
   notify: "Enable and restart the Promtail daemon"
