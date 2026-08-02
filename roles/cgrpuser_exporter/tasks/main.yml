@@ -13,6 +13,8 @@
 
   rescue:
     - name: "Install | download the `cgrpuser-exporter` binary (release {{ cgrpuser_exporter_ver }})"
+      retries: 3
+      delay: 1
       ansible.builtin.unarchive:
         src: "https://github.com/corvus-migratorius/cgrpuser-exporter/releases/download/v{{ cgrpuser_exporter_ver }}/cgrpuser-exporter-linux-amd64.tar.gz"
         dest: /tmp/
