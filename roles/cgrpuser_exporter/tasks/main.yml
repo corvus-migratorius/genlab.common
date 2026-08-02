@@ -1,0 +1,44 @@
+---
+- name: "Install | check present installation"
+  block:
+    - name: "Install | check if `cgrpuser-exporter` is accessible from $PATH"
+      changed_when: false
+      register: cgrpuser_exporter_installed_ver
+      ansible.builtin.command:
+        cmd: cgrpuser-exporter --version
+
+    - name: "Install | assert that the requested version is already installed"
+      ansible.builtin.assert:
+        that: "cgrpuser_exporter_ver in cgrpuser_exporter_installed_ver.stdout"
+
+  rescue:
+    - name: "Install | download the `cgrpuser-exporter` binary (release {{ cgrpuser_exporter_ver }})"
+      retries: 3
+      delay: 1
+      ansible.builtin.unarchive:
+        src: "https://github.com/corvus-migratorius/cgrpuser-exporter/releases/download/v{{ cgrpuser_exporter_ver }}/cgrpuser-exporter-linux-amd64.tar.gz"
+        dest: /tmp/
+        remote_src: true
+
+    - name: "Install | stop service before replacing binary (avoids ETXTBSY)"
+      failed_when: false
+      ansible.builtin.systemd_service:
+        name: cgrpuser-exporter
+        state: stopped
+
+    - name: "Install | move the exporter binary '{{ cgrpuser_exporter_bin_path }}'"
+      notify: "(Re)start and enable cgrpuser-exporter"
+      ansible.builtin.copy:
+        src: "/tmp/cgrpuser-exporter-linux-amd64"
+        dest: "{{ cgrpuser_exporter_bin_path }}/cgrpuser-exporter"
+        owner: root
+        group: root
+        mode: "0755"
+        remote_src: true
+
+- name: "Install | push the service file template"
+  notify: "(Re)start and enable cgrpuser-exporter"
+  ansible.builtin.template:
+    src: cgrpuser-exporter.service.j2
+    dest: /etc/systemd/system/cgrpuser-exporter.service
+    mode: "0644"

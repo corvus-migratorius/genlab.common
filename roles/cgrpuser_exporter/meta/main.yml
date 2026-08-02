@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  role_name: "cgrpuser_exporter"
+  namespace: genlab
+  author: "Alexander Gorelyshev"
+  company: "Genlab, LLC"
+  description: ""
+  license: "MIT"
+  min_ansible_version: "2.1"
+
+  platforms:
+    - name: "Ubuntu"
+      versions: ["jammy", "noble"]
+    - name: "EL"
+      versions: ["9"]
+
+  galaxy_tags: []
+dependencies: []
