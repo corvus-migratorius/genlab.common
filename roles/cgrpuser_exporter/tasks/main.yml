@@ -1,5 +1,5 @@
 ---
-- name: "Install | check if `cgrpuser_exporter` is accessible from $PATH"
+- name: "Install | check present installation"
   block:
     - name: "Install | check if `cgrpuser-exporter` is accessible from $PATH"
       changed_when: false
@@ -21,12 +21,12 @@
         remote_src: true
 
     - name: "Install | stop service before replacing binary (avoids ETXTBSY)"
+      failed_when: false
       ansible.builtin.systemd_service:
         name: cgrpuser-exporter
         state: stopped
-      failed_when: false
 
-    - name: "Install | move exporter binary '{{ cgrpuser_exporter_bin_path }}'"
+    - name: "Install | move the exporter binary '{{ cgrpuser_exporter_bin_path }}'"
       notify: "(Re)start and enable cgrpuser-exporter"
       ansible.builtin.copy:
         src: "/tmp/cgrpuser-exporter-linux-amd64"

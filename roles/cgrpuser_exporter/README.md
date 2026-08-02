@@ -1,7 +1,7 @@
-Role Name
+cgrpuser-exporter
 =========
 
-Download, configure and deploy Prometheus `cnexporter` as a systemd unit.
+Download, configure and deploy Prometheus `cgrpuser-exporter` as a systemd unit.
 
 Requirements
 ------------
