@@ -4,7 +4,10 @@ PermitUserEnvironment no
 X11Forwarding no
 StrictModes yes
 IgnoreUserKnownHosts yes
+
+{% if ansible_os_family == "Debian" %}
 DebianBanner no
+{% endif %}
 
 AllowAgentForwarding {{ sshd_v2_allow_agent_forwarding | ternary("yes", "no") }}
 AllowTcpForwarding {{ sshd_v2_allow_tcp_forwarding | ternary("yes", "no") }}
