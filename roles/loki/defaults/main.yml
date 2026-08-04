@@ -2,3 +2,4 @@
 loki_version: 3.4.2
 loki_storage_path: /data/loki
 loki_port: 3100
+loki_log_level: info
