@@ -12,10 +12,10 @@
     name: unzip
     state: present
 
-- name: "Create Loki directories"
+- name: "Create Loki system directories"
   with_items:
     - {path: '/opt/loki', mode: '0755'}
-    - {path: '/etc/loki', mode: '0644'}
+    - {path: '/etc/loki', mode: '0755'}
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
