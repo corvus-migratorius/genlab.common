@@ -31,20 +31,26 @@
     group: loki
     mode: "{{ item.mode }}"
 
-- name: "Install the requested Loki version"
+- name: "Read installed Loki version"
+  register: loki_version_check
+  changed_when: false
+  failed_when: false
+  ansible.builtin.command:
+    argv:
+      - "{{ loki_binary_path }}"
+      - "-version"
+
+- name: "Set Loki installation requirement"
+  ansible.builtin.set_fact:
+    loki_install_required: >-
+      {{
+        loki_version_check.rc != 0
+        or loki_version not in loki_version_check.stdout
+      }}
+
+- name: "Install requested Loki version"
+  when: loki_install_required
   block:
-    - name: "Check Loki version"
-      register: loki_version_check
-      changed_when: false
-      ansible.builtin.command: "{{ loki_binary_path }} -version"
-
-    - name: "Assert version is expected"
-      ansible.builtin.assert:
-        that: "loki_version in loki_version_check.stdout"
-        success_msg: "Expected Loki version available ({{ loki_version }})"
-        fail_msg: "Expected version '{{ loki_version }}'; available is '{{ loki_version_check.stdout }}'"
-
-  rescue:
     - name: "Install Loki {{ loki_version }}"
       retries: 3
       delay: 1
