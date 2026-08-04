@@ -1,10 +1,16 @@
 ---
-- name: "Install unzip package"
+- name: "Install unzip package (Debian/Ubuntu)"
+  when: ansible_os_family == "Debian"
   ansible.builtin.apt:
     name: unzip
     state: present
     cache_valid_time: 3600
 
+- name: "Install unzip package (RHEL/CentOS)"
+  when: ansible_os_family == "RedHat"
+  ansible.builtin.dnf:
+    name: unzip
+    state: present
 
 - name: "Create Loki directories"
   with_items:
