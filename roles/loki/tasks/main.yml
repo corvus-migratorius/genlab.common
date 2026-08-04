@@ -94,8 +94,8 @@
 
     - name: "Cleanup downloaded files"
       loop:
-        - /opt/loki/loki-linux-amd64.zip
-        - /usr/local/bin/logcli-linux-amd64.zip
+        - /opt/loki/loki-linux-amd64
+        - /usr/local/bin/logcli-linux-amd64
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
