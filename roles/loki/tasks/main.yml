@@ -12,32 +12,32 @@
     name: unzip
     state: present
 
+- name: "Create a Loki system user"
+  ansible.builtin.user:
+    name: loki
+    system: true
+    shell: /usr/sbin/nologin
+    create_home: false
+
 - name: "Create Loki system directories"
   with_items:
     - {path: '/opt/loki', mode: '0755'}
     - {path: '/etc/loki', mode: '0755'}
+    - {path: "{{ loki_storage_path }}", mode: '0750'}
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
-    owner: root
-    group: root
-    mode: "{{ item.mode }}"
-
-- name: "Create Loki storage directory"
-  ansible.builtin.file:
-    path: "{{ loki_storage_path }}"
-    state: directory
     owner: loki
     group: loki
-    mode: "0750"
+    mode: "{{ item.mode }}"
 
 - name: "Template Loki config file"
   notify: "Restart-enable the Loki daemon"
   ansible.builtin.template:
     src: "loki.yml.j2"
     dest: "/etc/loki/loki.yml"
-    owner: root
-    group: root
+    owner: loki
+    group: loki
     mode: "0644"
 
 - name: "Install the requested Loki version"
@@ -67,8 +67,8 @@
       ansible.builtin.copy:
         src: "/opt/loki/loki-linux-amd64"
         dest: /opt/loki/loki
-        owner: root
-        group: root
+        owner: loki
+        group: loki
         mode: "0755"
         remote_src: true
 
@@ -86,8 +86,8 @@
       ansible.builtin.copy:
         src: "/usr/local/bin/logcli-linux-amd64"
         dest: "/usr/local/bin/logcli"
-        owner: root
-        group: root
+        owner: loki
+        group: loki
         mode: "0755"
         remote_src: true
 
@@ -106,7 +106,7 @@
     dest: /etc/systemd/system/loki.service
     owner: root
     group: root
-    mode: "0755"
+    mode: "0644"
 
 - name: "Ensure Loki is enabled and started"
   ansible.builtin.systemd_service:
