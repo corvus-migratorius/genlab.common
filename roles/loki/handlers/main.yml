@@ -1,5 +1,5 @@
 ---
-- name: "Restart the Loki daemon"
+- name: "Restart-enable the Loki daemon"
   ansible.builtin.systemd:
     name: loki
     state: restarted
