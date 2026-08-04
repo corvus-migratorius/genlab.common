@@ -5,7 +5,17 @@ After=network.target
 [Service]
 Type=simple
 User=loki
+Group=loki
 ExecStart={{ loki_binary_path }} -config.file /etc/loki/loki.yml
+
+Restart=on-failure
+RestartSec=5s
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths={{ loki_storage_path }}
 
 [Install]
 WantedBy=multi-user.target
