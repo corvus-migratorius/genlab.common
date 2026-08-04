@@ -2,3 +2,4 @@
 alertmanager_version: "0.30.0"
 alertmanager_config_dir: "/etc/alertmanager"
 alertmanager_storage_dir: "/var/lib/alertmanager"
+alertmanager_log_level: "info"
