@@ -1,5 +1,4 @@
 ---
-
 - name: "Configuration | Copy configuration files"
   notify: "(Re)start and enable Alertmanager"
   with_fileglob:
