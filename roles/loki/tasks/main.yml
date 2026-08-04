@@ -23,6 +23,13 @@
     group: root
     mode: "{{ item.mode }}"
 
+- name: "Create Loki storage directory"
+  ansible.builtin.file:
+    path: "{{ loki_storage_path }}"
+    state: directory
+    owner: loki
+    group: loki
+    mode: "0750"
 
 - name: "Template Loki config file"
   notify: "Restart the Loki daemon"
