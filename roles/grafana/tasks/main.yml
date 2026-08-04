@@ -9,6 +9,12 @@
     state: started
     delay: 10
 
+- name: "Reset default admin password"
+  no_log: "{{ grafana_no_log }}"
+  changed_when: false
+  ansible.builtin.command: >
+    grafana-cli admin reset-admin-password "{{ grafana_admin_api_password }}"
+
 - name: "Include user creation tasks"
   when: grafana_users is defined
   loop: "{{ grafana_users }}"
