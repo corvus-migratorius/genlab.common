@@ -21,9 +21,9 @@
 
 - name: "Create Loki system directories"
   with_items:
-    - {path: '/opt/loki', mode: '0755'}
-    - {path: '/etc/loki', mode: '0755'}
-    - {path: "{{ loki_storage_path }}", mode: '0750'}
+    - {path: "{{ loki_binary_path | dirname }}", mode: "0755"}
+    - {path: "/etc/loki", mode: "0755"}
+    - {path: "{{ loki_storage_path }}", mode: "0750"}
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
@@ -31,22 +31,12 @@
     group: loki
     mode: "{{ item.mode }}"
 
-- name: "Template Loki config file"
-  notify: "Restart-enable the Loki daemon"
-  ansible.builtin.template:
-    src: "loki.yml.j2"
-    dest: "/etc/loki/loki.yml"
-    owner: loki
-    group: loki
-    mode: "0644"
-    validate: /usr/local/bin/loki -config.file=%s -verify-config
-
 - name: "Install the requested Loki version"
   block:
     - name: "Check Loki version"
-      ansible.builtin.command: /opt/loki/loki -version
       register: loki_version_check
       changed_when: false
+      ansible.builtin.command: "{{ loki_binary_path }} -version"
 
     - name: "Assert version is expected"
       ansible.builtin.assert:
@@ -66,8 +56,8 @@
 
     - name: "Rename and set permissions for the Loki binary"
       ansible.builtin.copy:
-        src: "/opt/loki/loki-linux-amd64"
-        dest: /opt/loki/loki
+        src: "{{ loki_binary_path }}-linux-amd64"
+        dest: "{{ loki_binary_path }}"
         owner: loki
         group: loki
         mode: "0755"
@@ -94,11 +84,21 @@
 
     - name: "Cleanup downloaded files"
       loop:
-        - /opt/loki/loki-linux-amd64
-        - /usr/local/bin/logcli-linux-amd64
+        - "{{ loki_binary_path }}-linux-amd64"
+        - "/usr/local/bin/logcli-linux-amd64"
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
+
+- name: "Template Loki config file"
+  notify: "Restart-enable the Loki daemon"
+  ansible.builtin.template:
+    src: "loki.yml.j2"
+    dest: "/etc/loki/loki.yml"
+    owner: loki
+    group: loki
+    mode: "0644"
+    validate: "{{ loki_binary_path }} -config.file=%s -verify-config"
 
 - name: "Template the systemd unit file"
   notify: "Restart-enable the Loki daemon"

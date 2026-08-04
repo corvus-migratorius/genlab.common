@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 User=loki
-ExecStart=/opt/loki/loki -config.file /etc/loki/loki.yml
+ExecStart={{ loki_binary_path }} -config.file /etc/loki/loki.yml
 
 [Install]
 WantedBy=multi-user.target
