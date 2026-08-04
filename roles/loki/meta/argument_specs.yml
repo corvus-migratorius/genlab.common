@@ -1,0 +1,18 @@
+---
+argument_specs:
+  main:
+    short_description: "Deploy Grafana Loki as a systemd service"
+    options:
+      loki_version:
+        type: str
+      loki_binary_path:
+        type: str
+      loki_storage_path:
+        type: str
+      loki_port:
+        type: int
+      loki_log_level:
+        type: list
+        choices: [debug, info, warn, error]
+      loki_install_logcli:
+        type: bool
