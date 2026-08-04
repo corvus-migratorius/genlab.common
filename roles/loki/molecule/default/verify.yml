@@ -10,24 +10,24 @@
         dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
         extensions: ['yml']
 
-    - name: "Sanity check the Loki daemon"
+    - name: "Sanity check the Loki daemon by scraping its metrics endpoint"
       retries: 5
       delay: 1
-      register: loki_this
-      failed_when: "loki_version not in loki_this.content"
+      register: loki_metrics
+      failed_when: "loki_version not in loki_metrics.content"
       ansible.builtin.uri:
         # kics-scan ignore-line - kics wants https on localhost but i dont
         url: "http://localhost:{{ loki_port }}/metrics"
         return_content: true
 
-    - name: "Ensure that locgli is installed and able to run"
+    - name: "Ensure that Logcli is installed and able to run"
       register: loki_logcli
       failed_when: loki_logcli.rc != 0
       changed_when: false
       ansible.builtin.command:
         cmd: logcli --version
 
-    - name: "Check logcli version"
+    - name: "Check Logcli version"
       ansible.builtin.assert:
         that: "'version {{ loki_version }}' in loki_logcli.stderr"
         success_msg: "logcli version {{ loki_version }} is installed and working"
