@@ -39,6 +39,7 @@
     owner: loki
     group: loki
     mode: "0644"
+    validate: /usr/local/bin/loki -config.file=%s -verify-config
 
 - name: "Install the requested Loki version"
   block:
