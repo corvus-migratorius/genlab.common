@@ -73,6 +73,7 @@
         remote_src: true
 
     - name: "Install companion Logcli {{ loki_version }}"
+      when: loki_install_logcli
       retries: 3
       delay: 1
       ansible.builtin.unarchive:
@@ -81,6 +82,7 @@
         remote_src: true
 
     - name: "Rename and set permissions for the Logcli binary"
+      when: loki_install_logcli
       ansible.builtin.copy:
         src: "/usr/local/bin/logcli-linux-amd64"
         dest: "/usr/local/bin/logcli"
