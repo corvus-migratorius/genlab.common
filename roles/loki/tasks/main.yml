@@ -1,104 +1,123 @@
 ---
-- name: "Install unzip package"
+- name: "Install unzip package (Debian/Ubuntu)"
+  when: ansible_os_family == "Debian"
   ansible.builtin.apt:
     name: unzip
     state: present
     cache_valid_time: 3600
 
+- name: "Install unzip package (RHEL/CentOS)"
+  when: ansible_os_family == "RedHat"
+  ansible.builtin.dnf:
+    name: unzip
+    state: present
 
-- name: "Create Loki directories"
+- name: "Create a Loki system user"
+  ansible.builtin.user:
+    name: loki
+    system: true
+    shell: /usr/sbin/nologin
+    create_home: false
+
+- name: "Create Loki system directories"
   with_items:
-    - {path: '/opt/loki', mode: '0755'}
-    - {path: '/etc/loki', mode: '0644'}
+    - {path: "{{ loki_binary_path | dirname }}", mode: "0755"}
+    - {path: "/etc/loki", mode: "0755"}
+    - {path: "{{ loki_storage_path }}", mode: "0750"}
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
-    owner: root
-    group: root
+    owner: loki
+    group: loki
     mode: "{{ item.mode }}"
 
+- name: "Read installed Loki version"
+  register: loki_version_check
+  changed_when: false
+  failed_when: false
+  ansible.builtin.command:
+    argv:
+      - "{{ loki_binary_path }}"
+      - "-version"
 
-- name: "Template Loki config file"
-  notify: "Restart the Loki daemon"
-  ansible.builtin.template:
-    src: "loki.yml.j2"
-    dest: "/etc/loki/loki.yml"
-    owner: root
-    group: root
-    mode: "0644"
-
+- name: "Set Loki installation requirement"
+  ansible.builtin.set_fact:
+    loki_install_required: >-
+      {{
+        loki_version_check.rc != 0
+        or loki_version not in loki_version_check.stdout
+      }}
 
 - name: "Install requested Loki version"
+  when: loki_install_required
   block:
-    - name: "Check Loki version"
-      ansible.builtin.command: /opt/loki/loki -version
-      register: loki_version_check
-      changed_when: false
-
-    - name: "Assert version correctness"
-      notify: "Restart the Loki daemon"
-      ansible.builtin.assert:
-        that: "loki_version in loki_version_check.stdout"
-        success_msg: "Expected Loki version available ({{ loki_version }})"
-        fail_msg: "Expected version '{{ loki_version }}'; available is '{{ loki_version_check.stdout }}'"
-
-  rescue:
-    - name: "Install Loki if it is not present ({{ loki_version }})"
+    - name: "Install Loki {{ loki_version }}"
       retries: 3
       delay: 1
+      notify: "Restart-enable the Loki daemon"
       ansible.builtin.unarchive:
-        src: "https://github.com/grafana/loki/releases/download/v\
-             {{ loki_version }}/loki-linux-amd64.zip"
+        src: "https://github.com/grafana/loki/releases/download/v{{ loki_version }}/loki-linux-amd64.zip"
         dest: /opt/loki/
         remote_src: true
 
     - name: "Rename and set permissions for the Loki binary"
       ansible.builtin.copy:
-        src: "/opt/loki/loki-linux-amd64"
-        dest: /opt/loki/loki
-        owner: root
-        group: root
+        src: "{{ loki_binary_path }}-linux-amd64"
+        dest: "{{ loki_binary_path }}"
+        owner: loki
+        group: loki
         mode: "0755"
         remote_src: true
 
-    - name: "Install logcli"
+    - name: "Install companion Logcli {{ loki_version }}"
+      when: loki_install_logcli
       retries: 3
       delay: 1
       ansible.builtin.unarchive:
-        src: "https://github.com/grafana/loki/releases/download/v\
-                {{ loki_version }}/logcli-linux-amd64.zip"
+        src: "https://github.com/grafana/loki/releases/download/v{{ loki_version }}/logcli-linux-amd64.zip"
         dest: /usr/local/bin
         remote_src: true
 
     - name: "Rename and set permissions for the Logcli binary"
+      when: loki_install_logcli
       ansible.builtin.copy:
         src: "/usr/local/bin/logcli-linux-amd64"
         dest: "/usr/local/bin/logcli"
-        owner: root
-        group: root
+        owner: loki
+        group: loki
         mode: "0755"
         remote_src: true
 
     - name: "Cleanup downloaded files"
       loop:
-        - /opt/loki/loki-linux-amd64.zip
-        - /usr/local/bin/logcli-linux-amd64.zip
+        - "{{ loki_binary_path }}-linux-amd64"
+        - "/usr/local/bin/logcli-linux-amd64"
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
 
+- name: "Template Loki config file"
+  notify: "Restart-enable the Loki daemon"
+  ansible.builtin.template:
+    src: "loki.yml.j2"
+    dest: "/etc/loki/loki.yml"
+    owner: loki
+    group: loki
+    mode: "0644"
+    validate: "{{ loki_binary_path }} -config.file=%s -verify-config"
 
 - name: "Template the systemd unit file"
-  notify: "Reload the Loki daemon configuration"
+  notify: "Restart-enable the Loki daemon"
   ansible.builtin.template:
     src: templates/loki.service.j2
     dest: /etc/systemd/system/loki.service
     owner: root
     group: root
-    mode: "0755"
+    mode: "0644"
 
-- name: "Start and enable the Loki daemon"
-  ansible.builtin.systemd:
+- name: "Ensure Loki is enabled and started"
+  ansible.builtin.systemd_service:
     name: loki
     state: started
+    daemon_reload: true
     enabled: true

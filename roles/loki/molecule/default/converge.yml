@@ -3,3 +3,5 @@
   hosts: all
   roles:
     - role: genlab.common.loki
+      loki_install_logcli: true
+      loki_log_level: debug

@@ -2,9 +2,9 @@
 galaxy_info:
   role_name: loki
   namespace: genlab
-  author: "Danila Danilkin"
+  author: "Alexander Gorelyshev"
   company: "Genlab, LLC"
-  description: "Deploy Loki as a systemd service"
+  description: "Deploy Grafana Loki as a systemd service"
   license: "MIT"
   min_ansible_version: "2.1"
 
