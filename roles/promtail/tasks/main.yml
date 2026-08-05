@@ -36,7 +36,7 @@
     group: promtail
     mode: "0750"
 
-- name: "Set facl to allow promtail user to read all '/var/log' contents"
+- name: "Set facl to allow promtail user to read all current '/var/log' contents"
   ansible.posix.acl:
     path: /var/log
     entity: promtail
@@ -44,6 +44,14 @@
     permissions: rX
     state: present
     recursive: true
+
+- name: "Set facl to allow promtail user to read all '/var/log' contents by default"
+  ansible.posix.acl:
+    path: /var/log/
+    entity: promtail
+    etype: user
+    permissions: rX
+    state: present
     default: true
 
 - name: "Make promtail user owner of '{{ promtail_positions_path }}'"
