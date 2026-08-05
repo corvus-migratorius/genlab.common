@@ -72,7 +72,7 @@
         dest: "/usr/bin/promtail"
         owner: root
         group: root
-        mode: "0755"
+        mode: "0750"
         remote_src: true
 
     - name: "Cleanup the downloaded file"
@@ -87,7 +87,7 @@
     dest: /etc/systemd/system/promtail.service
     owner: root
     group: root
-    mode: "0644"
+    mode: "0640"
 
 - name: "Ensure '/etc/promtail' exists"
   ansible.builtin.file:
@@ -95,7 +95,7 @@
     state: directory
     owner: promtail
     group: promtail
-    mode: "0755"
+    mode: "0750"
 
 - name: "Template Promtail config file"
   notify: "Enable and restart the Promtail daemon"
@@ -104,4 +104,4 @@
     dest: /etc/promtail/config.yml
     owner: root
     group: root
-    mode: "0644"
+    mode: "0640"
