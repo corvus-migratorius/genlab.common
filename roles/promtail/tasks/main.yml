@@ -43,6 +43,8 @@
     etype: user
     permissions: rX
     state: present
+    recursive: true
+    default: true
 
 - name: "Make promtail user owner of '{{ promtail_positions_path }}'"
   changed_when: false
