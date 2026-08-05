@@ -70,8 +70,8 @@
 - name: "Template a drop-in configuration file"
   notify: "Restart ssh"
   ansible.builtin.template:
-    src: 90-ansible.conf.j2
-    dest: /etc/ssh/sshd_config.d/90-ansible.conf
+    src: 10-ansible.conf.j2
+    dest: /etc/ssh/sshd_config.d/10-ansible.conf
     owner: root
     group: root
     mode: "0644"
