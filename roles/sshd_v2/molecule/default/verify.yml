@@ -22,7 +22,7 @@
       changed_when: false
       loop:
         - /etc/ssh/sshd_config
-        - /etc/ssh/sshd_config.d/90-ansible.conf
+        - /etc/ssh/sshd_config.d/10-ansible.conf
       ansible.builtin.command:
         cmd: "sshd -t -f {{ item }}"
 
