@@ -5,7 +5,15 @@ After=network.target
 [Service]
 Type=simple
 User=promtail
-ExecStart=/usr/bin/promtail -config.file /etc/promtail/config.yml
+Group=promtail
+ExecStart={{ promtail_installation_path }}/promtail -config.file /etc/promtail/config.yml
+
+Restart=on-failure
+RestartSec=5s
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
 
 [Install]
 WantedBy=multi-user.target
