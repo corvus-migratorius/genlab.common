@@ -25,6 +25,17 @@
     state: present
     system: true
 
+- name: "Ensure promtail paths exist"
+  loop:
+    - /etc/promtail
+    - "{{ promtail_installation_path }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: promtail
+    group: promtail
+    mode: "0750"
+
 - name: "Set facl to allow promtail user to read all '/var/log' contents"
   ansible.posix.acl:
     path: /var/log
@@ -48,7 +59,7 @@
   failed_when: false
   ansible.builtin.command:
     argv:
-      - "{{ promtail_binary_path }}"
+      - "{{ promtail_installation_path }}"
       - "-version"
 
 - name: "Set Promtail installation requirement"
@@ -94,14 +105,6 @@
     owner: root
     group: root
     mode: "0640"
-
-- name: "Ensure '/etc/promtail' exists"
-  ansible.builtin.file:
-    path: /etc/promtail
-    state: directory
-    owner: promtail
-    group: promtail
-    mode: "0750"
 
 - name: "Template Promtail config file"
   notify: "Enable and restart the Promtail daemon"
