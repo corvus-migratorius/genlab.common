@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 User=loki
 Group=loki
-ExecStart={{ loki_binary_path }} -config.file /etc/loki/loki.yml
+ExecStart={{ loki_installation_path }}/loki -config.file /etc/loki/loki.yml
 
 Restart=on-failure
 RestartSec=5s

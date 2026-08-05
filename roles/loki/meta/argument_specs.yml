@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/role-arg-spec.json
 ---
 argument_specs:
   main:
@@ -5,7 +6,7 @@ argument_specs:
     options:
       loki_version:
         type: str
-      loki_binary_path:
+      loki_installation_path:
         type: str
       loki_storage_path:
         type: str
