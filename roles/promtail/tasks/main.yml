@@ -78,7 +78,7 @@
         dest: "{{ promtail_installation_path }}/promtail"
         owner: root
         group: root
-        mode: "0750"
+        mode: "0755"
         remote_src: true
 
     - name: "Cleanup the downloaded file"
@@ -110,7 +110,7 @@
     dest: /etc/promtail/config.yml
     owner: root
     group: root
-    mode: "0640"
+    mode: "0644"
 
 - name: "Ensure the Promatail service is enabled and running"
   ansible.builtin.systemd_service:
