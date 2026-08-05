@@ -59,7 +59,7 @@
   failed_when: false
   ansible.builtin.command:
     argv:
-      - "{{ promtail_installation_path }}"
+      - "{{ promtail_installation_path }}/promtail"
       - "-version"
 
 - name: "Set Promtail installation requirement"
