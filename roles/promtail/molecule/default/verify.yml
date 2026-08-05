@@ -14,7 +14,6 @@
       retries: 60
       delay: 1
       register: promtail_readiness
-      # failed_when: "promtail_this.content != 'Ready'"
       until:
         - (promtail_readiness.status | default(-1)) == 200
         - (promtail_readiness.content | default("")) == "Ready"
