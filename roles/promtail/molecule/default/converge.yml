@@ -3,5 +3,4 @@
   hosts: all
   roles:
     - role: genlab.common.promtail
-      promtail_version: 3.6.3
       promtail_loki_server: localhost  # required, but doesn't do anything in these tests
