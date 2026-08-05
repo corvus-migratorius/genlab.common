@@ -21,7 +21,7 @@
 
 - name: "Create Loki system directories"
   with_items:
-    - {path: "{{ loki_binary_path | dirname }}", mode: "0755"}
+    - {path: "{{ loki_installation_path }}", mode: "0755"}
     - {path: "/etc/loki", mode: "0755"}
     - {path: "{{ loki_storage_path }}", mode: "0750"}
   ansible.builtin.file:
@@ -37,7 +37,7 @@
   failed_when: false
   ansible.builtin.command:
     argv:
-      - "{{ loki_binary_path }}"
+      - "{{ loki_installation_path }}/loki"
       - "-version"
 
 - name: "Set Loki installation requirement"
@@ -62,8 +62,8 @@
 
     - name: "Rename and set permissions for the Loki binary"
       ansible.builtin.copy:
-        src: "{{ loki_binary_path }}-linux-amd64"
-        dest: "{{ loki_binary_path }}"
+        src: "{{ loki_installation_path }}/loki-linux-amd64"
+        dest: "{{ loki_installation_path }}/loki"
         owner: loki
         group: loki
         mode: "0755"
@@ -90,7 +90,7 @@
 
     - name: "Cleanup downloaded files"
       loop:
-        - "{{ loki_binary_path }}-linux-amd64"
+        - "{{ loki_installation_path }}/loki-linux-amd64"
         - "/usr/local/bin/logcli-linux-amd64"
       ansible.builtin.file:
         path: "{{ item }}"
@@ -104,7 +104,7 @@
     owner: loki
     group: loki
     mode: "0644"
-    validate: "{{ loki_binary_path }} -config.file=%s -verify-config"
+    validate: "{{ loki_installation_path }}/loki -config.file=%s -verify-config"
 
 - name: "Template the systemd unit file"
   notify: "Restart-enable the Loki daemon"

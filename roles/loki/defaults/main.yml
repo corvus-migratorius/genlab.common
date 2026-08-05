@@ -1,6 +1,6 @@
 ---
 loki_version: 3.6.11
-loki_binary_path: /opt/loki/loki
+loki_installation_path: /opt/loki/
 loki_storage_path: /data/loki
 loki_port: 3100
 loki_log_level: info
