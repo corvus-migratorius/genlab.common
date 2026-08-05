@@ -20,12 +20,12 @@
     groups:
       - adm
       - systemd-journal
-    shell: /bin/false
+    shell: /bin/nologin
     home: /var/lib/promtail
     state: present
     system: true
 
-- name: "Set facl to allow promtail user to read '/var/log' contents"
+- name: "Set facl to allow promtail user to read all '/var/log' contents"
   ansible.posix.acl:
     path: /var/log
     entity: promtail

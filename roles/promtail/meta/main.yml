@@ -2,7 +2,7 @@ galaxy_info:
   role_name: promtail
   namespace: genlab
   author: Danilkin Danila
-  description: Deploy Promtail
+  description: Deploy Promtail as a systemd service
 
   company: Genlab LLC
   license: MIT
