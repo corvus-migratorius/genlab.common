@@ -2,6 +2,7 @@
 server:
   http_listen_port: {{ promtail_http_port }}
   grpc_listen_port: 0
+
 positions:
   filename: {{ promtail_positions_path }}
 
@@ -16,10 +17,17 @@ scrape_configs:
           - localhost
         labels:
           job: varlogs
-          __path__: /var/log/*log
+          __path__: /var/log/*.log
+          host: {{ ansible_hostname }}
+
+      - targets:
+          - localhost
+        labels:
+          job: varlogs
+          __path__: /var/log/syslog
           host: {{ ansible_hostname }}
 {% endif %}
 
 {% if custom_scrape_configs is defined %}
-{{ custom_scrape_configs }}
+{{ promtail_custom_scrape_configs }}
 {% endif %}

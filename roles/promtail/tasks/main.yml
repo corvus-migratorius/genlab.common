@@ -106,7 +106,7 @@
 - name: "Template Promtail config file"
   notify: "Enable and restart the Promtail daemon"
   ansible.builtin.template:
-    src: templates/promtail.yml.j2
+    src: templates/config.yml.j2
     dest: /etc/promtail/config.yml
     owner: root
     group: root
