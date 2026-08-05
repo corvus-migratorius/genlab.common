@@ -16,3 +16,5 @@ argument_specs:
         type: int
       promtail_add_var_logs:
         type: bool
+      promtail_loki_server:
+        type: str
