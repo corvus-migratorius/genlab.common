@@ -1,0 +1,40 @@
+[agents]
+url={{ slurm_web_gateway_agents_url }}
+
+[service]
+{% if slurm_web_gateway_interface is defined %}
+interface={{ slurm_web_gateway_interface }}
+{% endif %}
+{% if slurm_web_gateway_port is defined %}
+port={{ slurm_web_gateway_port }}
+{% endif %}
+
+[ui]
+host={{ slurm_web_gateway_ui_host }}
+
+{% if slurm_web_gateway_auth_enabled %}
+[authentication]
+enabled=no
+
+[ldap]
+uri={{ slurm_web_ldap_uri }}
+user_base={{ slurm_web_ldap_user_base }}
+group_base={{ slurm_web_ldap_group_base }}
+{% if slurm_web_ldap_bind_dn is defined %}
+bind_dn={{ slurm_web_ldap_bind_dn }}
+{% endif %}
+{% if slurm_web_ldap_bind_password_file is defined %}
+bind_password_file={{ slurm_web_ldap_bind_password_file }}
+{% elif slurm_web_ldap_bind_password is defined %}
+bind_password={{ slurm_web_ldap_bind_password }}
+{% endif %}
+{% if slurm_web_ldap_restricted_groups is defined %}
+restricted_groups=
+{% for group in slurm_web_ldap_restricted_groups %}
+  {{ group }}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+[jwt]
+key={{ slurm_web_gateway_jwt_key }}
