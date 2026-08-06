@@ -1,5 +1,5 @@
 ---
-fail2ban_sshd_jail_banaction_by_os_family:
+fail2ban_sshd_banaction_by_os_family:
   RedHat: firewallcmd-rich-rules
   Debian: nftables-multiport
-fail2ban_sshd_jail_banaction: "{{ fail2ban_sshd_jail_banaction_by_os_family[ansible_os_family] }}"
+fail2ban_sshd_banaction: "{{ fail2ban_sshd_banaction_by_os_family[ansible_os_family] }}"

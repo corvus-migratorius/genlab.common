@@ -5,21 +5,21 @@ argument_specs:
     options:
       fail2ban_sshd_version:
         type: str
-      fail2ban_sshd_jail_enabled:
+      fail2ban_sshd_enabled:
         type: bool
-      fail2ban_sshd_jail_port:
+      fail2ban_sshd_port:
         type: str
-      fail2ban_sshd_jail_findtime:
+      fail2ban_sshd_findtime:
         type: int
-      fail2ban_sshd_jail_maxretry:
+      fail2ban_sshd_maxretry:
         type: int
-      fail2ban_sshd_jail_bantime:
+      fail2ban_sshd_bantime:
         type: int
-      fail2ban_sshd_jail_logpath:
+      fail2ban_sshd_logpath:
         type: str
-      fail2ban_sshd_jail_backend:
+      fail2ban_sshd_backend:
         type: str
-      fail2ban_sshd_jail_banaction:
+      fail2ban_sshd_banaction:
         type: str
-      fail2ban_sshd_jail_ignoreips:
+      fail2ban_sshd_ignoreips:
         type: list

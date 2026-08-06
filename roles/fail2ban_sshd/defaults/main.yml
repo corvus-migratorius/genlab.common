@@ -1,12 +1,12 @@
 ---
 fail2ban_sshd_version: "1.0.2-3ubuntu0.1"
-fail2ban_sshd_jail_enabled: true
-fail2ban_sshd_jail_port: ssh
-fail2ban_sshd_jail_findtime: 600
-fail2ban_sshd_jail_maxretry: 5
-fail2ban_sshd_jail_bantime: 3600
-fail2ban_sshd_jail_logpath: null
-fail2ban_sshd_jail_backend: systemd
-fail2ban_sshd_jail_ignoreips:
+fail2ban_sshd_enabled: true
+fail2ban_sshd_port: ssh
+fail2ban_sshd_findtime: 600
+fail2ban_sshd_maxretry: 5
+fail2ban_sshd_bantime: 3600
+fail2ban_sshd_logpath: null
+fail2ban_sshd_backend: systemd
+fail2ban_sshd_ignoreips:
   - 127.0.0.1/8
   - ::1
