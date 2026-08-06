@@ -1,0 +1,20 @@
+# yaml-language-serve: $schema=https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/role-arg-spec.json
+---
+argument_specs:
+  main:
+    description: "Deploy Promtail as a systemd service"
+    options:
+      promtail_version:
+        type: str
+      promtail_installation_path:
+        type: str
+      promtail_positions_path:
+        type: str
+      promtail_http_port:
+        type: int
+      promtail_loki_port:
+        type: int
+      promtail_add_var_logs:
+        type: bool
+      promtail_loki_server:
+        type: str

@@ -20,18 +20,39 @@
     groups:
       - adm
       - systemd-journal
-    shell: /bin/false
+    shell: /bin/nologin
     home: /var/lib/promtail
     state: present
     system: true
 
-- name: "Set facl to allow promtail user to read '/var/log' contents"
+- name: "Ensure promtail paths exist"
+  loop:
+    - /etc/promtail
+    - "{{ promtail_installation_path }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: promtail
+    group: promtail
+    mode: "0750"
+
+- name: "Set facl to allow promtail user to read all current '/var/log' contents"
   ansible.posix.acl:
     path: /var/log
     entity: promtail
     etype: user
     permissions: rX
     state: present
+    recursive: true
+
+- name: "Set facl to allow promtail user to read all '/var/log' contents by default"
+  ansible.posix.acl:
+    path: /var/log/
+    entity: promtail
+    etype: user
+    permissions: rX
+    state: present
+    default: true
 
 - name: "Make promtail user owner of '{{ promtail_positions_path }}'"
   changed_when: false
@@ -42,34 +63,40 @@
     state: touch
     mode: "0750"
 
-- name: "Install the requested Promtail version"
+- name: "Read installed Promtail version"
+  register: promtail_version_check
+  changed_when: false
+  failed_when: false
+  ansible.builtin.command:
+    argv:
+      - "{{ promtail_installation_path }}/promtail"
+      - "-version"
+
+- name: "Set Promtail installation requirement"
+  ansible.builtin.set_fact:
+    promtail_install_required: >-
+      {{
+        promtail_version_check.rc != 0
+        or promtail_version not in promtail_version_check.stdout
+      }}
+
+- name: "Install requested Promtail version"
+  when: promtail_install_required
   block:
-    - name: "Check Promtail version"
-      ansible.builtin.command: /usr/bin/promtail --version
-      register: promtail_version_check
-      changed_when: false
-
-    - name: "Assert version correctness"
-      ansible.builtin.assert:
-        that: "promtail_version in promtail_version_check.stdout"
-        success_msg: "Expected Promtail version available ({{ promtail_version }})"
-        fail_msg: "Expected version '{{ promtail_version }}'; available is '{{ promtail_version_check.stdout }}'"
-
-  rescue:
-    - name: "Install Promtail if its not present"
+    - name: "Install Promtail {{ promtail_version }}"
       notify: "Enable and restart the Promtail daemon"
       retries: 3
       delay: 3
       ansible.builtin.unarchive:
         src: "https://github.com/grafana/loki/releases/download/v\
              {{ promtail_version }}/promtail-linux-amd64.zip"
-        dest: /usr/bin/
+        dest: "{{ promtail_installation_path }}"
         remote_src: true
 
     - name: "Rename and set permissions for the Promtail binary"
       ansible.builtin.copy:
-        src: "/usr/bin/promtail-linux-amd64"
-        dest: "/usr/bin/promtail"
+        src: "{{ promtail_installation_path }}/promtail-linux-amd64"
+        dest: "{{ promtail_installation_path }}/promtail"
         owner: root
         group: root
         mode: "0755"
@@ -77,7 +104,7 @@
 
     - name: "Cleanup the downloaded file"
       ansible.builtin.file:
-        path: "/usr/bin/promtail-linux-amd64"
+        path: "{{ promtail_installation_path }}/promtail-linux-amd64"
         state: absent
 
 - name: "Template the systemd unit file"
@@ -87,21 +114,20 @@
     dest: /etc/systemd/system/promtail.service
     owner: root
     group: root
-    mode: "0644"
-
-- name: "Ensure '/etc/promtail' exists"
-  ansible.builtin.file:
-    path: /etc/promtail
-    state: directory
-    owner: promtail
-    group: promtail
-    mode: "0755"
+    mode: "0640"
 
 - name: "Template Promtail config file"
   notify: "Enable and restart the Promtail daemon"
   ansible.builtin.template:
-    src: templates/promtail.yml.j2
+    src: templates/config.yml.j2
     dest: /etc/promtail/config.yml
     owner: root
     group: root
     mode: "0644"
+
+- name: "Ensure the Promatail service is enabled and running"
+  ansible.builtin.systemd_service:
+    name: promtail
+    state: started
+    enabled: true
+    daemon_reload: true

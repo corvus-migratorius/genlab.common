@@ -1,8 +1,9 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/meta.json
 galaxy_info:
   role_name: promtail
   namespace: genlab
   author: Danilkin Danila
-  description: Deploy Promtail
+  description: Deploy Promtail as a systemd service
 
   company: Genlab LLC
   license: MIT
@@ -12,6 +13,8 @@ galaxy_info:
   platforms:
     - name: "Ubuntu"
       versions: ["jammy", "noble"]
+    - name: "Rocky"
+      versions: ["9.2"]
 
   galaxy_tags: []
 
