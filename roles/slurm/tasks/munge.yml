@@ -1,0 +1,55 @@
+---
+- name: Enable EPEL repository
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+    update_cache: true
+  when: ansible_os_family == "RedHat"
+
+- name: Enable CRB repository
+  community.general.dnf_config_manager:
+    name: crb
+    state: enabled
+  when: ansible_os_family == "RedHat"
+
+- name: Install munge on RedHat
+  ansible.builtin.dnf:
+    name:
+      - munge
+      - munge-libs
+      - munge-devel
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Install munge on Debian
+  ansible.builtin.apt:
+    name:
+      - munge
+      - libmunge-dev
+    state: present
+    update_cache: true
+  when: ansible_os_family == "Debian"
+
+- name: Check munge dir
+  ansible.builtin.file:
+    path: /etc/munge
+    owner: munge
+    group: munge
+    mode: "0700"
+    state: directory
+
+- name: Install munge key
+  notify: Restart munge
+  ansible.builtin.copy:
+    src: "{{ slurm_munge_key }}"
+    dest: /etc/munge/munge.key
+    owner: munge
+    group: munge
+    mode: "0400"
+  when: slurm_munge_key is defined
+
+- name: Ensure Munge is enabled and running
+  ansible.builtin.service:
+    name: munge
+    enabled: true
+    state: started

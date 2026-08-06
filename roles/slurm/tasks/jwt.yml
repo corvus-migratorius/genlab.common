@@ -1,0 +1,9 @@
+---
+- name: "Copy JWT signing key"
+  ansible.builtin.copy:
+    src: "{{ slurm_jwt_key_source }}"
+    dest: "{{ slurm_config_dir }}/jwt_hs256.key"
+    owner: "{{ slurm_user_name }}"
+    group: "{{ slurm_group_name }}"
+    mode: "0600"
+  when: slurm_enable_jwt | bool

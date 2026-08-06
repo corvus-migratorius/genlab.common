@@ -1,0 +1,38 @@
+---
+- name: Create slurm log directory
+  ansible.builtin.file:
+    path: "{{ __slurmdbd_config_merged.LogFile | dirname }}"
+    owner: "{{ slurm_user_name }}"
+    group: "{{ slurm_group_name }}"
+    mode: "0755"
+    state: directory
+  when: slurm_create_dirs and __slurmdbd_config_merged.LogFile != omit
+
+- name: Include config dir creation tasks
+  ansible.builtin.include_tasks: _inc_create_config_dir.yml
+  when: slurm_create_dirs
+
+- name: Install slurmdbd.conf
+  ansible.builtin.template:
+    src: generic.conf.j2
+    dest: "{{ slurm_config_dir }}/{{ item.name }}"
+    owner: "{{ slurm_user_name }}"
+    group: "{{ slurm_group_name }}"
+    mode: "0600"
+  with_items:
+    - name: slurmdbd.conf
+      config: __slurmdbd_config_merged
+  loop_control:
+    label: "{{ item.name }}"
+  notify: Reload slurmdbd
+
+- name: Create systemd service file
+  notify:
+    - Reload slurmdbd
+    - Reload systemd daemon
+  ansible.builtin.template:
+    src: slurmdbd.service.j2
+    dest: /etc/systemd/system/slurmdbd.service
+    owner: root
+    group: root
+    mode: "0644"
