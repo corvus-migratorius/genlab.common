@@ -1,0 +1,25 @@
+---
+argument_specs:
+  main:
+    description: "Deploy a lean Fail2Ban sshd configuration"
+    options:
+      fail2ban_sshd_version:
+        type: str
+      fail2ban_sshd_jail_sshd_enabled:
+        type: bool
+      fail2ban_sshd_jail_sshd_port:
+        type: str
+      fail2ban_sshd_jail_sshd_findtime:
+        type: int
+      fail2ban_sshd_jail_sshd_maxretry:
+        type: int
+      fail2ban_sshd_jail_sshd_bantime:
+        type: int
+      fail2ban_sshd_jail_sshd_logpath:
+        type: str
+      fail2ban_sshd_jail_sshd_backend:
+        type: str
+      fail2ban_sshd_jail_sshd_banaction:
+        type: str
+      fail2ban_sshd_jail_sshd_ignoreips:
+        type: list

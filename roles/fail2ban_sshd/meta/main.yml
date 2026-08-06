@@ -1,18 +1,18 @@
 ---
 galaxy_info:
-  role_name: fail2ban_rhel
+  role_name: fail2ban_sshd
   namespace: genlab
   author: "Alexander Gorelyshev"
   company: "Genlab, LLC"
-  description: "Deploy a lean Fail2Ban configuration for RHEL/Rocky 9+ hosts"
+  description: "Deploy a lean Fail2Ban sshd configuration"
   license: "MIT"
   min_ansible_version: "2.1"
 
   platforms:
+    - name: "Ubuntu"
+      versions: ["noble"]
     - name: "EL"
       versions: ["9"]
-    - name: "Rocky"
-      versions: ["9.2"]
 
   galaxy_tags: []
 

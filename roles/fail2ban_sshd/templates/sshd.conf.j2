@@ -1,0 +1,14 @@
+[sshd]
+enabled = {{ fail2ban_sshd_jail_enabled | ternary('true', 'false') }}
+port = {{ fail2ban_sshd_jail_port }}
+
+logpath = {{ fail2ban_sshd_jail_logpath }}
+
+backend = {{ fail2ban_sshd_jail_backend }}
+banaction = {{ fail2ban_sshd_jail_banaction }}
+
+findtime = {{ fail2ban_sshd_jail_findtime }}
+maxretry = {{ fail2ban_sshd_jail_maxretry }}
+bantime = {{ fail2ban_sshd_jail_bantime }}
+
+ignoreip = {{ fail2ban_sshd_jail_ignoreips | default([]) | join(' ') }}
