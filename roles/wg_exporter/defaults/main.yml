@@ -1,0 +1,8 @@
+---
+wg_exporter_version: "0.3.0"
+wg_exporter_alias: ""
+wg_exporter_collect_interval_sec: 5
+wg_exporter_listen_port: 9586
+wg_exporter_listen_address: 0.0.0.0
+wg_exporter_quiet: "-q"
+wg_exporter_verbose: "-vv"
