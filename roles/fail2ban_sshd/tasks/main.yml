@@ -16,16 +16,27 @@
         or fail2ban_sshd_version not in fail2ban_sshd_version_check.stdout
       }}
 
-- name: "Install EPEL release on RedHat-family systems"
+- name: "Install Fail2Ban (RHEL)"
   when:
     - fail2ban_sshd_install_required
     - ansible_os_family == "RedHat"
-  ansible.builtin.dnf:
-    name: "epel-release"
-    state: present
+  block:
+    - name: "Install EPEL release on RedHat-family systems"
+      ansible.builtin.dnf:
+        name: "epel-release"
+        state: present
 
-- name: "Install Fail2Ban {{ fail2ban_sshd_version }}"
-  when: fail2ban_sshd_install_required
+    - name: "Install Fail2Ban {{ fail2ban_sshd_version }}"
+      notify: "Restart fail2ban"
+      ansible.builtin.dnf:
+        name: "fail2ban-{{ fail2ban_sshd_version }}"
+        state: present
+        update_cache: true
+
+- name: "Install Fail2Ban (Debian) {{ fail2ban_sshd_version }}"
+  when:
+    - fail2ban_sshd_install_required
+    - ansible_os_family == "Debian"
   notify: "Restart fail2ban"
   ansible.builtin.package:
     name: "fail2ban={{ fail2ban_sshd_version }}"
