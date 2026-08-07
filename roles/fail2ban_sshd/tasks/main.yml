@@ -1,0 +1,74 @@
+---
+- name: "Read installed Fail2Ban version"
+  register: fail2ban_sshd_version_check
+  changed_when: false
+  failed_when: false
+  ansible.builtin.command:
+    argv:
+      - "fail2ban-client"
+      - "--version"
+
+- name: "Set Fail2Ban installation requirement"
+  ansible.builtin.set_fact:
+    fail2ban_sshd_install_required: >-
+      {{
+        fail2ban_sshd_version_check.rc != 0
+        or fail2ban_sshd_version not in fail2ban_sshd_version_check.stdout
+      }}
+
+- name: "Install Fail2Ban (RHEL)"
+  when:
+    - fail2ban_sshd_install_required
+    - ansible_os_family == "RedHat"
+  block:
+    - name: "Install EPEL release on RedHat-family systems"
+      ansible.builtin.dnf:
+        name: "epel-release"
+        state: present
+
+    - name: "Install Fail2Ban {{ fail2ban_sshd_version }}"
+      notify: "Restart fail2ban"
+      ansible.builtin.dnf:
+        name: "fail2ban-{{ fail2ban_sshd_version }}"
+        state: present
+        update_cache: true
+
+- name: "Install Fail2Ban (Debian) {{ fail2ban_sshd_version }}"
+  when:
+    - fail2ban_sshd_install_required
+    - ansible_os_family == "Debian"
+  notify: "Restart fail2ban"
+  ansible.builtin.package:
+    name: "fail2ban={{ fail2ban_sshd_version }}"
+    state: present
+    update_cache: true
+
+- name: "Ensure Fail2Ban sshd jail configuration directory exists"
+  ansible.builtin.file:
+    path: /etc/fail2ban/jail.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: "Render sshd jail configuration"
+  notify: "Restart fail2ban"
+  ansible.builtin.template:
+    src: sshd.conf.j2
+    dest: /etc/fail2ban/jail.d/sshd.local
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: "Ensure expected SELinux contexts on the fail2ban configuration files"
+  when: ansible_os_family == "RedHat"
+  changed_when: false
+  ansible.builtin.command:
+    cmd: restorecon -v /etc/fail2ban/
+
+- name: "Ensure Fail2Ban service is enabled and running"
+  ansible.builtin.systemd_service:
+    name: fail2ban
+    state: started
+    enabled: true
+    daemon_reload: true

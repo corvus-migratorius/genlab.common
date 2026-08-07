@@ -6,12 +6,12 @@
 
   tasks:
     - name: "Check that the fail2ban service is active"
-      register: fail2ban_rhel_fail2ban_service
+      register: fail2ban_sshd_fail2ban_service
       ansible.builtin.systemd:
         name: fail2ban
 
     - name: "Assert fail2ban is running"
       ansible.builtin.assert:
-        that: fail2ban_rhel_fail2ban_service.status.ActiveState == "active"
+        that: fail2ban_sshd_fail2ban_service.status.ActiveState == "active"
         success_msg: "fail2ban service is running"
         fail_msg: "fail2ban service is not active"

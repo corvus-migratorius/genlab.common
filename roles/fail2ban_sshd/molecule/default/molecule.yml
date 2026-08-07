@@ -6,8 +6,8 @@ driver:
   name: docker
 
 platforms:
-  - name: rocky9
-    image: geerlingguy/docker-${MOLECULE_DISTRO:-rockylinux9}-ansible:latest
+  - name: ubuntu
+    image: geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2404}-ansible:latest
     pre_build_image: true
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
