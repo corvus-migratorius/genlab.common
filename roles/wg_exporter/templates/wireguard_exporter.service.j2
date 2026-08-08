@@ -1,0 +1,35 @@
+[Unit]
+Description=Wireguard Exporter
+Documentation=https://github.com/kbknapp/wireguard_exporter
+After=network.target
+StartLimitIntervalSec=120
+StartLimitBurst=5    
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/sbin/wireguard_exporter \
+{% if wg_exporter_alias is defined and wg_exporter_alias | length > 0 %}
+    --alias={{ wg_exporter_alias }} \
+{% endif %}
+    --collect-interval={{ wg_exporter_collect_interval_sec }} \
+    --listen-port={{ wg_exporter_listen_port}} \
+    --listen-address={{ wg_exporter_listen_address }} \
+    {{ wg_exporter_quiet }} \
+    {{ wg_exporter_verbose }}
+
+SyslogIdentifier=wireguard_exporter
+Restart=on-failure
+RestartSec=5
+                                                                                                                                                                                                                                                                                
+ProtectHome=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=yes
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target
