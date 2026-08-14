@@ -18,13 +18,13 @@ platforms:
 
 provisioner:
   name: ansible
-  env:
-    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/../
-    gitlab_ce_fqdn: gitlab.molecule.test
+  ansible_args:
+    - --extra-vars
+    - "gitlab_ce_fqdn=gitlab.molecule.test"
 
 verifier:
   name: ansible
-  
+
 lint: |
   set -e
   yamllint .
