@@ -3,7 +3,9 @@
   hosts: all
   become: true
   vars_files:
-    - ../../defaults/main.yml # verify не подключает роль → дефолты грузим явно
+    - ../../defaults/main.yml
+  vars:
+    gitlab_ce_fqdn: gitlab.molecule.test
   tasks:
     - name: Config check
       ansible.builtin.stat:
