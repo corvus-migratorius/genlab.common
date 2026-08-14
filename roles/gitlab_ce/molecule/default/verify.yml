@@ -1,0 +1,26 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  vars_files:
+    - ../../defaults/main.yml
+  vars:
+    gitlab_ce_fqdn: gitlab.molecule.test
+  tasks:
+    - name: Config check
+      ansible.builtin.stat:
+        path: /etc/gitlab/gitlab.rb
+      register: gitlab_ce_rb
+
+    - name: Exists gitlab.rb
+      ansible.builtin.assert:
+        that: gitlab_ce_rb.stat.exists
+
+    - name: Check Gitlab-url
+      ansible.builtin.uri:
+        url: https://127.0.0.1
+        headers:
+          Host: "{{ gitlab_ce_fqdn }}"
+        validate_certs: false
+        follow_redirects: none
+        status_code: [200, 302]

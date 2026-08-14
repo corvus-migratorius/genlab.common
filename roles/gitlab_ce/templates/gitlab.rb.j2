@@ -1,0 +1,17 @@
+external_url "https://{{ gitlab_ce_fqdn }}"
+
+letsencrypt['enable'] = false
+
+nginx['redirect_http_to_https'] = true
+nginx['ssl_certificate'] = "{{ gitlab_ce_ssl_dir }}/{{ gitlab_ce_fqdn }}.crt"
+nginx['ssl_certificate_key'] = "{{ gitlab_ce_ssl_dir }}/{{ gitlab_ce_fqdn }}.key"
+
+registry['enable'] = false
+gitlab_pages['enable'] = false
+gitlab_kas['enable'] = false
+
+prometheus['enable'] = false
+alertmanager['enable'] = false
+
+puma['worker_processes'] = {{ gitlab_ce_puma_workers }}
+sidekiq['concurrency'] = {{ gitlab_ce_sidekiq_concurrency }}

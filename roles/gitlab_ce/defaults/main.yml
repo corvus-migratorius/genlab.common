@@ -1,0 +1,5 @@
+---
+gitlab_ce_ssl_dir: /etc/gitlab/ssl
+gitlab_ce_cert_days: 3650
+gitlab_ce_puma_workers: 2
+gitlab_ce_sidekiq_concurrency: 10
