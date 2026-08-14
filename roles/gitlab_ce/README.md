@@ -33,3 +33,7 @@ See: [converge.yml](molecule/default/converge.yml)
 ## License
 
 MIT
+
+## Authors
+
+Mondrunov Elveg - jollypunk1@gmail.com
