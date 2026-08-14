@@ -11,6 +11,7 @@
 - [curl_scheduled](roles/curl_scheduled/README.md)
 - [dnsmasq](roles/dnsmasq/README.md)
 - [docker_ubuntu](roles/docker_ubuntu/README.md)
+- [gitlab_ce](roles/gitlab_ce/README.md)
 - [grafana](roles/grafana/README.md)
 - [hostname](roles/hostname/README.md)
 - [ipmi_exporter](roles/ipmi_exporter/README.md)
