@@ -1,20 +1,31 @@
 ---
 dependency:
   name: galaxy
+
 driver:
   name: docker
+
 platforms:
-  - name: gitlab_ce-instance
-    image: geerlingguy/docker-ubuntu2404-ansible:latest
+  - name: ubuntu
+    image: geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2404}-ansible:latest
     pre_build_image: true
     privileged: true
     cgroupns_mode: host
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    command: /usr/sbin/init
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+
+
 provisioner:
   name: ansible
-  env:
-    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/../
+  ansible_args:
+    - --extra-vars
+    - "gitlab_ce_fqdn=gitlab.molecule.test"
+
 verifier:
   name: ansible
+
+lint: |
+  set -e
+  yamllint .
+  ansible-lint .
