@@ -33,33 +33,13 @@
     fail_msg: "{{ platform1c_download_method }} needs to be set for the role to work"
     success_msg: "Method {{ platform1c_download_method }} is defined"
 
-- name: "Install unzip, apache2, ufw"
+- name: "Install unzip, apache2"
   ansible.builtin.apt:
     name:
       - unzip
       - apache2
-      - ufw
     state: present
     update_cache: true
-
-- name: "Deny access to 1c platform ports with ufw"
-  community.general.ufw:
-    rule: deny
-    port: "{{ item.port }}"
-  loop:
-    - { port: "1545" } # 1c ras
-    - { port: "1540" } # 1c server agent
-    - { port: "1541" } # 1c server manager
-
-- name: "Deny access to 1c platform ports with ufw (1c workers)"
-  community.general.ufw:
-    rule: deny
-    port: 1560:1591 # 1c server workers
-    proto: tcp
-
-- name: "Enable ufw"
-  community.general.ufw:
-    state: enabled
 
 - name: "Read variables from the configuration file"
   ansible.builtin.include_vars:
