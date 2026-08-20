@@ -5,5 +5,6 @@
   roles:
     - role: genlab.common.gitlab_ce
       gitlab_ce_fqdn: gitlab.molecule.test
+      # kics-scan ignore-line - Passwords And Secrets - Generic Password
       gitlab_ce_smtp_password: password
       gitlab_ce_smtp_username: smtp_username
