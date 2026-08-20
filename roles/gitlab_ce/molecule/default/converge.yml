@@ -5,3 +5,5 @@
   roles:
     - role: genlab.common.gitlab_ce
       gitlab_ce_fqdn: gitlab.molecule.test
+      gitlab_ce_smtp_password: password
+      gitlab_ce_smtp_username: smtp_username
