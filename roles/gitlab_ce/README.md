@@ -19,6 +19,7 @@ The role metadata currently targets:
 
 The role exposes the following variables in defaults/main.yml:
 
+- gitlab_ce_version - pinned version of the gitlab-ce deb package
 - gitlab_ce_fqdn - domain name for gitlab (gitlab requires it)
 - gitlab_ce_ssl_dir - directory that will contain ssl-certificates
 - gitlab_ce_cert_days - expires_in for ssl-certificates
