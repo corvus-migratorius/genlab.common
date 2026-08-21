@@ -20,10 +20,10 @@ Role Variables
 --------------
 
 `sftp_username` — user account name on the sFTP server  
-`sftp_pubkey` — the public part of the SSH key the user will be using to connect to the server
-`sftp_root` — directory to put the SFTP shares under
-`sftp_transfers_groupname` — group owning `{{sftp_root}}/{{sftp_username}}-uploads/transfers`
-`sftp_permissions` — list of permissions, see below for supported (default: `open,close,read,write,lstat,fstat,opendir,readdir,remove,mkdir,rmdir,realpath,rename`)
+`sftp_pubkey` — the public part of the SSH key the user will be using to connect to the server  
+`sftp_root` — directory to put the SFTP shares under  
+`sftp_transfers_groupname` — group owning `{{sftp_root}}/{{sftp_username}}-uploads/transfers`  
+`sftp_permissions` — list of permissions, see below for supported (default: `open,close,read,write,lstat,fstat,opendir,readdir,remove,mkdir,rmdir,realpath,rename`)  
 
 List Of SFTP Operations
 ------------------------
