@@ -22,7 +22,7 @@
 
 - name: Install GitLab CE
   ansible.builtin.apt:
-    name: gitlab-ce
+    name: "gitlab-ce={{ gitlab_ce_version }}"
     update_cache: true
   retries: 3
   delay: 3
