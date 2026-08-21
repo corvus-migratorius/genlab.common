@@ -1,0 +1,83 @@
+- name: Install dependencies
+  ansible.builtin.apt:
+    name:
+      - curl
+      - ca-certificates
+      - apt-transport-https
+      - tzdata
+      - openssl
+    update_cache: true
+
+- name: Add GitLab Runner repository
+  ansible.builtin.get_url:
+    url: https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh
+    dest: /tmp/gitlab_runner_script.deb.sh
+    mode: '0755'
+
+- name: Run script to install GitLab Runner repo
+  ansible.builtin.command: /tmp/gitlab_runner_script.deb.sh
+  args:
+    creates: /etc/apt/sources.list.d/runner_gitlab-runner.list
+
+- name: Install GitLab Runner
+  ansible.builtin.apt:
+    name: "gitlab-runner={{ gitlab_runner_version }}"
+    update_cache: true
+  retries: 3
+  delay: 3
+  register: gitlab_runner_result
+  until: gitlab_runner_result is success
+
+- name: Create certs directory
+  ansible.builtin.file:
+    path: "{{ gitlab_runner_certs_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Fetch GitLab CA certificate
+  ansible.builtin.shell: >
+    set -o pipefail &&
+    openssl s_client -showcerts -servername {{ gitlab_runner_url | urlsplit('hostname') }}
+    -connect {{ gitlab_runner_url | urlsplit('hostname') }}:{{ gitlab_runner_url | urlsplit('port') | default(443, true) }}
+    </dev/null
+    | openssl x509 -outform PEM
+  args:
+    executable: /bin/bash
+  register: gitlab_runner_ca
+  changed_when: false
+  when: gitlab_runner_ca_fetch
+
+- name: Install GitLab CA certificate
+  ansible.builtin.copy:
+    content: "{{ gitlab_runner_ca.stdout }}\n"
+    dest: "{{ gitlab_runner_certs_dir }}/ca.crt"
+    owner: root
+    group: root
+    mode: "0644"
+  when: gitlab_runner_ca_fetch
+  notify: Restart GitLab Runner
+
+- name: Configure config.toml
+  ansible.builtin.template:
+    src: config.toml.j2
+    dest: /etc/gitlab-runner/config.toml
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart GitLab Runner
+
+- name: Apply configuration
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable GitLab Runner service
+  ansible.builtin.systemd_service:
+    name: gitlab-runner
+    state: started
+    enabled: true
+  register: gitlab_runner_service
+
+- name: Show GitLab Runner state
+  ansible.builtin.debug:
+    msg: "gitlab-runner is {{ gitlab_runner_service.status.ActiveState }}"

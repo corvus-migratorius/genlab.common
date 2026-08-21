@@ -1,0 +1,35 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  vars_files:
+    - ../../defaults/main.yml
+  tasks:
+    - name: Config check
+      ansible.builtin.stat:
+        path: /etc/gitlab-runner/config.toml
+      register: gitlab_runner_toml
+
+    - name: Exists config.toml
+      ansible.builtin.assert:
+        that: gitlab_runner_toml.stat.exists
+
+    - name: Read config.toml
+      ansible.builtin.slurp:
+        src: /etc/gitlab-runner/config.toml
+      register: gitlab_runner_config
+
+    - name: Runner is described in config.toml
+      ansible.builtin.assert:
+        that: gitlab_runner_name in (gitlab_runner_config.content | b64decode)
+
+    - name: Check gitlab-runner service
+      ansible.builtin.systemd_service:
+        name: gitlab-runner
+      register: gitlab_runner_unit
+
+    - name: Service is enabled and running
+      ansible.builtin.assert:
+        that:
+          - gitlab_runner_unit.status.UnitFileState == "enabled"
+          - gitlab_runner_unit.status.ActiveState == "active"

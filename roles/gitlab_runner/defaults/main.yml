@@ -1,0 +1,13 @@
+---
+gitlab_runner_version: "19.3.0-1"
+# Оставил для явности какие переменные нужно явно переопределять
+gitlab_runner_url: ""
+gitlab_runner_token: ""
+gitlab_runner_name: "gl-runner"
+gitlab_runner_certs_dir: /etc/gitlab-runner/certs
+gitlab_runner_ca_fetch: true
+gitlab_runner_executor: docker
+gitlab_runner_concurrent: 2
+gitlab_runner_docker_image: alpine:3.21
+gitlab_runner_docker_volumes:
+  - /cache

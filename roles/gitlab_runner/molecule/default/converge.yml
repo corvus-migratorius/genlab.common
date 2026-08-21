@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  roles:
+    - role: genlab.common.gitlab_runner
+      gitlab_runner_url: https://gitlab.fic.local.test
+      # kics-scan ignore-line - Passwords And Secrets - Generic Token
+      gitlab_runner_token: glrt_molecule_token
+      gitlab_runner_ca_fetch: false # false for molecule-tests, replace to true for deploy with ca

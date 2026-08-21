@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: "gitlab_runner"
+  namespace: genlab
+  author: "Elveg Mondrunov"
+  company: "Genlab, LLC"
+  description: "Install and configure gitlab-runner on Ubuntu"
+  license: "MIT"
+  min_ansible_version: "2.1"
+
+  platforms:
+    - name: "Ubuntu"
+      versions: ["jammy", "noble"]
+
+  galaxy_tags: ["gitlabrunner"]
+
+dependencies: []
