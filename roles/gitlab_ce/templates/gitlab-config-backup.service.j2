@@ -1,0 +1,28 @@
+[Unit]
+Description=Upload GitLab configuration and secrets to object storage
+After=gitlab-runsvdir.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+UMask=0077
+Environment=AWS_DEFAULT_REGION={{ gitlab_ce_aws_region }}
+{% if gitlab_ce_aws_access_key_id is defined and gitlab_ce_aws_secret_access_key is defined %}
+# systemd reads the file as PID 1 and exposes a 0400 copy in $CREDENTIALS_DIRECTORY
+# that only this unit can see, so /root stays hidden from the aws process.
+LoadCredential=aws-credentials:/root/.aws/credentials
+Environment=AWS_SHARED_CREDENTIALS_FILE=%d/aws-credentials
+ProtectHome=yes
+{% else %}
+ProtectHome=read-only
+{% endif %}
+# The archive holds every GitLab secret. PrivateTmp gives the unit its own /tmp,
+# invisible to the rest of the host and wiped when the unit stops.
+ExecStartPre=/bin/mkdir -p /tmp/gitlab-backups
+ExecStart=/usr/bin/tar czf /tmp/gitlab-backups/backup_credentials.tar.gz -C /etc/gitlab .
+ExecStart=/usr/local/bin/aws --endpoint-url={{ gitlab_ce_config_backup_s3_endpoint }} s3 cp /tmp/gitlab-backups/backup_credentials.tar.gz {{ gitlab_ce_config_backup_s3_target }}
+
+PrivateTmp=yes
+ProtectSystem=strict
+NoNewPrivileges=yes
+RestrictSUIDSGID=yes
