@@ -1,5 +1,28 @@
 ---
 gitlab_ce_ssl_dir: /etc/gitlab/ssl
 gitlab_ce_cert_days: 3650
+
 gitlab_ce_puma_workers: 2
 gitlab_ce_sidekiq_concurrency: 10
+
+# SMTP
+gitlab_ce_smtp_authentication: login
+gitlab_ce_smtp_enable_starttls_auto: true
+gitlab_ce_smtp_tls: false
+gitlab_ce_smtp_pool: false
+gitlab_ce_smtp_openssl_verify_mode: peer
+gitlab_ce_email_from: "{{ gitlab_ce_smtp_username | default('') }}"
+gitlab_ce_email_reply_to: "{{ gitlab_ce_smtp_username | default('') }}"
+gitlab_ce_email_display_name: Gitlab
+
+# Backups
+## Backup gitlab: psql, repositories and key files
+gitlab_ce_backup_enabled: true
+gitlab_ce_backup_on_calendar: "*-*-* 03:00:00"
+
+## Backup gitlab-config: /etc/gitlab with gitlab-secrets.json to object storage.
+## Off by default: it needs gitlab_ce_config_backup_s3_endpoint,
+## gitlab_ce_config_backup_s3_target, gitlab_ce_aws_region and the keys
+## gitlab_ce_aws_access_key_id / gitlab_ce_aws_secret_access_key from vault.
+gitlab_ce_config_backup_enabled: false
+gitlab_ce_config_backup_on_calendar: "*-*-* 03:30:00"

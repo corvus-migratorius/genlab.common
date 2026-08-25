@@ -6,6 +6,20 @@
     - role: genlab.common.gitlab_ce
       gitlab_ce_fqdn: gitlab.molecule.test
       gitlab_ce_version: "19.2.0-ce.0"
+
+      gitlab_ce_smtp_username: smtp_username
       # kics-scan ignore-line - Passwords And Secrets - Generic Password
       gitlab_ce_smtp_password: password
-      gitlab_ce_smtp_username: smtp_username
+      gitlab_ce_smtp_address: 'smtp.yandex.ru'
+      gitlab_ce_smtp_port: 587
+      gitlab_ce_smtp_domain: genlab.llc
+
+      # Both timers are enabled to test the units, but nothing runs during
+      # the test: the backups themselves fire at night.
+      gitlab_ce_config_backup_enabled: true
+      gitlab_ce_config_backup_s3_endpoint: https://storage.yandexcloud.net
+      gitlab_ce_config_backup_s3_target: s3://genlab-gitlab-backup/
+      gitlab_ce_aws_access_key_id: molecule_access_key_id
+      # kics-scan ignore-line - Passwords And Secrets - Generic Secret
+      gitlab_ce_aws_secret_access_key: molecule_secret_access_key
+      gitlab_ce_aws_region: ru-central1
