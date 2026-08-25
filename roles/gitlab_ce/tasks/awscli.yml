@@ -1,0 +1,35 @@
+---
+- name: Install AWS CLI v2
+  block:
+    - name: Check for installed AWS CLI
+      ansible.builtin.stat:
+        path: /usr/local/bin/aws
+      register: gitlab_ce_awscli_bin
+
+    - name: Install AWS CLI v2 from official archive
+      when: not gitlab_ce_awscli_bin.stat.exists
+      block:
+        - name: Download AWS CLI v2 installer
+          ansible.builtin.get_url:
+            url: "https://awscli.amazonaws.com/awscli-exe-linux-\
+                  {{ ansible_facts['architecture'] }}.zip"
+            dest: /tmp/awscliv2.zip
+            mode: "0644"
+
+        - name: Unpack AWS CLI v2 installer
+          ansible.builtin.unarchive:
+            src: /tmp/awscliv2.zip
+            dest: /tmp
+            remote_src: true
+
+        - name: Run AWS CLI v2 installer
+          ansible.builtin.command: /tmp/aws/install
+          changed_when: true
+  always:
+    - name: Clean up AWS CLI installer files
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /tmp/awscliv2.zip
+        - /tmp/aws

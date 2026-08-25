@@ -1,5 +1,6 @@
+---
 - name: Reconfigure GitLab
   ansible.builtin.command:
     gitlab-ctl reconfigure
   register: gitlab_ce_flag
-  changed_when: gitlab_ce_flag != 0
+  changed_when: gitlab_ce_flag.rc == 0

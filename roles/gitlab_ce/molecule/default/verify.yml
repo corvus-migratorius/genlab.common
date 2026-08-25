@@ -6,6 +6,9 @@
     - ../../defaults/main.yml
   vars:
     gitlab_ce_fqdn: gitlab.molecule.test
+    gitlab_ce_smtp_address: smtp.yandex.ru
+    gitlab_ce_smtp_port: 587
+    gitlab_ce_smtp_domain: genlab.llc
   tasks:
     - name: Config check
       ansible.builtin.stat:
@@ -15,6 +18,55 @@
     - name: Exists gitlab.rb
       ansible.builtin.assert:
         that: gitlab_ce_rb.stat.exists
+
+    - name: Read gitlab.rb
+      ansible.builtin.slurp:
+        src: /etc/gitlab/gitlab.rb
+      register: gitlab_ce_rb_content
+
+    - name: SMTP settings come from variables
+      vars:
+        gitlab_ce_rb_text: "{{ gitlab_ce_rb_content.content | b64decode }}"
+        gitlab_ce_smtp_expected:
+          - 'smtp_address''] = "{{ gitlab_ce_smtp_address }}"'
+          - 'smtp_port''] = {{ gitlab_ce_smtp_port }}'
+          - 'smtp_domain''] = "{{ gitlab_ce_smtp_domain }}"'
+      ansible.builtin.assert:
+        that: item in gitlab_ce_rb_text
+        fail_msg: "Not found in gitlab.rb: {{ item }}"
+      loop: "{{ gitlab_ce_smtp_expected }}"
+
+    - name: Check AWS credentials file
+      ansible.builtin.stat:
+        path: /root/.aws/credentials
+      register: gitlab_ce_aws_credentials
+
+    - name: AWS credentials are readable by root only
+      ansible.builtin.assert:
+        that:
+          - gitlab_ce_aws_credentials.stat.exists
+          - gitlab_ce_aws_credentials.stat.pw_name == "root"
+          - gitlab_ce_aws_credentials.stat.mode == "0600"
+        fail_msg: "Unexpected state of /root/.aws/credentials"
+
+    - name: Check backup timers
+      ansible.builtin.systemd_service:
+        name: "{{ item }}"
+      register: gitlab_ce_timers
+      loop:
+        - gitlab-backup.timer
+        - gitlab-config-backup.timer
+
+    - name: Backup timers are enabled and active
+      ansible.builtin.assert:
+        that:
+          - item.status.ActiveState == "active"
+          - item.status.UnitFileState == "enabled"
+        success_msg: "Timer is running"
+        fail_msg: "Unexpected timer state: '{{ item.status.ActiveState }}'"
+      loop: "{{ gitlab_ce_timers.results }}"
+      loop_control:
+        label: "{{ item.item }}"
 
     - name: Check Gitlab-url
       ansible.builtin.uri:

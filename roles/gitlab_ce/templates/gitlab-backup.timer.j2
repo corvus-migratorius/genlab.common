@@ -1,0 +1,11 @@
+[Unit]
+Description=Schedule GitLab application backup
+
+[Timer]
+Unit=gitlab-backup.service
+OnCalendar={{ gitlab_ce_backup_on_calendar }}
+AccuracySec=1m
+Persistent=true
+
+[Install]
+WantedBy=timers.target

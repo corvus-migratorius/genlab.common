@@ -1,0 +1,22 @@
+---
+- name: Configure gitlab.rb
+  ansible.builtin.template:
+    src: gitlab.rb.j2
+    dest: /etc/gitlab/gitlab.rb
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Reconfigure GitLab
+
+- name: Apply configuration
+  ansible.builtin.meta: flush_handlers
+
+- name: Read initial root password
+  ansible.builtin.slurp:
+    src: /etc/gitlab/initial_root_password
+  register: gitlab_ce_initial_root_password
+  failed_when: false
+
+- name: Show initial root password
+  ansible.builtin.debug:
+    msg: "{{ (gitlab_ce_initial_root_password.content | b64decode).split('\n') | select('match', '^Password:') | list | first }}"

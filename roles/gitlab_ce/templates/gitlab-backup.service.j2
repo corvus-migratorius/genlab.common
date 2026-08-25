@@ -1,0 +1,10 @@
+[Unit]
+Description=GitLab application backup
+Documentation=https://docs.gitlab.com/administration/backup_restore/
+After=gitlab-runsvdir.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# Output goes to the journal, so rotation is not our problem.
+ExecStart=/usr/bin/gitlab-backup create CRON=1

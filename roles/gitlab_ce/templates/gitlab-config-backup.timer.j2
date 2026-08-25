@@ -1,0 +1,11 @@
+[Unit]
+Description=Schedule upload of GitLab configuration and secrets
+
+[Timer]
+Unit=gitlab-config-backup.service
+OnCalendar={{ gitlab_ce_config_backup_on_calendar }}
+AccuracySec=1m
+Persistent=true
+
+[Install]
+WantedBy=timers.target

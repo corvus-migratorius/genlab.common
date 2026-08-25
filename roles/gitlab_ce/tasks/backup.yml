@@ -1,0 +1,71 @@
+---
+- name: Schedule application backup
+  when: gitlab_ce_backup_enabled
+  block:
+    - name: Deploy application backup units
+      ansible.builtin.template:
+        src: "{{ gitlab_ce_unit }}.j2"
+        dest: "/etc/systemd/system/{{ gitlab_ce_unit }}"
+        owner: root
+        group: root
+        mode: "0644"
+      loop:
+        - gitlab-backup.service
+        - gitlab-backup.timer
+      loop_control:
+        loop_var: gitlab_ce_unit
+
+    - name: Enable and start application backup timer
+      ansible.builtin.systemd_service:
+        name: gitlab-backup.timer
+        state: started
+        enabled: true
+        daemon_reload: true
+
+- name: Schedule configuration backup
+  when: gitlab_ce_config_backup_enabled
+  block:
+    - name: Install AWS CLI for the upload to object storage
+      ansible.builtin.include_tasks: awscli.yml
+
+    - name: Manage AWS credentials for the configuration backup
+      when:
+        - gitlab_ce_aws_access_key_id is defined
+        - gitlab_ce_aws_secret_access_key is defined
+      block:
+        - name: Create directory for the AWS credentials
+          ansible.builtin.file:
+            path: /root/.aws
+            state: directory
+            owner: root
+            group: root
+            mode: "0700"
+
+        - name: Deploy AWS credentials
+          ansible.builtin.template:
+            src: aws-credentials.j2
+            dest: /root/.aws/credentials
+            owner: root
+            group: root
+            mode: "0600"
+          no_log: true
+
+    - name: Deploy configuration backup units
+      ansible.builtin.template:
+        src: "{{ gitlab_ce_unit }}.j2"
+        dest: "/etc/systemd/system/{{ gitlab_ce_unit }}"
+        owner: root
+        group: root
+        mode: "0644"
+      loop:
+        - gitlab-config-backup.service
+        - gitlab-config-backup.timer
+      loop_control:
+        loop_var: gitlab_ce_unit
+
+    - name: Enable and start configuration backup timer
+      ansible.builtin.systemd_service:
+        name: gitlab-config-backup.timer
+        state: started
+        enabled: true
+        daemon_reload: true
