@@ -1,0 +1,32 @@
+---
+- name: Install dependencies
+  ansible.builtin.apt:
+    name:
+      - curl
+      - openssh-server
+      - ca-certificates
+      - perl
+      - tzdata
+      - openssl
+      - unzip
+    update_cache: true
+
+- name: Add GitLab repository
+  ansible.builtin.get_url:
+    url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
+    dest: /tmp/gitlab_script.deb.sh
+    mode: '0755'
+
+- name: Run script to install Gitlab repo
+  ansible.builtin.command: /tmp/gitlab_script.deb.sh
+  args:
+    creates: /etc/apt/sources.list.d/gitlab_gitlab-ce.list
+
+- name: Install GitLab CE
+  ansible.builtin.apt:
+    name: "gitlab-ce={{ gitlab_ce_version }}"
+    update_cache: true
+  retries: 3
+  delay: 3
+  register: gitlab_ce_result
+  until: gitlab_ce_result is success

@@ -1,0 +1,33 @@
+---
+- name: Create SSL directory
+  ansible.builtin.file:
+    path: "{{ gitlab_ce_ssl_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Render openssl config
+  ansible.builtin.template:
+    src: openssl.cnf.j2
+    dest: "{{ gitlab_ce_ssl_dir }}/openssl.cnf"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Generate self-signed certificate
+  ansible.builtin.command: >
+    openssl req -x509 -newkey rsa:4096 -nodes
+    -keyout {{ gitlab_ce_ssl_dir }}/{{ gitlab_ce_fqdn }}.key
+    -out {{ gitlab_ce_ssl_dir }}/{{ gitlab_ce_fqdn }}.crt
+    -days {{ gitlab_ce_cert_days }}
+    -config {{ gitlab_ce_ssl_dir }}/openssl.cnf
+  args:
+    creates: "{{ gitlab_ce_ssl_dir }}/{{ gitlab_ce_fqdn }}.crt"
+
+- name: Protect private key
+  ansible.builtin.file:
+    path: "{{ gitlab_ce_ssl_dir }}/{{ gitlab_ce_fqdn }}.key"
+    owner: root
+    group: root
+    mode: "0600"
