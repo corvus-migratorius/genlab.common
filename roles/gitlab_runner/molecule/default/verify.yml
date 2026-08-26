@@ -4,6 +4,8 @@
   become: true
   vars_files:
     - ../../defaults/main.yml
+  vars:
+    gitlab_runner_name: gl-runner
   tasks:
     - name: Config check
       ansible.builtin.stat:
