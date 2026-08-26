@@ -4,7 +4,7 @@
   become: true
   roles:
     - role: genlab.common.gitlab_runner
-      gitlab_runner_version: "19.2.4-ce.0"
+      gitlab_runner_version: "19.2.0-1"
       gitlab_runner_name: gl-runner
       gitlab_runner_url: "https://gitlab.fic.local.test"
       # kics-scan ignore-line - Passwords And Secrets - Generic Token

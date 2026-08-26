@@ -23,8 +23,10 @@
 
 - name: Install GitLab Runner
   ansible.builtin.apt:
-    name: "gitlab-runner={{ gitlab_runner_version }}"
     update_cache: true
+    name:
+      - "gitlab-runner={{ gitlab_runner_version }}"
+      - "gitlab-runner-helper-images={{ gitlab_runner_version }}"
   retries: 3
   delay: 3
   register: gitlab_runner_result
