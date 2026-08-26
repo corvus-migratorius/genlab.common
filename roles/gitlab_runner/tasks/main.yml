@@ -12,6 +12,8 @@
   ansible.builtin.get_url:
     url: https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh
     dest: /tmp/gitlab_runner_script.deb.sh
+    owner: root
+    group: root
     mode: '0755'
 
 - name: Run script to install GitLab Runner repo
