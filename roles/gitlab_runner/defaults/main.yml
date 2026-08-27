@@ -1,0 +1,9 @@
+---
+gitlab_runner_certs_dir: /etc/gitlab-runner/certs
+gitlab_runner_ca_fetch: true
+gitlab_runner_executor: docker
+gitlab_runner_concurrent: 2
+gitlab_runner_docker_image: alpine:3.21
+gitlab_runner_docker_privileged: false
+gitlab_runner_docker_volumes:
+  - /cache
