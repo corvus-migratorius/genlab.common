@@ -1,0 +1,72 @@
+---
+
+slurm_version: 25.11.4
+
+slurm_upgrade: false
+slurm_roles: []
+slurm_partitions: []
+slurm_nodes: []
+slurm_config_dir: "/etc/slurm"
+
+slurm_enable_jwt: false # or false
+slurm_jwt_key_source: "secrets/jwt.key"
+
+slurm_create_user: true
+slurm_create_dirs: true
+slurm_rotate_logs: true
+slurm_configure_munge: true
+
+slurmd_service_name: slurmd
+slurmctld_service_name: slurmctld
+slurmdbd_service_name: slurmdbd
+
+slurmdbd_cluster_name: cluster
+__cluster_not_setup: true
+
+slurm_start_services: true
+
+slurm_accounts: {}
+slurm_user_name: slurm
+slurm_group_name: slurm
+slurm_user_gid: 888
+slurm_user_uid: 888
+
+slurmrestd_user_uid: 889
+slurmrestd_user_gid: 889
+
+slurm_run_dir: "/run/slurm"
+slurm_log_dir: "/var/log/slurm"
+__slurm_debian: "{{ ansible_os_family == 'Debian' }}"
+__slurm_redhat: "{{ ansible_os_family == 'RedHat' }}"
+
+__slurm_config_default:
+  AuthType: auth/munge
+  CryptoType: crypto/munge
+  SlurmUser: "{{ slurm_user_name }}"
+  ClusterName: "{{ slurmdbd_cluster_name }}"
+  # default is proctrack/cgroup which is the best but also less than 100% chance of working e.g. in docker
+  ProctrackType: proctrack/cgroup
+  # slurmctld options
+  SlurmctldPort: 6817
+  SlurmctldLogFile: "{{ slurm_log_dir }}/slurmctld.log"
+  SlurmctldPidFile: "{{ slurm_run_dir }}/slurmctld.pid"
+  StateSaveLocation: "/var/spool/slurm/ctld"
+  # slurmd options
+  SlurmdPort: 6818
+  SlurmdLogFile: "{{ slurm_log_dir }}/slurmd.log"
+  SlurmdPidFile: "{{ slurm_run_dir }}/slurmd.pid"
+  SlurmdSpoolDir: "/var/spool/slurm/d"
+
+__slurm_config_merged: "{{ __slurm_config_default | combine(slurm_config | default({})) }}"
+
+__slurmdbd_config_default:
+  AuthType: auth/munge
+  DbdPort: 6819
+  DbdHost: localhost
+  SlurmUser: "{{ slurm_user_name }}"
+  PidFile: "{{ slurm_run_dir }}/slurmdbd.pid"
+  LogFile: "{{ slurm_log_dir }}/slurmdbd.log"
+  StorageType: accounting_storage/slurmdbd
+  StorageUser: slurm
+
+__slurmdbd_config_merged: "{{ __slurmdbd_config_default | combine(slurmdbd_config | default({})) }}"

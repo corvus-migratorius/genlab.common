@@ -13,3 +13,6 @@ exclude_paths:
   - roles/rustdesk/molecule/default/client-binary-existance.yml
   - roles/borg_server/molecule/default/secrets.yaml
   - roles/sshd/molecule/default/mkuser.yml
+
+  # ansible-link asks to set slurm prefix, but they already have slurm prefix according to daemon type
+  - roles/slurm/defaults/main.yml
