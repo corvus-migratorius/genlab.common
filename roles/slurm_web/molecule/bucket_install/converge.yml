@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: true
+  become: true
+  vars:
+    slurm_jwt_key_src: ../jwt_hs256.key
+    slurm_web_install_method: bucket
+
+  roles:
+    - role: genlab.common.slurm_web
