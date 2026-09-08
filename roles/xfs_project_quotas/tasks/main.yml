@@ -17,12 +17,20 @@
     group: root
     mode: "0644"
 
-- name: "Quotas | Ensure xfsprogs package is installed"
+- name: "Quotas | Ensure xfsprogs apt package is installed "
+  when: ansible_os_family == "Debian"
   ansible.builtin.apt:
     name: xfsprogs
     state: present
     update_cache: true
     cache_valid_time: 3600
+
+- name: "Quotas | Ensure xfsprogs rpm package is installed"
+  when: ansible_os_family == "RedHat"
+  ansible.builtin.dnf:
+    name: xfsprogs
+    state: present
+    update_cache: true
 
 - name: "Quotas | Ensure all /etc/projects entries exist"
   loop: "{{ projects }}"
