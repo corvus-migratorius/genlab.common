@@ -1,0 +1,18 @@
+---
+- name: Install agent configuration
+  ansible.builtin.template:
+    src: agent.ini.j2
+    dest: /etc/slurm-web/agent.ini
+    owner: slurm-web
+    group: slurm-web
+    mode: "0644"
+  notify: Restart slurm-web-agent
+
+- name: Install policy configuration
+  ansible.builtin.template:
+    src: policy.ini.j2
+    dest: /etc/slurm-web/policy.ini
+    owner: slurm-web
+    group: slurm-web
+    mode: "0644"
+  notify: Restart slurm-web-agent

@@ -1,0 +1,16 @@
+# Managed by Ansible - do not edit manually
+
+[roles]
+{% for role in slurm_web_policy_roles %}
+{% if role.members is defined %}
+{{ role.name }}={{ role.members | join(',') }}
+{% else %}
+{{ role.name }}
+{% endif %}
+{% endfor %}
+
+{% for role in slurm_web_policy_roles %}
+[{{ role.name }}]
+actions={{ role.actions | join(',') }}
+
+{% endfor %}

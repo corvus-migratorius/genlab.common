@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: slurm_web
+  namespace: genlab
+  author: Maria Sayganova
+  description: Deploy slurm-web monitoring app
+  company: Genlab LLC
+  license: MIT
+  min_ansible_version: "2.1"
+
+  platforms:
+    - name: "Ubuntu"
+      versions: ["jammy", "noble"]
+    - name: "Rocky"
+
+  galaxy_tags: []
+dependencies: []
