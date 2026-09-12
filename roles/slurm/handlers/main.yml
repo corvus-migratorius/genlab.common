@@ -1,0 +1,56 @@
+---
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Restart munge
+  ansible.builtin.service:
+    name: munge
+    state: restarted
+
+- name: Reload slurmdbd
+  when: "'dbd' in slurm_roles"
+  ansible.builtin.service:
+    name: slurmdbd
+    state: reloaded
+
+- name: Restart slurmdbd
+  when: "'dbd' in slurm_roles"
+  ansible.builtin.service:
+    name: slurmdbd
+    state: restarted
+
+- name: Reload slurmctld
+  when: "'controller' in slurm_roles"
+  ansible.builtin.service:
+    name: slurmctld
+    state: reloaded
+
+- name: Restart slurmctld
+  when: "'controller' in slurm_roles"
+  ansible.builtin.service:
+    name: slurmctld
+    state: restarted
+
+- name: Reload slurmd
+  when: "'exec' in slurm_roles"
+  ansible.builtin.service:
+    name: slurmd
+    state: reloaded
+
+- name: Restart slurmd
+  when: "'exec' in slurm_roles"
+  ansible.builtin.service:
+    name: slurmd
+    state: restarted
+
+- name: Reconfigure slurmctld
+  when: "'controller' in slurm_roles"
+  ansible.builtin.command: scontrol reconfigure
+  changed_when: true
+
+- name: Restart slurmrestd
+  when: "'restd' in slurm_roles"
+  ansible.builtin.service:
+    name: slurmrestd
+    state: restarted

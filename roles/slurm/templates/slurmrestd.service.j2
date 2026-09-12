@@ -1,0 +1,51 @@
+[Unit]
+Description=Slurm REST daemon
+Documentation=man:slurmrestd(8)
+After=network-online.target remote-fs.target munge.service slurmctld.service
+Wants=network-online.target munge.service
+Requires=munge.service
+ConditionPathExists={{ slurm_config_dir }}/slurm.conf
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/sysconfig/slurmrestd
+EnvironmentFile=-/etc/default/slurmrestd
+Environment=SLURM_JWT=daemon
+
+User=slurmrestd
+Group=slurmrestd
+
+ExecStart=/usr/sbin/slurmrestd $SLURMRESTD_OPTIONS \
+    -a rest_auth/jwt \
+    unix:/run/slurmrestd/slurmrestd.socket
+
+RuntimeDirectory=slurmrestd
+RuntimeDirectoryMode=0755
+
+# Restart behavior
+Restart=on-failure
+RestartSec=10
+StartLimitBurst=5
+
+# Resource limits
+LimitNOFILE=65536
+LimitMEMLOCK=infinity
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+[Install]
+WantedBy=multi-user.target

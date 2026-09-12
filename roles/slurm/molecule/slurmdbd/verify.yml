@@ -1,0 +1,43 @@
+---
+- name: Verify SlurmDBD installation
+  hosts: all
+  become: true
+  vars:
+    slurmdbd_cluster_name: test-cluster
+
+  tasks:
+    - name: Populate service facts
+      ansible.builtin.service_facts:
+
+    - name: Assert required services are running
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services[item].state == 'running'
+        fail_msg: "{{ item }} is not running"
+      loop:
+        - munge.service
+        - slurmdbd.service
+
+    - name: Check slurmdbd is listening
+      ansible.builtin.wait_for:
+        port: "{{ __slurmdbd_config_default.DbdPort | default(6819) }}"
+        host: 127.0.0.1
+        timeout: 5
+
+    - name: Query slurmdbd
+      ansible.builtin.command: sacctmgr --parsable2 -n list cluster
+      changed_when: false
+      register: slurm_sacctmgr_clusters
+
+    - name: Assert slurmdbd responded
+      ansible.builtin.assert:
+        that:
+          - slurm_sacctmgr_clusters.rc == 0
+        fail_msg: "Failed to communicate with slurmdbd"
+
+    - name: Assert configured cluster exists
+      ansible.builtin.assert:
+        that:
+          - slurmdbd_cluster_name in slurm_sacctmgr_clusters.stdout
+        fail_msg: "Cluster {{ slurmdbd_cluster_name }} not found in accounting database"
+      when: slurmdbd_cluster_name is defined

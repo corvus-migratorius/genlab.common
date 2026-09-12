@@ -1,0 +1,73 @@
+---
+- name: Include user creation tasks
+  ansible.builtin.include_tasks: user.yml
+  when: slurm_create_user
+
+- name: Include munge tasks
+  ansible.builtin.include_tasks: munge.yml
+  when: slurm_configure_munge
+
+- name: Include slurm installation from source
+  ansible.builtin.include_tasks: install.yml
+
+- name: Include jwt copy task
+  ansible.builtin.include_tasks: jwt.yml
+  when: slurm_enable_jwt | bool
+
+- name: Include controller installation tasks
+  ansible.builtin.include_tasks: slurmctld.yml
+  when: "'slurmservers' in group_names or 'controller' in slurm_roles"
+
+- name: Include execution host installation tasks
+  ansible.builtin.include_tasks: slurmd.yml
+  when: "'slurmexechosts' in group_names or 'exec' in slurm_roles"
+
+- name: Include DB installation tasks
+  ansible.builtin.include_tasks: slurmdbd.yml
+  when: "'slurmdbdservers' in group_names or 'dbd' in slurm_roles"
+
+- name: Include slurmrestd installation tasks
+  ansible.builtin.include_tasks: slurmrestd.yml
+  when: "'slurmrestdhosts' in group_names or 'restd' in slurm_roles"
+
+- name: Import common tasks
+  ansible.builtin.import_tasks: common.yml
+
+- name: Ensure slurmdbd is enabled and running
+  ansible.builtin.service:
+    name: slurmdbd
+    enabled: true
+    state: started
+  when: "slurm_start_services and  'dbd' in slurm_roles"
+
+- name: Ensure slurmctld is enabled and running
+  ansible.builtin.service:
+    name: slurmctld
+    enabled: true
+    state: started
+  when: "slurm_start_services and 'controller' in slurm_roles"
+
+- name: Ensure slurmd is enabled and running
+  ansible.builtin.service:
+    name: slurmd
+    enabled: true
+    state: started
+  when: "slurm_start_services and 'exec' in slurm_roles"
+
+- name: Ensure slurmrestd is enabled and running
+  ansible.builtin.service:
+    name: slurmrestd
+    enabled: true
+    state: started
+  when: "slurm_start_services and 'restd' in slurm_roles"
+
+- name: Setup cluster on slurmdb
+  ansible.builtin.include_tasks: slurmdbd_cluster.yml
+  when: "slurm_start_services and 'dbd' in slurm_roles"
+
+- name: Setup accounts on slurm controller
+  ansible.builtin.include_tasks: accounts.yml
+  when:
+    - slurm_accounts is defined
+    - slurm_accounts | length > 0
+    - "'dbd' in slurm_roles"

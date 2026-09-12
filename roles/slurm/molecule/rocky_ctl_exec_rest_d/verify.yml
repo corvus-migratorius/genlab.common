@@ -1,0 +1,49 @@
+# kics-scan disable=2e8d4922-8362-4606-8c14-aa10466a1ce3
+---
+- name: Verify Slurm installation
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: Load role default variables
+      ansible.builtin.include_vars:
+        dir: "{{ playbook_dir }}/../../defaults"
+
+  tasks:
+    - name: Populate service facts
+      ansible.builtin.service_facts:
+
+    - name: Assert all slurm services are running
+      ansible.builtin.assert:
+        that: ansible_facts.services[item].state == 'running'
+        fail_msg: "{{ item }} is not running"
+      loop:
+        - munge.service
+        - slurmctld.service
+        - slurmd.service
+        - slurmrestd.service
+
+    - name: Check slurmctld is responsive
+      ansible.builtin.command: scontrol ping
+      changed_when: false
+      register: slurm_scontrol_ping
+
+    - name: Assert slurmctld responded
+      ansible.builtin.assert:
+        that: "'UP' in scontrol_ping.stdout"
+        fail_msg: "{{ slurm_scontrol_ping.stdout }}"
+
+    - name: Check openmetrics endpoint
+      ansible.builtin.uri:
+        url: "http://localhost:{{ __slurm_config_default.SlurmctldPort }}/metrics/nodes" # kics-ignore
+        method: GET
+        status_code: 200
+        return_content: true
+      register: slurm_metrics
+
+    - name: Assert cluster metrics are present
+      ansible.builtin.assert:
+        that:
+          - "'slurm_node_cpus' in slurm_metrics.content"
+          - "'slurm_nodes_idle' in slurm_metrics.content"
+        fail_msg: "openmetrics endpoint did not return expected metrics"
