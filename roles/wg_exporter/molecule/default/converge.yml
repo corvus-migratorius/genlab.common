@@ -1,0 +1,16 @@
+---
+- name: Converge
+  hosts: all
+
+  pre_tasks:
+    - name: Ensure Vim and Curl are installed
+      ansible.builtin.package:
+        name:
+          - vim
+          - curl
+          - wireguard
+        state: present
+        update_cache: true
+
+  roles:
+    - role: genlab.common.wg_exporter
