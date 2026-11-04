@@ -36,6 +36,34 @@
     telegramChatID: "{{ uptime_kuma_tg_chat_id }}"
     state: "present"
 
+- name: "Configure Yandex Messenger notification method"
+  when:
+    - uptime_kuma_ym_bot_token is defined
+    - uptime_kuma_ym_chat_id is defined
+  no_log: true
+  lucasheld.uptime_kuma.notification:
+    api_url: http://127.0.0.1:{{ uptime_kuma_port }}
+    api_token: "{{ uptime_kuma_api_token }}"
+    type: webhook
+    name: "{{ uptime_kuma_ym_notif_name | default('Yandex Messenger alerts') }}"
+    isDefault: "{{ uptime_kuma_ym_notif_is_default | default(true) }}"
+    applyExisting: "{{ uptime_kuma_ym_notif_apply_existing | default(true) }}"
+    webhookURL: "https://botapi.messenger.yandex.net/bot/v1/messages/sendText/"
+    webhookContentType: custom
+    webhookAdditionalHeaders: >-
+      {{
+        {
+          'Authorization': 'OAuth ' ~ uptime_kuma_ym_bot_token,
+          'Content-Type': 'application/json'
+        } | to_json
+      }}
+    webhookCustomBody: >-
+      {
+        "chat_id": {{ uptime_kuma_ym_chat_id | to_json }},
+        "text": {% raw %}{{ msg | json }}{% endraw %}
+      }
+    state: present
+
 - name: "Create monitor groups"
   when: uptime_kuma_monitor_groups is defined
   loop: "{{ uptime_kuma_monitor_groups }}"
