@@ -4,7 +4,7 @@
     name: caddy
     comment: "Caddy web server"
     shell: /sbin/nologin
-    home: /var/lib/caddy
+    home: "{{ caddy_home }}"
     state: present
     system: true
 
