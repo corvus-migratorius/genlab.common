@@ -5,5 +5,4 @@
     - role: genlab.common.caddy
       caddy_src_conf_path: "files/Caddyfile"
       caddy_dest_conf_path: "/etc/caddy/Caddyfile"
-      caddy_version: "2.11.3"
       caddy_limit_nofile: 1048576
