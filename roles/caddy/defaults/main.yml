@@ -5,3 +5,4 @@ caddy_limit_nofile: 1048576
 caddy_home: /var/lib/caddy
 caddy_caps: "CAP_NET_BIND_SERVICE"
 caddy_show_environ: false
+caddy_log_path: ""

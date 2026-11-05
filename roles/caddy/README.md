@@ -13,6 +13,7 @@ Role Variables
 - `caddy_src_conf_path`: (required) location of the `Caddyfile` on the controller
 - `caddy_dest_conf_path`: where to put the configuration file for the service default `/etc/caddy/Caddyfile`
 - `caddy_limit_nofile`: default `1048576`
+- `caddy_log_path`: default `""`
 
 Dependencies
 ------------
