@@ -70,6 +70,9 @@
   ansible.builtin.file:
     path: /etc/caddy
     state: directory
+    owner: root
+    group: caddy
+    mode: "0750"
 
 - name: "Create a directory for Caddy logs"
   when: caddy_log_path | length > 0
