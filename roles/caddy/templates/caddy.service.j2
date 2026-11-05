@@ -31,8 +31,10 @@ PrivateTmp=true
 ProtectSystem=strict
 # caddy home must be rw to maintain ACME-gained TLS certificates and other persistent data
 ReadWritePaths={{ caddy_home }}
+PrivateDevices=true
 AmbientCapabilities={{ caddy_caps }}
-CapabilityBoundingSet= {{ caddy_caps }}
+CapabilityBoundingSet={{ caddy_caps }}
+NoNewPrivileges=true
 
 [Install]
 WantedBy=multi-user.target
