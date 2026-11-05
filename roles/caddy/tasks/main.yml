@@ -82,6 +82,7 @@
     owner: root
     group: root
     mode: "0644"
+    validate: "/usr/bin/caddy validate --adapter caddyfile --config %s"
 
 - name: "Create a directory for Caddy logs"
   when: caddy_log_path | length > 0
