@@ -84,7 +84,7 @@
     mode: "0644"
 
 - name: "Create a directory for Caddy logs"
-  when: caddy_log_path is defined
+  when: caddy_log_path | length > 0
   ansible.builtin.file:
     state: directory
     path: "{{ caddy_log_path }}"

@@ -30,7 +30,7 @@ LimitNOFILE={{ caddy_limit_nofile }}
 PrivateTmp=true
 ProtectSystem=strict
 # caddy home must be rw to maintain ACME-gained TLS certificates and other persistent data
-ReadWritePaths={{ caddy_home }}
+ReadWritePaths={{ caddy_home }} {{ caddy_log_path }}
 PrivateDevices=true
 AmbientCapabilities={{ caddy_caps }}
 CapabilityBoundingSet={{ caddy_caps }}
