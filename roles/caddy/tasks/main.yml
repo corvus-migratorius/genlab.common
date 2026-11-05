@@ -70,6 +70,12 @@
   ansible.builtin.file:
     path: /etc/caddy
     state: directory
+
+- name: "Create a directory for Caddy logs"
+  when: caddy_log_path | length > 0
+  ansible.builtin.file:
+    state: directory
+    path: "{{ caddy_log_path }}"
     owner: caddy
     group: caddy
     mode: "0755"
@@ -84,11 +90,12 @@
     mode: "0644"
     validate: "/usr/bin/caddy validate --adapter caddyfile --config %s"
 
-- name: "Create a directory for Caddy logs"
+# validation generates a root:root -rw------ access.log
+# this prevents caddy process from starting up due to a DAC error
+- name: "Set access log ownership to caddy post-validation"
   when: caddy_log_path | length > 0
   ansible.builtin.file:
-    state: directory
-    path: "{{ caddy_log_path }}"
+    path: "{{ caddy_log_path }}/access.log"
     owner: caddy
     group: caddy
     mode: "0755"
