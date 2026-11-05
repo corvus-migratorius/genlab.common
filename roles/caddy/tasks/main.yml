@@ -75,7 +75,7 @@
     mode: "0755"
 
 - name: "Template caddy config file"
-  notify: "Enable and restart the caddy daemon"
+  notify: "Reload the caddy daemon"
   ansible.builtin.template:
     src: "{{ caddy_src_conf_path }}"
     dest: "{{ caddy_dest_conf_path }}"
