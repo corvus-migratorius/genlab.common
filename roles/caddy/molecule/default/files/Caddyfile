@@ -1,3 +1,11 @@
 :8080 {
 	respond "caddy-ok" 200
+
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 5MB
+			roll_keep 2
+			roll_keep_for 168h
+		}
+	}
 }

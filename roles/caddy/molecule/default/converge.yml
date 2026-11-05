@@ -6,3 +6,4 @@
       caddy_src_conf_path: "files/Caddyfile"
       caddy_dest_conf_path: "/etc/caddy/Caddyfile"
       caddy_limit_nofile: 1048576
+      caddy_log_path: "/var/log/caddy/"
