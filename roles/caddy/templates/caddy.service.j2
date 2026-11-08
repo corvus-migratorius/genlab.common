@@ -23,13 +23,33 @@ Requires=network-online.target
 Type=notify
 User=caddy
 Group=caddy
-ExecStart=/usr/bin/caddy run --environ --config {{ caddy_dest_conf_path }}
+ExecStart=/usr/bin/caddy run {{ "--environ" if caddy_show_environ else "" }} --config {{ caddy_dest_conf_path }}
 ExecReload=/usr/bin/caddy reload --config {{ caddy_dest_conf_path }} --force
 TimeoutStopSec=5s
 LimitNOFILE={{ caddy_limit_nofile }}
 PrivateTmp=true
-ProtectSystem=full
-AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+ProtectSystem=strict
+# caddy home must be rw to maintain ACME-gained TLS certificates and other persistent data
+ReadWritePaths={{ caddy_home }} {{ caddy_log_path }}
+PrivateDevices=true
+AmbientCapabilities={{ caddy_caps }}
+CapabilityBoundingSet={{ caddy_caps }}
+NoNewPrivileges=true
+
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+SystemCallArchitectures=native
+
+UMask=0027
 
 [Install]
 WantedBy=multi-user.target
