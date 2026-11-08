@@ -36,5 +36,20 @@ AmbientCapabilities={{ caddy_caps }}
 CapabilityBoundingSet={{ caddy_caps }}
 NoNewPrivileges=true
 
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+SystemCallArchitectures=native
+
+UMask=0027
+
 [Install]
 WantedBy=multi-user.target
