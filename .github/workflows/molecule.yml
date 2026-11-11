@@ -63,7 +63,7 @@ jobs:
     steps:
       - name: Checkout the repo
         if: ${{ matrix.role != '__no_role__' }}
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
